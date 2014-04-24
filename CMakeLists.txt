@@ -9,6 +9,8 @@ set(LIBRARIES
         sfml-graphics
         sfml-network
         sfml-audio
+	assimp
+	GLEW
 )
 add_executable(${PROJECT_NAME} ./src/main.cpp ${SRC_LIST})
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})

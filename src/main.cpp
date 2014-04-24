@@ -20,10 +20,7 @@ int main() {
 
     ScriptEngine engine;
     Script* script = new Script();
-    engine.RegisterFunction(doubleTrouble, "doubleTrouble");
-    script->SetContent((char*)"i = 0; print(i)");
-    engine.RunScript(script);
-    script->SetContent((char*)"i+1;print(i)");
+    script->LoadFromFile("main.lua");
     engine.RunScript(script);
 
     /*
