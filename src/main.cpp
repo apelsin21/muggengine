@@ -8,7 +8,10 @@
 
 #include "scriptengine.hpp"
 
+#include "udpclient.hpp"
+
 #include <lua.hpp>
+#include <string>
 
 static int doubleTrouble(lua_State* L) {
     double d = luaL_checknumber(L, 1);
@@ -16,14 +19,47 @@ static int doubleTrouble(lua_State* L) {
     return 1;
 }
 
-int main() {
+std::string GetFromInput() {
+    std::cout << "Send message:\n";
+    std::string message;
+    std::cin >> message;
 
+    return message;
+}
+
+int main() {
+    UDPClient client;
+    client.SetBlocking(false);
+    client.BindToPort(54000);
+
+    std::string address;
+    unsigned short port;
+    std::size_t size;
+
+    std::string message;
+
+    while(true) {
+        client.SendMessage("127.0.0.1", 54000, GetFromInput());
+        message = (const char*)client.RecieveMessage(address, port, size);
+        std::cout << "Recieved \"" << message << "\" from " << address << " on port " << port << " with a size of " << size << std::endl;
+    }
+
+    /*
     ScriptEngine engine;
-    Script* script = new Script();
+    engine.RegisterFunction(SendMessage, "send_message");
+    engine.RegisterFunction(RecieveMessage, "receive_message");
+
+    Script* script;
     script->LoadFromFile("main.lua");
     engine.RunScript(script);
 
-    /*
+    client.SendMessage("127.0.0.1", 54000, "fungerar det?");
+    std::string address;
+    unsigned short port;
+    std::size_t size;
+	const char* message = (const char*)client.RecieveMessage(address, port, size);
+    std::cout << "Recieved \"" << message << "\" from " << address << " on port " << port << " with a size of " << size << std::endl;
+    
     const char* string = "";
 	int size = strlen(string);
 	
@@ -49,8 +85,6 @@ int main() {
 		std::cout << "Decompression failed!\n";
 	}
     */
-	
-    delete script;
 
 	return 0;
 }
