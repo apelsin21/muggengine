@@ -1872,7 +1872,7 @@ extern "C" {
 #endif
 
 #undef LZO_HAVE_CONFIG_H
-#include "minilzo/minilzo.h"
+#include "minilzo.h"
 
 #if !defined(MINILZO_VERSION) || (MINILZO_VERSION != 0x2060)
 //#  error "version mismatch in miniLZO source files"

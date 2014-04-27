@@ -1,4 +1,4 @@
-#include "headers/window.hpp"
+#include "window.hpp"
 
 Window::Window(int resX = 800, int resY = 600, bool fullscreen = false, const char* title = "Default") {
     this->isFullscreen = fullscreen;

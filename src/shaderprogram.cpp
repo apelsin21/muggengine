@@ -1,4 +1,4 @@
-#include "headers/shaderprogram.hpp"
+#include "shaderprogram.hpp"
 
 ShaderProgram::ShaderProgram(const char* vsFilepath, const char* fsFilepath) {
     this->vsID = glCreateShader(GL_VERTEX_SHADER);

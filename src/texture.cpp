@@ -1,4 +1,4 @@
-#include "headers/texture.hpp"
+#include "texture.hpp"
 
 Texture::Texture(const char* filepath) {
     glGenTextures(1, &this->textureID);
