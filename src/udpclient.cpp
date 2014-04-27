@@ -51,18 +51,46 @@ bool UDPClient::SendMessage(std::string recipient_address, unsigned short recipi
 	return true;
 }
 
-const char* UDPClient::RecieveMessage(std::string &recipient_address, unsigned short &recipient_port, std::size_t &out_size) {
+const char* UDPClient::RecieveMessage(std::size_t max_len, std::string &sender_address, unsigned short &sender_port, std::size_t &out_size) {
     if(!this->is_bound) {
         std::cout << "Tried to recieve a message while not bound to a port!\n";
     }
     
-    char* data = new char[100];
+    char* data = new char[max_len];
 
     sf::IpAddress remote_address;
 
-    if(this->socket.receive(data, 100, out_size, remote_address, recipient_port) == sf::Socket::Done) {
-        recipient_address = remote_address.toString();
+    if(this->socket.receive(data, max_len, out_size, remote_address, sender_port) == sf::Socket::Done) {
+        sender_address = remote_address.toString();
 
         return data;
+    }
+}
+
+bool UDPClient::SendPacket(sf::Packet packet, std::string recipient_address, unsigned short recipient_port) {
+    if(!this->is_bound) {
+        std::cout << "Tried to send packet without being bound to socket!\n";
+        return false;
+    }
+
+    sf::IpAddress address = recipient_address;
+
+    if(this->socket.send(packet, address, recipient_port) == sf::Socket::Done) {
+        return true;
+    }
+
+    return false;
+}
+sf::Packet UDPClient::RecievePacket(std::string &sender_address, unsigned short &sender_port) {
+    if(!this->is_bound) {
+        std::cout << "Tried to listen for packet while not bound to port!\n";
+    }
+
+    sf::IpAddress address;
+    sf::Packet packet;
+
+    if(this->socket.receive(packet, address, sender_port) == sf::Socket::Done) {
+        sender_address = address.toString();
+        return packet;
     }
 }

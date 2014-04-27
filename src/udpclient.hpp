@@ -26,7 +26,10 @@ public:
 	bool GetBlocking();
 
 	bool SendMessage(std::string recipient_address, unsigned short recipient_port, std::string message);
-	const char* RecieveMessage(std::string &recipient_address, unsigned short &recipient_port, std::size_t &out_size);
+	const char* RecieveMessage(std::size_t max_len, std::string &sender_address, unsigned short &sender_port, std::size_t &out_size);
+
+    bool SendPacket(sf::Packet packet, std::string recipient_address, unsigned short recipient_port);
+    sf::Packet RecievePacket(std::string &sender_address, unsigned short &sender_port);
 
 	void SetServerPort(unsigned short port);
 	unsigned short GetServerPort();

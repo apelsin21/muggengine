@@ -38,10 +38,15 @@ int main() {
 
     std::string message;
 
+    sf::Packet packet;
+    sf::Packet recieved_packet;
+
     while(true) {
-        client.SendMessage("127.0.0.1", 54000, GetFromInput());
-        message = (const char*)client.RecieveMessage(address, port, size);
-        std::cout << "Recieved \"" << message << "\" from " << address << " on port " << port << " with a size of " << size << std::endl;
+        packet << GetFromInput();
+        client.SendPacket(packet, "127.0.0.1", 54000);
+        recieved_packet = client.RecievePacket(address, port);
+        recieved_packet >> message;
+        std::cout << "Recieved packet from " << address << " on port" << port << " containing " << message << std::endl;
     }
 
     /*
