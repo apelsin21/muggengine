@@ -20,7 +20,6 @@ static int doubleTrouble(lua_State* L) {
 }
 
 std::string GetFromInput() {
-    std::cout << "Send message:\n";
     std::string message;
     std::cin >> message;
 
@@ -30,7 +29,7 @@ std::string GetFromInput() {
 int main() {
     UDPClient client;
     client.SetBlocking(false);
-    client.BindToPort(54000);
+    client.BindToPort(54001);
 
     std::string address;
     unsigned short port;
@@ -38,16 +37,14 @@ int main() {
 
     std::string message;
 
-    sf::Packet packet;
-    sf::Packet recieved_packet;
-
-    while(true) {
-        packet << GetFromInput();
-        client.SendPacket(packet, "127.0.0.1", 54000);
-        recieved_packet = client.RecievePacket(address, port);
-        recieved_packet >> message;
-        std::cout << "Recieved packet from " << address << " on port" << port << " containing " << message << std::endl;
-    }
+    do {
+        std::cout << "Send:\n";
+        message = GetFromInput();
+        client.SendMessage("127.0.0.1", 54000, message);
+        //message = client.RecieveMessage(200, address, port, size);
+        //if(message != "")
+        //    std::cout << "Recieved \"" << message << "\" from " << address << ":" << port << " with size: " << size << std::endl;
+    } while(message != "/quit");
 
     /*
     ScriptEngine engine;

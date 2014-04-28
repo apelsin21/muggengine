@@ -65,6 +65,8 @@ const char* UDPClient::RecieveMessage(std::size_t max_len, std::string &sender_a
 
         return data;
     }
+
+    return "";
 }
 
 bool UDPClient::SendPacket(sf::Packet packet, std::string recipient_address, unsigned short recipient_port) {
