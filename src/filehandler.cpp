@@ -1,47 +1,36 @@
 #include "filehandler.hpp"
 
-FileHandler::FileHandler() {
-	//TODO: Do something
+std::vector<char> mugg::Filehandler::ReadFile(std::string filepath) {
+    this->in_stream.open(filepath.c_str(), std::ios::in | std::ios::binary | std::ios::ate);
+    std::ifstream::pos_type position = this->in_stream.tellg();
+
+    std::vector<char> data(position);
+
+    this->in_stream.seekg(0, std::ios::beg);
+    this->in_stream.read(&data[0], position);
+
+    this->in_stream.close();
+    return data;
 }
 
-FileHandler::~FileHandler() {
-	//TODO: Do something
+void mugg::Filehandler::WriteDataToFile(std::string filepath, std::vector<char> data) {
+    this->out_stream.open(filepath.c_str(), std::ios::out | std::ios::binary);
+
+    if(this->out_stream.is_open()) { 
+        for(int i = 0; i <= data.size(); i++) {
+            this->out_stream.put(data[i]);
+        }
+    }
+
+    this->out_stream.close();
 }
 
-int FileHandler::GetFileSize(const char* where) {
-	FILE *p_file = NULL;
-    p_file = fopen(where, "rb");
-    fseek(p_file, 0, SEEK_END);
-    int size = ftell(p_file);
-    fclose(p_file);
-    return size;
-}
+void mugg::Filehandler::AppendStringToFile(std::string filepath, std::string what) {
+    this->out_stream.open(filepath.c_str(), std::ios::out | std::ios::app);
 
-char* FileHandler::ReadDataFromFile(const char* where, int &out_size) {
-	this->in_stream.open(where, std::ios::in | std::ios::binary);
-	char* buffer = NULL;
-	if(this->in_stream.is_open()) {
-		out_size = this->GetFileSize(where);
-		
-		buffer = new char[out_size];
-		this->in_stream.read(buffer, out_size);
-		
-		this->in_stream.close();
-	} else {
-		std::cout << "Couldn't open " << where << " for reading.\n";
-	}
-	
-	return buffer;
-}
+    if(this->out_stream.is_open()) {
+        this->out_stream << what;
+    }
 
-void FileHandler::WriteBinaryDataToFile(const char* where, unsigned char* data, int size) {
-	this->out_stream.open(where, std::ios::out | std::ios::trunc | std::ios::binary);
-	
-	if(this->out_stream.is_open()) {
-		this->out_stream.write((const char*)data, size);
-	} else {
-		std::cout << "Couldn't open file " << where << " for writing.\n";
-	}
-	
-	this->out_stream.close();
+    this->out_stream.close();
 }

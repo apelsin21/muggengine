@@ -1,7 +1,7 @@
 #ifndef COMPRESSIONHANDLER_HPP
 #define COMPRESSIONHANDLER_HPP
 
-#include "minilzo/minilzo.h"
+#include "minilzo.h"
 
 class CompressionHandler {
 private:
