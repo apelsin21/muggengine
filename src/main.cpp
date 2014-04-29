@@ -13,24 +13,58 @@
 #include <lua.hpp>
 #include <string>
 
+UDPClient client;
+
 static int doubleTrouble(lua_State* L) {
     double d = luaL_checknumber(L, 1);
     lua_pushnumber(L, d*2);
     return 1;
 }
 
-std::string GetFromInput() {
-    std::string message;
-    std::cin >> message;
+static int SendMessage(lua_State* L) {
+    if(lua_gettop(L) != 1) {
+        std::cout << "send_message function got " << lua_gettop(L) << " arguments, expected 1\n";
+    }
 
-    return message;
+    std::string message = luaL_checkstring(L, 1);
+    
+    client.SendMessage("127.0.0.1", 54000, message);
+
+    std::cout << "Sent message " << message << std::endl;
+
+    return 0;
+}
+static int RecieveMessage(lua_State* L) {
+    if(lua_gettop(L) != 0) {
+        std::cout << "recieve_message got parameter, expected none\n";
+    }
+
+    std::string address;
+    unsigned short port;
+    std::size_t size;
+
+    std::string message = client.RecieveMessage(200, address, port, size);
+
+    lua_pushstring(L, message.c_str());
+    return 1;
 }
 
 int main() {
-    UDPClient client;
+    FileHandler filehandler;
+
     client.SetBlocking(false);
     client.BindToPort(54001);
 
+    ScriptEngine engine;
+    engine.RegisterFunction(SendMessage, "send_message");
+    engine.RegisterFunction(RecieveMessage, "recieve_message");
+
+    int size;
+    Script* script;
+    
+    std::string file = (const char*)filehandler.ReadDataFromFile("main.lua", size);
+    script->SetContent((char*)file.c_str());
+    /*
     std::string address;
     unsigned short port;
     std::size_t size;
@@ -39,14 +73,13 @@ int main() {
 
     do {
         std::cout << "Send:\n";
-        message = GetFromInput();
+        std::cin >> message;
         client.SendMessage("127.0.0.1", 54000, message);
-        //message = client.RecieveMessage(200, address, port, size);
-        //if(message != "")
-        //    std::cout << "Recieved \"" << message << "\" from " << address << ":" << port << " with size: " << size << std::endl;
+        message = client.RecieveMessage(200, address, port, size);
+        if(message != "")
+            std::cout << "Recieved \"" << message << "\" from " << address << ":" << port << " with size: " << size << std::endl;
     } while(message != "/quit");
-
-    /*
+    
     ScriptEngine engine;
     engine.RegisterFunction(SendMessage, "send_message");
     engine.RegisterFunction(RecieveMessage, "receive_message");
