@@ -1,13 +1,5 @@
 #include "compressionhandler.hpp"
 
-CompressionHandler::CompressionHandler() {
-	//TODO: Do something
-}
-
-CompressionHandler::~CompressionHandler() {
-	//TODO: Do something
-}
-
 //Returns true on success, false on failure
 bool CompressionHandler::CompressData(unsigned char* what, int size, unsigned char* &output_data, long unsigned int &out_size) {
 	unsigned char* working_memory = new unsigned char[LZO1X_MEM_COMPRESS];
