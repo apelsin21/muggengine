@@ -7,7 +7,7 @@
 #include <fstream>
 #include <ostream>
 
-#include "file.hpp"
+#include "log.hpp"
 
 namespace mugg {
     class Filehandler {
@@ -15,11 +15,10 @@ namespace mugg {
             std::ifstream in_stream;
             std::ofstream out_stream;
         public:
-            std::vector<char> ReadFile(std::string filepath);
-            void WriteDataToFile(std::string filepath, std::vector<char> data);
-            void AppendDataToFile(std::string filepath, std::vector<char> data);
-    
-            void AppendStringToFile(std::string filepath, std::string what);
+            std::vector<char> ReadDataFromFilepath(std::string filepath);
+            void WriteDataToFilepath(std::string filepath, std::vector<char> data);
+            void AppendDataToFilepath(std::string filepath, std::vector<char> data);
+            void AppendStringToFilepath(std::string filepath, std::string what);
     };
 }
 

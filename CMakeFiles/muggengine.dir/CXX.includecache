@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+./headers/filehandler.hpp
+iostream
+-
+string
+-
+vector
+-
+fstream
+-
+ostream
+-
+log.hpp
+./headers/log.hpp
+
+./headers/log.hpp
+iostream
+-
+string
+-
+ctime
+-
+filehandler.hpp
+./headers/filehandler.hpp
+
+/home/drmugg123/Downloads/muggengine/src/filehandler.cpp
+filehandler.hpp
+/home/drmugg123/Downloads/muggengine/src/filehandler.hpp
+
