@@ -7,6 +7,10 @@ std::string mugg::File::GetFilepath() {
     return this->filepath;
 }
 
+std::size_t mugg::File::GetSize() {
+    return this->data.size();
+}
+
 void mugg::File::SetData(std::vector<char> data) {
     this->data = data;
 }

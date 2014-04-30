@@ -16,44 +16,48 @@ namespace mugg {
         INFO
     };
 
+    static LOG_LEVEL MIN_LEVEL_TO_PRINT = WARNING;
     static std::string logfilepath = "log.txt";
     static void WriteToLog(LOG_LEVEL lvl, std::string message) {
         std::ofstream stream(mugg::logfilepath.c_str(), std::ios::out | std::ios::app);
-        std::string error_msg;
         
+        std::time_t now = std::time(0);
+        std::string dt = ctime(&now);
+        message.insert(0, dt);
+
         switch(lvl) {
             case FATAL_ERROR:
-                error_msg = "Fatal error: ";
+                message.insert(0, "Fatal error: ");
                 break;
             case ERROR:
-                 error_msg = "Error: ";
+                message.insert(0, "Error: ");
                 break;
             case WARNING:
-                error_msg = "Warning: ";
+                message.insert(0, "Warning: ");
                 break;
             case DEBUG:
-                error_msg = "Debug: ";
+                message.insert(0, "Debug: ");
                 break;
             case INFO:
-                error_msg = "Info: ";
+                message.insert(0, "Info: ");
                 break;
             default:
-                error_msg = "";
                 break;
         }
         
-        message.insert(0, error_msg);
-        
-        if(stream.is_open()) {
-            int position = stream.tellp();
-            if(position > 0) {
-                message.insert(0, "\n");
-            }
-
-            for(int i = 0; i <= message.length() - 1; i++) {
-                stream.put(message[i]);
-            }
+        if(lvl <= mugg::MIN_LEVEL_TO_PRINT) {
+            std::cout << message << std::endl;
         }
+
+        if(stream.is_open()) {
+            if(stream.tellp() > 0)
+                message.insert(0, "\n");
+            
+            for(unsigned int i = 0; i <= message.length() - 1; i++)
+                stream.put(message[i]);
+        }
+
+        stream.close();
     }
     static std::vector<char> GetLogContents();
 }

@@ -10,13 +10,9 @@ namespace mugg {
             std::string filepath;
             std::vector<char> data;
         public:
-            File();
-            ~File();
-
             void SetFilepath(std::string filepath);
             std::string GetFilepath();
 
-            void SetSize(std::size_t size);
             std::size_t GetSize();
             
             void SetData(std::vector<char> data);

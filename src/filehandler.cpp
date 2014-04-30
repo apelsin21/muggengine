@@ -9,11 +9,6 @@ std::vector<char> mugg::Filehandler::ReadDataFromFilepath(std::string filepath) 
     this->in_stream.seekg(0, std::ios::beg);
     this->in_stream.read(&data[0], position);
 
-    std::string msg;
-    msg += "Wrote to file ";
-    msg += filepath;
-    mugg::WriteToLog(mugg::INFO, msg);
-
     this->in_stream.close();
     return data;
 }
@@ -66,4 +61,17 @@ void mugg::Filehandler::AppendStringToFilepath(std::string filepath, std::string
     }
 
     this->out_stream.close();
+}
+
+mugg::File mugg::Filehandler::GetFileFromPath(std::string filepath) {
+    File file;
+    file.SetFilepath(filepath);
+
+    file.SetData(this->ReadDataFromFilepath(filepath));
+    
+    return file;
+}
+
+void mugg::Filehandler::WriteFileToPath(File file, std::string filepath) {
+    this->WriteDataToFilepath(filepath, file.GetData());
 }
