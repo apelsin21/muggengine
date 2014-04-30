@@ -4,6 +4,7 @@
 #include "filehandler.hpp"
 #include "log.hpp"
 #include "file.hpp"
+#include "shader.hpp"
 
 int main() {
     mugg::WriteToLog(mugg::INFO, "this informational message won't be printed");
