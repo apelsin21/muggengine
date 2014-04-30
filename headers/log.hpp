@@ -23,29 +23,34 @@ namespace mugg {
         
         switch(lvl) {
             case FATAL_ERROR:
-                error_msg = "\nFatal error: ";
+                error_msg = "Fatal error: ";
                 break;
             case ERROR:
-                 error_msg = "\nError: ";
+                 error_msg = "Error: ";
                 break;
             case WARNING:
-                error_msg = "\nWarning: ";
+                error_msg = "Warning: ";
                 break;
             case DEBUG:
-                error_msg = "\nDebug: ";
+                error_msg = "Debug: ";
                 break;
             case INFO:
-                error_msg = "\nInfo: ";
+                error_msg = "Info: ";
                 break;
             default:
-                error_msg = "\n";
+                error_msg = "";
                 break;
         }
         
         message.insert(0, error_msg);
         
         if(stream.is_open()) {
-            for(int i = 0; i <= message.length(); i++) {
+            int position = stream.tellp();
+            if(position > 0) {
+                message.insert(0, "\n");
+            }
+
+            for(int i = 0; i <= message.length() - 1; i++) {
                 stream.put(message[i]);
             }
         }
