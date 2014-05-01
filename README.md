@@ -1,13 +1,9 @@
 muggengine
 ==========
 
-<<<<<<< HEAD
-Shitty Lua and C++ "game engine", depends on SDL 2, FreeImage, FreeType, ENet, Lua, and GLEW. 
+Game engine written in C++ using OpenGL v3.0 for rendering, Lua for scripting, OpenAL for audio,
+Bullet for physics, ENet for networking, Assimp for importing/exporting common model formats, and SDL 2 for window and misc.
 
-I'll update this readme when it's closer to  v0.0000001.
-=======
-Game engine using OpenGL v3.0 for rendering, Lua for scripting, OpenAL for audio,
-Bullet for physics, ENet for networking, and SDL 2 for window and misc.
+Supports Linux, Windows. Not Mac/OSX since I've never really used one and don't know the differences.
 
-Will expand when closer to version 0.00000000000001.
->>>>>>> a654b6cd333e4afab4098c1ff041f6597620d28d
+Will crash and bug out on anything other than Linux, and probably on Linux too. Don't use this.
