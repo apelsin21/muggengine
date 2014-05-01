@@ -1,6 +1,6 @@
 muggengine
 ==========
 
-Shitty Lua and C++ "game engine", needs to link with SFML 2.1(the entire stack, sfml-graphics is used to load textures and the likes), lua 5.2, glew, assimp 3.x in order to compile.
+Shitty Lua and C++ "game engine", depends on SDL 2, FreeImage, FreeType, ENet, Lua, and GLEW. 
 
-Builds and runs on whatever SFML supports, which is probably only x86 Windows, Mac, Linux and ARM Linux(Although OpenGL ES isn't supported, so no graphics on Raspberry Pi).
+I'll update this readme when it's closer to  v0.0000001.
