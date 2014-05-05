@@ -1,51 +1,72 @@
 #include <string>
 #include <vector>
+#include <ctime>
 
 #include <GL/glew.h>
-#include <SDL2/SDL.h>
+#include <GLFW/glfw3.h>
 
 #include "filehandler.hpp"
 #include "log.hpp"
 #include "file.hpp"
 #include "shader.hpp"
+#include "vector2i.hpp"
+
+void error_callback(int error, const char* message) {
+    mugg::WriteToLog(mugg::ERROR, std::string(message));
+}
 
 int main() {
     int width = 800, height = 600;
     int major_ver = 3, minor_ver = 0;
+    
+    GLFWwindow* window;
 
-    SDL_Window* window;
-    SDL_GLContext context;
+    glfwSetErrorCallback(error_callback);
 
-    window = SDL_CreateWindow("MuggEngine Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
+    if(!glfwInit()) {
+        mugg::WriteToLog(mugg::FATAL_ERROR, "Failed to initialize GLFW!");
+        return -1;
+    }
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, major_ver);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minor_ver);
+    window = glfwCreateWindow(width, height, "Muggengine Window", NULL, NULL);
 
-    context = SDL_GL_CreateContext(window);
+    if(!window) {
+        mugg::WriteToLog(mugg::FATAL_ERROR, "Failed to create GLFW window!");
+        glfwTerminate();
+        return -1;
+    }
 
-    std::string error_msg = "Failed to create OpenGL context, with version: ";
-    error_msg += major_ver;
-    error_msg += ", ";
-    error_msg += minor_ver;
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major_ver);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor_ver);
+
+    glfwMakeContextCurrent(window);
 
     glewExperimental = GL_TRUE;
     if(glewInit() != GLEW_OK) {
-        mugg::WriteToLog(mugg::FATAL_ERROR, error_msg);
+        mugg::WriteToLog(mugg::FATAL_ERROR, "Failed to initialize GLEW!");
         return -1;
     }
 
     glEnable(GL_COLOR_BUFFER_BIT);
     glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
 
-    while(true) {
+    mugg::Vector2i vector(100, 2343);
+
+    mugg::Vector2i vector2 = vector;
+    std::cout << "X: " << vector2.GetX() << " Y: " << vector2.GetY() << std::endl;
+
+    while(!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
         
-        const Uint8* state = SDL_GetKeyboardState(NULL);
-        if(state[SDL_SCANCODE_F11]) {
-            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL);
+        if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+            glfwSetWindowShouldClose(window, true);
+        }
+        if(glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS) {
+            window = glfwCreateWindow(1680, 1050, "Muggengine Window", glfwGetPrimaryMonitor(), NULL);
         }
         
-        SDL_GL_SwapWindow(window);
+        glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 
 	return 0;

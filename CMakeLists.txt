@@ -17,7 +17,7 @@ set(LIBRARIES
 file(GLOB SOURCES src/*.cpp src/*.c)
 file(GLOB HEADERS headers/*.hpp headers/*.h)
 
-add_executable(${PROJECT_NAME} ./src/main.cpp ${SOURCES})
+add_executable(${PROJECT_NAME} ./src/main.cpp ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
 include_directories(./headers)
 
