@@ -14,6 +14,7 @@
 #include "shader.hpp"
 #include "defs.hpp"
 #include "window.hpp"
+#include "shaderprogram.hpp"
 
 int main() {
     

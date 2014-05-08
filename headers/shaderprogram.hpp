@@ -13,16 +13,20 @@
 namespace mugg {
     class ShaderProgram {
     private:
-        //1: Vertex Shader
-        //2: Fragment Shader
-        //3: Geometry Shader
-        //4: Tesselation Shader
-        //5: Compute Shader
-        mugg::Shader shaders[5];
+        mugg::Filehandler filehandler;
 
+        std::vector<mugg::Shader> shaders; 
+
+        bool CompileShader(mugg::Shader shader);
+        mugg::Shader LoadShader(std::string filepath, mugg::ShaderType type);
+
+        bool linked;
     public:
-        ShaderProgram();
-        ~ShaderProgram();
+        void AddShader(std::string filepath, mugg::ShaderType type);
+        
+        mugg::Shader GetShaderByType(mugg::ShaderType type);
+    
+        
     };
 }
 
