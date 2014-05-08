@@ -10,6 +10,7 @@ namespace mugg {
     class Shader : public File {
         private:
             mugg::ShaderType shaderType;
+            GLuint shaderID;
         public:
     };
 }

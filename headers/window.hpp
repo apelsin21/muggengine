@@ -13,11 +13,10 @@
 namespace mugg {
     class Window {
     private:
-        void framebuffer_size_callback();
         GLFWwindow* window;
         bool fullscreen, open, created, focused, minimized;
-        
-        mugg::Context context;
+        glm::vec2 resolution, position;
+        std::string title;
 
         static void ErrorCallback(int error, const char* message);
     public:
@@ -27,7 +26,10 @@ namespace mugg {
         void Create(std::string title, glm::vec2 resolution, glm::vec2 position);
         bool GetIsCreated();
 
+        void Recreate();
+
         void Close();
+        bool IsOpen();
 
         void SetWidth(int width);
         int GetWidth();

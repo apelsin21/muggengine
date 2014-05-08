@@ -4,6 +4,9 @@
 #define DefaultGLMajorVersion 3
 #define DefaultGLMinorVersion 0
 #define UseCoreProfileByDefault false
+#define DefaultWindowTitle "MuggEngine Window"
+#define DefaultWindowWidth 800
+#define DefaultWindowHeight 600
 
 namespace mugg {
 	enum ShaderType {
