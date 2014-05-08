@@ -6,8 +6,10 @@ void mugg::ShaderProgram::AddShader(std::string filepath, mugg::ShaderType type)
         return;
     }
     mugg::Shader shader = this->LoadShader(filepath, type);
-    this->CompileShader(shader);
-    this->shaders.push_back(shader);
+    if(this->CompileShader(shader))
+        this->shaders.push_back(shader);
+    else
+        return;
 }
 
 mugg::Shader mugg::ShaderProgram::LoadShader(std::string filepath, mugg::ShaderType type) {
@@ -36,4 +38,27 @@ mugg::Shader mugg::ShaderProgram::LoadShader(std::string filepath, mugg::ShaderT
 }
 
 bool mugg::ShaderProgram::CompileShader(mugg::Shader shader) {
+    glCompileShader(shader.id);
+
+    GLint status;
+    glGetShaderiv(shader.id, GL_COMPILE_STATUS, &status);
+    if(status != GL_TRUE) {
+        char* buffer = new char[512];
+        glGetShaderInfoLog(shader.id, 512, NULL, buffer);
+        std::string error_msg(buffer);
+        mugg::WriteToLog(mugg::FATAL_ERROR, error_msg);
+        return false;
+    }
+
+    return true;
+}
+
+bool mugg::ShaderProgram::LinkProgram() {
+    this->id = glCreateProgram();
+    for(int i = 0; i <= this->shaders.size(); i++)
+        glAttachShader(this->id, shaders[i].id);
+
+    glLinkProgram(this->id);
+
+    glUseProgram(this->id);
 }

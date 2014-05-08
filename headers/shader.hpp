@@ -11,6 +11,7 @@ namespace mugg {
         public:
             mugg::ShaderType type; 
             GLuint id;
+            bool compiled = false;
     };
 }
 

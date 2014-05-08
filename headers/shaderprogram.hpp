@@ -17,16 +17,18 @@ namespace mugg {
 
         std::vector<mugg::Shader> shaders; 
 
+        GLuint id;
+
         bool CompileShader(mugg::Shader shader);
         mugg::Shader LoadShader(std::string filepath, mugg::ShaderType type);
-
+    
         bool linked;
     public:
         void AddShader(std::string filepath, mugg::ShaderType type);
         
         mugg::Shader GetShaderByType(mugg::ShaderType type);
     
-        
+        bool LinkProgram();
     };
 }
 

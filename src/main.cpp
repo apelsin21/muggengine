@@ -15,25 +15,23 @@
 #include "defs.hpp"
 #include "window.hpp"
 #include "shaderprogram.hpp"
+#include "engine.hpp"
 
 int main() {
     
     mugg::Window window;
+    mugg::Context context;
+    mugg::Engine engine(context);
+
+    mugg::ShaderProgram shaderProgram;
+    shaderProgram.AddShader("data/shaders/vertex.glsl", mugg::VERTEX_SHADER);
+    shaderProgram.AddShader("data/shaders/fragment.glsl", mugg::FRAGMENT_SHADER);
 
     window.Create("MuggEngine Window", glm::vec2(800, 600), glm::vec2(0, 0));
 
-    glewExperimental = GL_TRUE;
-    if(glewInit() != GLEW_OK) {
-        mugg::WriteToLog(mugg::FATAL_ERROR, "Failed to initialize GLEW!");
-        return -1;
-    }
-
-    glEnable(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
-
     while(window.IsOpen()) {
-        glClear(GL_COLOR_BUFFER_BIT);
-        
+        engine.Render();
+
         window.SwapBuffers();
         glfwPollEvents();
     }
