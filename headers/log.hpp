@@ -6,19 +6,12 @@
 #include <ctime>
 
 #include "filehandler.hpp"
+#include "defs.hpp"
 
 namespace mugg {
-    enum LOG_LEVEL {
-        FATAL_ERROR,
-        ERROR,
-        WARNING,
-        DEBUG,
-        INFO
-    };
-
-    static LOG_LEVEL MIN_LEVEL_TO_PRINT = WARNING;
+    static mugg::LogLevel MIN_LEVEL_TO_PRINT = WARNING;
     static std::string logfilepath = "log.txt";
-    static void WriteToLog(LOG_LEVEL lvl, std::string message) {
+    static void WriteToLog(mugg::LogLevel lvl, std::string message) {
         std::ofstream stream(mugg::logfilepath.c_str(), std::ios::out | std::ios::app);
         
         std::time_t now = std::time(0);
@@ -26,19 +19,19 @@ namespace mugg {
         message.insert(0, dt);
 
         switch(lvl) {
-            case FATAL_ERROR:
+            case mugg::FATAL_ERROR:
                 message.insert(0, "Fatal error: ");
                 break;
-            case ERROR:
+            case mugg::ERROR:
                 message.insert(0, "Error: ");
                 break;
-            case WARNING:
+            case mugg::WARNING:
                 message.insert(0, "Warning: ");
                 break;
-            case DEBUG:
+            case mugg::DEBUG:
                 message.insert(0, "Debug: ");
                 break;
-            case INFO:
+            case mugg::INFO:
                 message.insert(0, "Info: ");
                 break;
             default:

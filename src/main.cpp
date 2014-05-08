@@ -2,14 +2,18 @@
 #include <vector>
 #include <ctime>
 
+#define GLEW_STATIC
 #include <GL/glew.h>
+
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include "filehandler.hpp"
 #include "log.hpp"
 #include "file.hpp"
 #include "shader.hpp"
-#include "vector2i.hpp"
+#include "defs.hpp"
+#include "window.hpp"
 
 void error_callback(int error, const char* message) {
     mugg::WriteToLog(mugg::ERROR, std::string(message));
@@ -50,11 +54,6 @@ int main() {
     glEnable(GL_COLOR_BUFFER_BIT);
     glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
 
-    mugg::Vector2i vector(100, 2343);
-
-    mugg::Vector2i vector2 = vector;
-    std::cout << "X: " << vector2.GetX() << " Y: " << vector2.GetY() << std::endl;
-
     while(!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
         
@@ -63,6 +62,8 @@ int main() {
         }
         if(glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS) {
             window = glfwCreateWindow(1680, 1050, "Muggengine Window", glfwGetPrimaryMonitor(), NULL);
+            glfwMakeContextCurrent(window);
+            glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
         }
         
         glfwSwapBuffers(window);

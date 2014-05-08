@@ -8,6 +8,7 @@
 #include <ostream>
 
 #include "log.hpp"
+#include "defs.hpp"
 #include "file.hpp"
 
 namespace mugg {
