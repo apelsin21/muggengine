@@ -9,6 +9,7 @@
 
 #include "context.hpp"
 #include "log.hpp"
+#include "color.hpp"
 
 namespace mugg {
     class Window {
@@ -17,6 +18,7 @@ namespace mugg {
         bool fullscreen, open, created, focused, minimized;
         glm::vec2 resolution, position;
         std::string title;
+        mugg::Color backgroundColor;
 
         static void ErrorCallback(int error, const char* message);
     public:

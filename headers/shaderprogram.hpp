@@ -14,20 +14,21 @@ namespace mugg {
     class ShaderProgram {
     private:
         mugg::Filehandler filehandler;
-
-        std::vector<mugg::Shader> shaders; 
-
+        std::vector<mugg::Shader> shaders;
         GLuint id;
+        bool linked;
 
         bool CompileShader(mugg::Shader shader);
         mugg::Shader LoadShader(std::string filepath, mugg::ShaderType type);
-    
-        bool linked;
     public:
-        void AddShader(std::string filepath, mugg::ShaderType type);
-        
+        ShaderProgram();
+        ShaderProgram(const mugg::ShaderProgram& name) {}
+        ~ShaderProgram();
+
+        bool AddShader(std::string filepath, mugg::ShaderType type);
+
         mugg::Shader GetShaderByType(mugg::ShaderType type);
-    
+
         bool LinkProgram();
     };
 }

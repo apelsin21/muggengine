@@ -16,16 +16,12 @@ namespace mugg {
     class Engine {
     private:
         mugg::Context context;
-        mugg::Color backgroundColor;
         std::vector<mugg::ShaderProgram> shaderPrograms;
     public:
         Engine(mugg::Context context);
         ~Engine();
 
         void Initialize();
-
-        void SetBackgroundColor(mugg::Color color);
-        mugg::Color GetBackgroundColor();
 
         void AddShaderProgram(mugg::ShaderProgram program);
         std::vector<mugg::ShaderProgram> GetShaderPrograms();

@@ -1,5 +1,22 @@
 #include "filehandler.hpp"
 
+std::string mugg::Filehandler::ReadTextFromFilepath(std::string filepath) {
+    this->in_stream.open(filepath.c_str(), std::ios::in | std::ios::ate);
+
+    std::string data;
+
+    if(this->in_stream.is_open()) {
+        std::string line = "";
+
+        while(std::getline(this->in_stream, data)) {
+                data += "\n" + line;
+        }
+        this->in_stream.close();
+    }
+
+    return data;
+}
+
 std::vector<char> mugg::Filehandler::ReadDataFromFilepath(std::string filepath) {
     this->in_stream.open(filepath.c_str(), std::ios::in | std::ios::binary | std::ios::ate);
     std::ifstream::pos_type position = this->in_stream.tellg();
@@ -17,7 +34,7 @@ void mugg::Filehandler::WriteDataToFilepath(std::string filepath, std::vector<ch
     this->out_stream.open(filepath.c_str(), std::ios::out | std::ios::binary);
 
     if(this->out_stream.is_open()) {
-        for(int i = 0; i <= data.size(); i++) 
+        for(int i = 0; i <= data.size(); i++)
             this->out_stream.put(data[i]);
     } else {
         std::string error_message;
@@ -68,7 +85,7 @@ mugg::File mugg::Filehandler::GetFileFromPath(std::string filepath) {
     file.SetFilepath(filepath);
 
     file.SetData(this->ReadDataFromFilepath(filepath));
-    
+
     return file;
 }
 

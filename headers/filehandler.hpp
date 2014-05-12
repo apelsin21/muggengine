@@ -17,6 +17,7 @@ namespace mugg {
             std::ifstream in_stream;
             std::ofstream out_stream;
         public:
+            std::string ReadTextFromFilepath(std::string filepath);
             std::vector<char> ReadDataFromFilepath(std::string filepath);
             void WriteDataToFilepath(std::string filepath, std::vector<char> data);
             void AppendDataToFilepath(std::string filepath, std::vector<char> data);

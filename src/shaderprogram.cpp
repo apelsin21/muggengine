@@ -1,15 +1,28 @@
 #include "shaderprogram.hpp"
 
-void mugg::ShaderProgram::AddShader(std::string filepath, mugg::ShaderType type) {
+mugg::ShaderProgram::ShaderProgram() {
+    this->id = -1;
+    this->linked = false;
+}
+
+mugg::ShaderProgram::~ShaderProgram() {
+}
+
+bool mugg::ShaderProgram::AddShader(std::string filepath, mugg::ShaderType type) {
     if(this->linked) {
-        mugg::WriteToLog(mugg::WARNING, "Tried to add shader to linked shader program!");
-        return;
+        mugg::WriteToLog(mugg::WARNING, "Tried to add shader to an already linked shader program!");
+        return false;
     }
+
     mugg::Shader shader = this->LoadShader(filepath, type);
-    if(this->CompileShader(shader))
-        this->shaders.push_back(shader);
-    else
-        return;
+
+    if(!this->CompileShader(shader)) {
+        mugg::WriteToLog(mugg::ERROR, "Failed to compile shader");
+        return false;
+    }
+
+    this->shaders.push_back(shader);
+    return true;
 }
 
 mugg::Shader mugg::ShaderProgram::LoadShader(std::string filepath, mugg::ShaderType type) {
@@ -23,24 +36,23 @@ mugg::Shader mugg::ShaderProgram::LoadShader(std::string filepath, mugg::ShaderT
             shader.id = glCreateShader(GL_FRAGMENT_SHADER);
             break;
         default:
-            mugg::WriteToLog(mugg::ERROR, "FIX THIS, TRIED TO LOAD GEOMETRY SHADER, DON'T KNOW HOW PLS FIX");
-            //TODO: Learn how geometry shaders work, fix urgently
+            mugg::WriteToLog(mugg::ERROR, "Tried to load shader that isn't implemented yet");
             break;
     }
-
-    shader.SetData(filehandler.ReadDataFromFilepath(filepath));
-
-    const char* data = new char[shader.GetSize()];
-    data = &shader.GetData()[0];
+    const char* data = filehandler.ReadTextFromFilepath(filepath).c_str();
 
     glShaderSource(shader.id, 1, &data, NULL);
-    delete data;
+
+    shader.SetData(filehandler.ReadDataFromFilepath(filepath));
+    shader.type = type;
+
+    return shader;
 }
 
 bool mugg::ShaderProgram::CompileShader(mugg::Shader shader) {
     glCompileShader(shader.id);
 
-    GLint status;
+    GLint status = GL_FALSE;
     glGetShaderiv(shader.id, GL_COMPILE_STATUS, &status);
     if(status != GL_TRUE) {
         char* buffer = new char[512];
@@ -54,11 +66,31 @@ bool mugg::ShaderProgram::CompileShader(mugg::Shader shader) {
 }
 
 bool mugg::ShaderProgram::LinkProgram() {
+    if(this->shaders.size() <= 0) {
+        mugg::WriteToLog(mugg::ERROR, "Tried to link shaderless shaderprogram!");
+        return false;
+    }
+
     this->id = glCreateProgram();
     for(int i = 0; i <= this->shaders.size(); i++)
         glAttachShader(this->id, shaders[i].id);
 
     glLinkProgram(this->id);
 
+    GLint status = GL_FALSE;
+    glGetProgramiv(this->id, GL_LINK_STATUS, &status);
+    if(status != GL_TRUE) {
+        char* buffer = new char[512];
+        glGetProgramInfoLog(this->id, 512, NULL, buffer);
+        std::string error_msg(buffer);
+        mugg::WriteToLog(mugg::FATAL_ERROR, error_msg);
+        return false;
+    }
+
     glUseProgram(this->id);
+
+    for(unsigned int i = 0; i <= this->shaders.size(); i++)
+        glDeleteShader(this->shaders[i].id);
+
+    return true;
 }

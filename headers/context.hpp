@@ -22,6 +22,8 @@ namespace mugg {
 
         void UseCoreProfile(bool useCoreProfile);
         bool GetUsesCoreProfile();
+
+        void Enable();
     };
 }
 

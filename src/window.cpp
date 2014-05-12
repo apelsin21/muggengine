@@ -5,12 +5,12 @@ void mugg::Window::ErrorCallback(int error, const char* message) {
     mugg::WriteToLog(mugg::ERROR, error_msg);
 }
 
-mugg::Window::Window() { 
+mugg::Window::Window() {
     glfwSetErrorCallback(this->ErrorCallback);
 
     this->title = "MuggEngine Window";
     this->fullscreen = false;
-    this->open = true;
+    this->open = false;
     this->created = false;
     this->focused = false;
     this->minimized = false;
@@ -21,7 +21,10 @@ mugg::Window::Window() {
 }
 
 mugg::Window::~Window() {
-    glfwDestroyWindow(this->window);
+    if(this->created) {
+        glfwDestroyWindow(this->window);
+    }
+
 }
 
 void mugg::Window::Recreate() {
@@ -80,7 +83,7 @@ void mugg::Window::SetResolution(glm::vec2 what) {
 }
 glm::vec2 mugg::Window::GetResolution() {
     int width, height;
-    
+
     return glm::vec2(width, height);
 }
 
