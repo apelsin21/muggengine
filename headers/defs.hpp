@@ -14,15 +14,20 @@ namespace mugg {
 	    FRAGMENT_SHADER,
 	    GEOMETRY_SHADER,
         TESSELATION_SHADER,
-        COMPUTE_SHADER
+        COMPUTE_SHADER,
 	};
 
     enum LogLevel {
     	FATAL_ERROR,
     	ERROR,
    		WARNING,
-   		DEBUG, 
-  		INFO
+   		DEBUG,
+  		INFO,
+    };
+
+    enum ContextFlags {
+        COLOR_BUFFER_BIT,
+        DEPTH_BUFFER_BIT,
     };
 }
 #endif

@@ -21,7 +21,7 @@ namespace mugg {
         Engine(mugg::Context context);
         ~Engine();
 
-        void Initialize();
+        bool Initialize();
 
         void AddShaderProgram(mugg::ShaderProgram program);
         std::vector<mugg::ShaderProgram> GetShaderPrograms();

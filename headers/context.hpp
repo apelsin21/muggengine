@@ -1,18 +1,24 @@
 #ifndef CONTEXT_HPP
 #define CONTEXT_HPP
 
+#include <vector>
+
 #include <GL/glew.h>
 
 #include "defs.hpp"
+#include "log.hpp"
 
 namespace mugg {
     class Context {
     private:
         GLuint majorVersion, minorVersion;
-        bool usesCoreProfile;
+        bool usesCoreProfile, enabled;
+        std::vector<mugg::ContextFlags> flags;
     public:
         Context();
         ~Context();
+
+        std::vector<mugg::ContextFlags> GetFlags();
 
         void SetMajorVersion(GLuint majorVersion);
         GLuint GetMajorVersion();
@@ -23,7 +29,8 @@ namespace mugg {
         void UseCoreProfile(bool useCoreProfile);
         bool GetUsesCoreProfile();
 
-        void Enable();
+        bool Enable();
+        bool GetIsEnabled();
     };
 }
 
