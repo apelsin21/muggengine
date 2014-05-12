@@ -15,7 +15,7 @@ bool mugg::Engine::Initialize() {
         mugg::WriteToLog(mugg::ERROR, error_msg);
     }
 
-    if(!this->context.Enable() && this->context.GetFlags().size() == NULL) {
+    if(!this->context.Enable() && this->context.GetFlags().size() <= 0) {
         mugg::WriteToLog(mugg::ERROR, "Tried to enable context, failed, no context flags");
         return false;
     }

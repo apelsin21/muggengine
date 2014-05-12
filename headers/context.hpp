@@ -18,6 +18,7 @@ namespace mugg {
         Context();
         ~Context();
 
+        void AddFlag(mugg::ContextFlags flag);
         std::vector<mugg::ContextFlags> GetFlags();
 
         void SetMajorVersion(GLuint majorVersion);

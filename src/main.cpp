@@ -23,6 +23,8 @@ int main() {
     context.SetMajorVersion(3);
     context.SetMinorVersion(0);
     context.UseCoreProfile(false);
+    context.AddFlag(mugg::COLOR_BUFFER_BIT);
+    context.AddFlag(mugg::DEPTH_BUFFER_BIT);
     mugg::Engine engine(context);
     engine.Initialize();
 

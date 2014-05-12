@@ -44,8 +44,7 @@ bool mugg::Context::Enable() {
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if(GLEW_OK != err) {
-        std::string error_msg("GLEW failed to initialize!\n");
-        error_msg += "GLEW error string:\n";
+        std::string error_msg("GLEW failed to initialize! GLEW error string:\n");
         error_msg += (const char*)glewGetErrorString(err);
 
         mugg::WriteToLog(mugg::FATAL_ERROR, error_msg);
@@ -71,6 +70,10 @@ bool mugg::Context::Enable() {
 
 std::vector<mugg::ContextFlags> mugg::Context::GetFlags() {
     return this->flags;
+}
+
+void mugg::Context::AddFlag(mugg::ContextFlags flag) {
+    this->flags.push_back(flag);
 }
 
 bool mugg::Context::GetIsEnabled() {
