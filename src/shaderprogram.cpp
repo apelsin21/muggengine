@@ -82,7 +82,7 @@ bool mugg::ShaderProgram::CompileShader(mugg::Shader shader) {
 }
 
 bool mugg::ShaderProgram::LinkProgram() {
-    if(this->shaders.size() <= 0) {
+    if(this->shaders.size() == 0) {
         mugg::WriteToLog(mugg::ERROR, "Tried to link shaderless shaderprogram!");
         return false;
     }

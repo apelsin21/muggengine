@@ -8,6 +8,8 @@ mugg::Engine::~Engine() {
 }
 
 bool mugg::Engine::Initialize() {
+    mugg::WriteToLog(mugg::INFO, "#### Engine instance initializing! ####");
+    
     if(!this->context.GetIsEnabled()) {
         if(!this->context.Enable()) {
             mugg::WriteToLog(mugg::FATAL_ERROR, "Engine instance got unenabled context, failed trying to enable it!");
@@ -18,13 +20,13 @@ bool mugg::Engine::Initialize() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, this->context.GetMajorVersion());
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, this->context.GetMinorVersion());
 
-    if(!this->context.Enable() && this->context.GetFlags().size() <= 0) {
+    if(this->context.GetFlags().size() <= 0) {
         mugg::WriteToLog(mugg::ERROR, "Tried to enable context, failed, no context flags!");
         return false;
     }
 
     for(int i = 0; i <= this->shaderPrograms.size(); i++) {
-        if(this->shaderPrograms[i].LoadShadersFromDisk()) {
+        if(!this->shaderPrograms[i].LoadShadersFromDisk()) {
             mugg::WriteToLog(mugg::ERROR, "Couldn't load shaders from disk for shaderprogram!");
             return false;
         }

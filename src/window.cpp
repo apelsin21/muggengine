@@ -49,9 +49,9 @@ void mugg::Window::Create(std::string title = DefaultWindowTitle,
 
     if(!window) {
         std::string error_msg("Failed to create GLFW window wih resolution of: ");
-        error_msg += resolution.x;
+        error_msg += (int)this->resolution.x;
         error_msg += "x";
-        error_msg += resolution.y;
+        error_msg += (int)this->resolution.y;
         mugg::WriteToLog(mugg::FATAL_ERROR, error_msg);
         return;
     }

@@ -1,17 +1,23 @@
 #include "filehandler.hpp"
 
 std::string mugg::Filehandler::ReadTextFromFilepath(std::string filepath) {
-    this->in_stream.open(filepath.c_str(), std::ios::in | std::ios::ate);
+    this->in_stream.open(filepath.c_str(), std::ios::in | std::ios::binary);
 
     std::string data;
 
     if(this->in_stream.is_open()) {
-        std::string line = "";
+        std::string line("");
 
-        while(std::getline(this->in_stream, data)) {
-                data += "\n" + line;
+        while(std::getline(this->in_stream, line)) {
+            data += line + "\n";
         }
-        this->in_stream.close();
+
+        in_stream.close();
+    } else {
+        std::string error_msg("Couldn't open file ");
+        error_msg += filepath;
+        error_msg += " for reading!";
+        mugg::WriteToLog(mugg::ERROR, error_msg);
     }
 
     return data;
