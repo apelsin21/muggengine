@@ -30,12 +30,12 @@ int main() {
 
     mugg::ShaderProgram shaderProgram;
 
-    /*
+    mugg::Filehandler handler;
+
     if(!shaderProgram.AddShader("data/shaders/vertex.glsl", mugg::VERTEX_SHADER)) {
         mugg::WriteToLog(mugg::FATAL_ERROR, "Couldn't load vertex shader");
         return -1;
     }
-    */
 
     window.Create("MuggEngine Window", glm::vec2(800, 600), glm::vec2(0, 0));
 

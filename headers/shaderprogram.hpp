@@ -9,6 +9,8 @@
 #include "shader.hpp"
 #include "log.hpp"
 #include "filehandler.hpp"
+#include <cstdlib>
+#include <cstring>
 
 namespace mugg {
     class ShaderProgram {
@@ -19,7 +21,7 @@ namespace mugg {
         bool linked;
 
         bool CompileShader(mugg::Shader shader);
-        mugg::Shader LoadShader(std::string filepath, mugg::ShaderType type);
+        bool LoadShader(std::string filepath, mugg::ShaderType type, mugg::Shader &outShader);
     public:
         ShaderProgram();
         ShaderProgram(const mugg::ShaderProgram& name) {}
@@ -27,7 +29,10 @@ namespace mugg {
 
         bool AddShader(std::string filepath, mugg::ShaderType type);
 
-        mugg::Shader GetShaderByType(mugg::ShaderType type);
+        //Will fail if GL isn't initialized!
+        bool LoadShadersFromDisk();
+
+        bool GetShaderByType(mugg::ShaderType type);
 
         bool LinkProgram();
     };
