@@ -45,9 +45,6 @@ void mugg::Window::Create(std::string title = DefaultWindowTitle,
     this->position = position;
     this->title = title;
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-
     this->window = glfwCreateWindow(resolution.x, resolution.y, title.c_str(), NULL, NULL);
 
     if(!window) {

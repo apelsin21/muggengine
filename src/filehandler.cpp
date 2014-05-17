@@ -84,11 +84,7 @@ mugg::File mugg::Filehandler::GetFileFromPath(std::string filepath) {
     File file;
     file.SetFilepath(filepath);
 
-    file.SetData(this->ReadDataFromFilepath(filepath));
+    file.SetData(this->ReadTextFromFilepath(filepath));
 
     return file;
-}
-
-void mugg::Filehandler::WriteFileToPath(File file, std::string filepath) {
-    this->WriteDataToFilepath(filepath, file.GetData());
 }

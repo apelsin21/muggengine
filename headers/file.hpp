@@ -7,16 +7,15 @@
 namespace mugg {
     class File {
         private:
-            std::string filepath;
-            std::vector<char> data;
+            std::string filepath, data;
         public:
             void SetFilepath(std::string filepath);
             std::string GetFilepath();
 
             std::size_t GetSize();
-            
-            void SetData(std::vector<char> data);
-            std::vector<char> GetData();
+
+            void SetData(std::string data);
+            std::string GetData();
     };
 }
 

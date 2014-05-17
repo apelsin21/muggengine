@@ -10,26 +10,21 @@ mugg::ShaderProgram::~ShaderProgram() {
 
 bool mugg::ShaderProgram::AddShader(std::string filepath, mugg::ShaderType type) {
     if(this->linked) {
-        mugg::WriteToLog(mugg::WARNING, "Tried to add shader to an already linked shader program!");
+        mugg::WriteToLog(mugg::INFO, "Adding shader to an already linked shader program!");
         return false;
     }
 
     mugg::Shader shader;
-    if(this->LoadShader(filepath, type, shader) == false) {
-        return false;
-    }
-
-    if(!this->CompileShader(shader)) {
-        mugg::WriteToLog(mugg::ERROR, "Failed to compile shader");
-        return false;
-    }
+    shader.SetFilepath(filepath);
+    shader.type = type;
+    shader.id = 0;
+    shader.compiled = false;
 
     this->shaders.push_back(shader);
     return true;
 }
 
-bool mugg::ShaderProgram::LoadShader(std::string filepath, mugg::ShaderType type, mugg::Shader &outShader) {
-    mugg::Shader shader;
+bool mugg::ShaderProgram::LoadShader(std::string filepath, mugg::ShaderType type, mugg::Shader &shader) {
 
     switch(type) {
         case mugg::VERTEX_SHADER:
@@ -43,25 +38,31 @@ bool mugg::ShaderProgram::LoadShader(std::string filepath, mugg::ShaderType type
             break;
     }
 
-    const char* data = filehandler.ReadTextFromFilepath(filepath).c_str();
+    std::string data = filehandler.ReadTextFromFilepath(filepath);
 
-    if(data == nullptr || strcmp(data, "") > 0) {
+    if(data.size() == 0) {
         std::string error_msg("Failed to add shader at: ");
         error_msg += filepath;
-        error_msg += " to shaderprogram, skipping";
+        error_msg += " to shaderprogram, skipping. Reason: Empty file";
         mugg::WriteToLog(mugg::ERROR, error_msg);
         return false;
     }
 
-    glShaderSource(shader.id, 1, &data, NULL);
+    const char* tempData = data.c_str();
+    glShaderSource(shader.id, 1, &tempData, NULL);
 
-    shader.SetData(filehandler.ReadDataFromFilepath(filepath));
+    shader.SetData(data);
     shader.type = type;
 
     return true;
 }
 
 bool mugg::ShaderProgram::CompileShader(mugg::Shader shader) {
+    if(shader.GetData().size() == 0) {
+        mugg::WriteToLog(mugg::ERROR, "Tried to compile empty shader!");
+        return false;
+    }
+
     glCompileShader(shader.id);
 
     GLint status = GL_FALSE;
@@ -71,8 +72,11 @@ bool mugg::ShaderProgram::CompileShader(mugg::Shader shader) {
         glGetShaderInfoLog(shader.id, 512, NULL, buffer);
         std::string error_msg(buffer);
         mugg::WriteToLog(mugg::FATAL_ERROR, error_msg);
+        shader.compiled = false;
         return false;
     }
+
+    shader.compiled = true;
 
     return true;
 }
@@ -84,8 +88,13 @@ bool mugg::ShaderProgram::LinkProgram() {
     }
 
     this->id = glCreateProgram();
-    for(int i = 0; i <= this->shaders.size(); i++)
-        glAttachShader(this->id, shaders[i].id);
+    for(int i = 0; i <= this->shaders.size(); i++) {
+        if(this->shaders[i].compiled) {
+            glAttachShader(this->id, shaders[i].id);
+        } else {
+            this->CompileShader(this->shaders[i]);
+        }
+    }
 
     glLinkProgram(this->id);
 
@@ -99,8 +108,6 @@ bool mugg::ShaderProgram::LinkProgram() {
         return false;
     }
 
-    glUseProgram(this->id);
-
     for(unsigned int i = 0; i <= this->shaders.size(); i++)
         glDeleteShader(this->shaders[i].id);
 
@@ -109,7 +116,12 @@ bool mugg::ShaderProgram::LinkProgram() {
 
 bool mugg::ShaderProgram::LoadShadersFromDisk() {
     for(int i = 0; i <= this->shaders.size(); i++) {
-            this->LoadShader()
+        //if(!this->LoadShader(this->shaders[i].GetFilepath(), this->shaders[i].type, this->shaders[i])) {
+        //    return false;
+        //}
+        if(!this->CompileShader(this->shaders[i])) {
+            return false;
+        }
     }
 
     return true;

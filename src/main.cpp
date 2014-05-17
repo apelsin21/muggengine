@@ -26,18 +26,18 @@ int main() {
     context.AddFlag(mugg::COLOR_BUFFER_BIT);
     context.AddFlag(mugg::DEPTH_BUFFER_BIT);
     mugg::Engine engine(context);
-    engine.Initialize();
 
     mugg::ShaderProgram shaderProgram;
+    shaderProgram.AddShader("data/shaders/vertex.glsl", mugg::VERTEX_SHADER);
+    shaderProgram.AddShader("data/shaders/fragment.glsl", mugg::FRAGMENT_SHADER);
 
-    mugg::Filehandler handler;
-
-    if(!shaderProgram.AddShader("data/shaders/vertex.glsl", mugg::VERTEX_SHADER)) {
-        mugg::WriteToLog(mugg::FATAL_ERROR, "Couldn't load vertex shader");
-        return -1;
-    }
+    engine.AddShaderProgram(shaderProgram);
 
     window.Create("MuggEngine Window", glm::vec2(800, 600), glm::vec2(0, 0));
+    if(!engine.Initialize()) {
+        mugg::WriteToLog(mugg::FATAL_ERROR, "Failed to initialize engine");
+        return -1;
+    }
 
     while(window.IsOpen()) {
         engine.Render();

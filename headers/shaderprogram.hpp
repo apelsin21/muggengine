@@ -29,7 +29,6 @@ namespace mugg {
 
         bool AddShader(std::string filepath, mugg::ShaderType type);
 
-        //Will fail if GL isn't initialized!
         bool LoadShadersFromDisk();
 
         bool GetShaderByType(mugg::ShaderType type);
