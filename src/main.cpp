@@ -82,6 +82,8 @@ int main() {
     mugg::ScriptSystem system(true);
     system.RegisterMetatable(personFuncs, "lua_Person", "Person");
 
+    system.PrintStack();
+
     int error = luaL_dofile(system.GetState(), "main.lua");
     if(error) {
         std::cout << lua_tostring(system.GetState(), -1) << std::endl;

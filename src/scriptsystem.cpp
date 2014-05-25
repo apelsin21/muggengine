@@ -54,12 +54,28 @@ const char* mugg::ScriptSystem::GetRegistredMetatablesGlobalNamesByIndex(int ind
 }
 
 void mugg::ScriptSystem::PrintStack() {
+    std::cout << "### LUA STACK DUMP BEGIN ###\n";
+    
     int top = lua_gettop(this->state);
     for(int i = 0; i <= top; i++) {
-        int current = lua_gettype(this->state, i);
+        int current = lua_type(this->state, i);
         
+        std::cout << "Index: " << i << " type: " << lua_typename(this->state, current) << " value: ";
+
         switch(current) {
-            case LUA_NUMBER
+            case LUA_TNUMBER:
+                std::cout << lua_tonumber(this->state, i);
+            break;
+            case LUA_TSTRING:
+                std::cout << lua_tostring(this->state, i);
+            break;
+            case LUA_TBOOLEAN:
+                std::cout << lua_toboolean(this->state, i) ? "true" : "false";
+            break;
         }
+
+        std::cout << std::endl;
     }
+
+    std::cout << "### LUA STACK DUMP END ###\n";
 }

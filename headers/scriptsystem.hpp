@@ -1,7 +1,9 @@
 #ifndef SCRIPTSYSTEM_HPP
 #define SCRIPTSYSTEM_HPP
 
+#include <iostream>
 #include <vector>
+#include <string>
 
 #include "lua.hpp"
 
