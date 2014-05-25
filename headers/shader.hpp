@@ -1,7 +1,9 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
-#include "GL/glew.h"
+#include <utility>
+
+#include <GL/glew.h>
 
 #include "file.hpp"
 #include "defs.hpp"
@@ -9,9 +11,8 @@
 namespace mugg {
     class Shader : public File {
         public:
-            Shader() {this->compiled = false; this->type = mugg::VERTEX_SHADER; this->id = 0;}
+            Shader();
             Shader(const Shader&) {}
-            ~Shader() {}
 
             mugg::ShaderType type;
             GLuint id;

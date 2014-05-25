@@ -13,8 +13,6 @@
 namespace mugg {
     static mugg::LogLevel MIN_LEVEL_TO_PRINT = WARNING;
     static std::string logfilepath = "log.txt";
-
-    
     
     static void WriteToLog(mugg::LogLevel lvl, std::string message) {
         std::ofstream stream(mugg::logfilepath.c_str(), std::ios::out | std::ios::app);

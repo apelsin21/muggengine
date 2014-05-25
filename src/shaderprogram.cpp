@@ -10,8 +10,7 @@ mugg::ShaderProgram::~ShaderProgram() {
 
 bool mugg::ShaderProgram::AddShader(std::string filepath, mugg::ShaderType type) {
     if(this->linked) {
-        mugg::WriteToLog(mugg::INFO, "Adding shader to an already linked shader program!");
-        return false;
+        mugg::WriteToLog(mugg::WARNING, "Adding shader to an already linked shader program!");
     }
 
     mugg::Shader shader;
@@ -33,9 +32,6 @@ bool mugg::ShaderProgram::LoadShader(std::string filepath, mugg::ShaderType type
         case mugg::FRAGMENT_SHADER:
             shader.id = glCreateShader(GL_FRAGMENT_SHADER);
             break;
-        default:
-            mugg::WriteToLog(mugg::ERROR, "Tried to load shader that isn't implemented yet");
-            break;
     }
 
     std::string data = filehandler.ReadTextFromFilepath(filepath);
@@ -54,10 +50,11 @@ bool mugg::ShaderProgram::LoadShader(std::string filepath, mugg::ShaderType type
     shader.SetData(data);
     shader.type = type;
 
+
     return true;
 }
 
-bool mugg::ShaderProgram::CompileShader(mugg::Shader shader) {
+bool mugg::ShaderProgram::CompileShader(mugg::Shader &shader) {
     if(shader.GetData().size() == 0) {
         mugg::WriteToLog(mugg::ERROR, "Tried to compile empty shader!");
         return false;
@@ -116,9 +113,10 @@ bool mugg::ShaderProgram::LinkProgram() {
 
 bool mugg::ShaderProgram::LoadShadersFromDisk() {
     for(int i = 0; i <= this->shaders.size(); i++) {
-        //if(!this->LoadShader(this->shaders[i].GetFilepath(), this->shaders[i].type, this->shaders[i])) {
-        //    return false;
-        //}
+        if(!this->LoadShader(this->shaders[i].GetFilepath(), this->shaders[i].type, this->shaders[i])) {
+            return false;
+        }
+
         if(!this->CompileShader(this->shaders[i])) {
             return false;
         }

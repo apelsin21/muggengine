@@ -20,7 +20,7 @@ namespace mugg {
         GLuint id;
         bool linked;
 
-        bool CompileShader(mugg::Shader shader);
+        bool CompileShader(mugg::Shader &shader);
         bool LoadShader(std::string filepath, mugg::ShaderType type, mugg::Shader &outShader);
     public:
         ShaderProgram();

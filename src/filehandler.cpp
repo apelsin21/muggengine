@@ -12,7 +12,6 @@ std::string mugg::Filehandler::ReadTextFromFilepath(std::string filepath) {
             data += line + "\n";
         }
 
-        in_stream.close();
     } else {
         std::string error_msg("Couldn't open file ");
         error_msg += filepath;
@@ -20,6 +19,8 @@ std::string mugg::Filehandler::ReadTextFromFilepath(std::string filepath) {
         mugg::WriteToLog(mugg::ERROR, error_msg);
     }
 
+    in_stream.close();
+    
     return data;
 }
 

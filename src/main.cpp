@@ -17,34 +17,104 @@
 #include "shaderprogram.hpp"
 #include "engine.hpp"
 
+#include <assert.h>
+#include <lua.hpp>
+
+void dumpStack(lua_State* L);
+
+class Person {
+    private:
+        int age;
+    public:
+        Person(int age) {
+            this->age = age;
+        }
+        ~Person() {
+        }
+
+        void SetAge(int age) {
+            this->age = age;
+        }
+        int GetAge() {
+            return this->age;
+        }
+};
+
+Person* checkPerson(lua_State* L, int n) {
+    return *(Person**)luaL_checkudata(L, n, "lua_Person");
+}
+
+int personConstructor(lua_State* L) {
+    int arg = luaL_checknumber(L, 1);
+
+    Person** person = (Person**)lua_newuserdata(L, sizeof(Person*));
+    *person = new Person(arg);
+
+    luaL_getmetatable(L, "lua_Person");
+    lua_setmetatable(L, -2);
+
+    return 1;
+}
+
+int personSetAge(lua_State* L) {
+    Person* person = checkPerson(L, 1);
+    int arg = luaL_checknumber(L, 2);
+    person->SetAge(arg);
+
+    return 0;
+}
+
+int personGetAge(lua_State* L) {
+    Person* person = checkPerson(L, 1);
+    lua_pushnumber(L, person->GetAge());
+    return 1;
+}
+
+int personDeconstructor(lua_State* L) {
+    Person* person = checkPerson(L, 1);
+    delete person;
+    
+    return 0;
+}
+
+luaL_Reg personFuncs[] = {
+    {"new", personConstructor},
+    {"set_age", personSetAge},
+    {"get_age", personGetAge},
+    {"__gc", personDeconstructor},
+    {NULL, NULL}
+};
+
+void registerPerson(lua_State* L) {
+    luaL_newmetatable(L, "lua_Person");
+    luaL_setfuncs(L, personFuncs, 0);
+    lua_pushvalue(L, -1);
+    lua_setfield(L, -2, "__index");
+
+    lua_setglobal(L, "Person");
+}
+
+void dumpStack(lua_State* L) {
+    int top = lua_gettop(L);
+    for(int i = 0; i <= top; i++) {
+        std::cout << "At index " << i << " type "<< lua_typename(L, lua_type(L, i)) << std::endl;
+    }
+}
+
 int main() {
-    mugg::Window window;
-    mugg::Context context;
-    context.SetMajorVersion(3);
-    context.SetMinorVersion(0);
-    context.UseCoreProfile(false);
-    context.AddFlag(mugg::COLOR_BUFFER_BIT);
-    context.AddFlag(mugg::DEPTH_BUFFER_BIT);
-    mugg::Engine engine(context);
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
 
-    mugg::ShaderProgram shaderProgram;
-    shaderProgram.AddShader("data/shaders/vertex.glsl", mugg::VERTEX_SHADER);
-    shaderProgram.AddShader("data/shaders/fragment.glsl", mugg::FRAGMENT_SHADER);
+    registerPerson(L);
 
-    engine.AddShaderProgram(shaderProgram);
-
-    window.Create("MuggEngine Window", glm::vec2(800, 600), glm::vec2(0, 0));
-    if(!engine.Initialize()) {
-        mugg::WriteToLog(mugg::FATAL_ERROR, "Failed to initialize engine");
-        return -1;
+    
+    int error = luaL_dofile(L, "main.lua");
+    if(error) {
+        std::cout << lua_tostring(L, -1) << std::endl;
+        lua_pop(L, 1);
     }
 
-    while(window.IsOpen()) {
-        engine.Render();
-
-        window.SwapBuffers();
-        glfwPollEvents();
-    }
+    lua_close(L);
 
 	return 0;
 }
