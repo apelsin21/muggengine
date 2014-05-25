@@ -5,8 +5,6 @@
 
 #include "scriptsystem.hpp"
 
-void dumpStack(lua_State* L);
-
 class Person {
     private:
         int age;
@@ -70,19 +68,10 @@ luaL_Reg personFuncs[] = {
     {NULL, NULL}
 };
 
-void dumpStack(lua_State* L) {
-    int top = lua_gettop(L);
-    for(int i = 0; i <= top; i++) {
-        std::cout << "At index " << i << " type "<< lua_typename(L, lua_type(L, i)) << std::endl;
-    }
-}
-
 int main() {
     
     mugg::ScriptSystem system(true);
     system.RegisterMetatable(personFuncs, "lua_Person", "Person");
-
-    system.PrintStack();
 
     int error = luaL_dofile(system.GetState(), "main.lua");
     if(error) {
