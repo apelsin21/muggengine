@@ -1,24 +1,9 @@
 #include <string>
-#include <vector>
-#include <ctime>
+#include <iostream>
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-
-#include "filehandler.hpp"
-#include "log.hpp"
-#include "file.hpp"
-#include "shader.hpp"
-#include "defs.hpp"
-#include "window.hpp"
-#include "shaderprogram.hpp"
-#include "engine.hpp"
-
-#include <assert.h>
 #include <lua.hpp>
+
+#include "scriptsystem.hpp"
 
 void dumpStack(lua_State* L);
 
@@ -85,15 +70,6 @@ luaL_Reg personFuncs[] = {
     {NULL, NULL}
 };
 
-void registerPerson(lua_State* L) {
-    luaL_newmetatable(L, "lua_Person");
-    luaL_setfuncs(L, personFuncs, 0);
-    lua_pushvalue(L, -1);
-    lua_setfield(L, -2, "__index");
-
-    lua_setglobal(L, "Person");
-}
-
 void dumpStack(lua_State* L) {
     int top = lua_gettop(L);
     for(int i = 0; i <= top; i++) {
@@ -102,19 +78,15 @@ void dumpStack(lua_State* L) {
 }
 
 int main() {
-    lua_State* L = luaL_newstate();
-    luaL_openlibs(L);
-
-    registerPerson(L);
-
     
-    int error = luaL_dofile(L, "main.lua");
-    if(error) {
-        std::cout << lua_tostring(L, -1) << std::endl;
-        lua_pop(L, 1);
-    }
+    mugg::ScriptSystem system(true);
+    system.RegisterMetatable(personFuncs, "lua_Person", "Person");
 
-    lua_close(L);
+    int error = luaL_dofile(system.GetState(), "main.lua");
+    if(error) {
+        std::cout << lua_tostring(system.GetState(), -1) << std::endl;
+        lua_pop(system.GetState(), 1);
+    }
 
 	return 0;
 }
