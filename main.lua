@@ -17,7 +17,8 @@ if window:get_fullscreen() == true then
 else
     print("no")
 end
-    
+
+input = InputHandler.new()
 
 end_time = os.clock() - start_time
 
