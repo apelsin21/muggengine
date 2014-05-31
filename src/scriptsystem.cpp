@@ -79,3 +79,12 @@ void mugg::ScriptSystem::PrintStack() {
 
     std::cout << "### LUA STACK DUMP END ###\n";
 }
+
+void mugg::ScriptSystem::DoFile(const char* filepath) {
+    int error = luaL_dofile(this->state, filepath);
+
+    if(error) {
+        std::cout << lua_tostring(this->state, -1) << std::endl;
+        lua_pop(this->state, 1);
+    }
+}

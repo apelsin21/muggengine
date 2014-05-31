@@ -36,7 +36,11 @@ namespace mugg {
             const char* GetRegistredMetatablesPrivateNamesByIndex(int index);
             const char* GetRegistredMetatablesGlobalNamesByIndex(int index);
 
+            void RegisterFunctions(luaL_Reg* functions);
+
             void PrintStack();
+
+            void DoFile(const char* filepath);
     };
 }
 

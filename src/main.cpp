@@ -2,8 +2,15 @@
 #include <iostream>
 
 #include <lua.hpp>
+#include <glm/glm.hpp>
+#include <SFML/System.hpp>
 
 #include "scriptsystem.hpp"
+
+#include "window.hpp"
+#include "windowbinds.hpp"
+#include "inputhandler.hpp"
+#include "defs.hpp"
 
 class Person {
     private:
@@ -69,15 +76,11 @@ luaL_Reg personFuncs[] = {
 };
 
 int main() {
-    
     mugg::ScriptSystem system(true);
     system.RegisterMetatable(personFuncs, "lua_Person", "Person");
+    system.RegisterMetatable(mugg::binds::windowFuncs, "mugg_Window", "Window");
 
-    int error = luaL_dofile(system.GetState(), "main.lua");
-    if(error) {
-        std::cout << lua_tostring(system.GetState(), -1) << std::endl;
-        lua_pop(system.GetState(), 1);
-    }
+	system.DoFile("main.lua");
 
-	return 0;
+    return 0;
 }
