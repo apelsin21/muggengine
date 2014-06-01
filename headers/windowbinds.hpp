@@ -114,6 +114,51 @@ namespace mugg {
             return 0;
         }
 
+        int windowSetVsync(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+            bool arg;
+
+            if(lua_isboolean(L, 2)) {
+                arg = lua_toboolean(L, 2);
+            } else {
+                luaL_error(L, "Argument to set_vsync wasn't a boolean");
+            }
+
+            window->SetVsync(arg);
+            return 0;
+        }
+        int windowGetVsync(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            lua_pushboolean(L, window->GetVsync());
+            return 1;
+        }
+
+        int windowSetTitle(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            const char* arg = luaL_checkstring(L, 2);
+
+            window->SetTitle(arg);
+
+            return 0;
+        }
+        int windowGetTitle(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            const char* title = window->GetTitle();
+
+            lua_pushstring(L, title);
+            return 1;
+        }
+
+        int windowSwapBuffers(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            window->SwapBuffers();
+            return 0;
+        }
+
         luaL_Reg windowFuncs[] = {
             {"new", windowConstructor},
 
@@ -128,8 +173,16 @@ namespace mugg {
             {"set_fullscreen", windowSetFullscreen},
             {"get_fullscreen", windowGetFullscreen},
 
+            {"set_vsync", windowSetVsync},
+            {"get_vsync", windowGetVsync},
+
+            {"set_title", windowSetTitle},
+            {"get_title", windowGetTitle},
+
             {"is_open", windowIsOpen},
             {"close", windowClose},
+            
+            {"swap_buffers", windowSwapBuffers},
 
             {"__gc", windowDeconstructor},
             {NULL, NULL}

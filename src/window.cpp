@@ -10,6 +10,7 @@ mugg::Window::Window(glm::vec2 resolution, glm::vec2 position, const char* title
     this->vsync = false;
     this->fullscreen = false;
     this->open = true;
+    this->title = title;
 }
 mugg::Window::~Window() {
     this->window.close();
@@ -70,10 +71,18 @@ bool mugg::Window::GetActive() {
     return this->active;
 }
 
+void mugg::Window::SetTitle(const char* title) {
+    this->title = title;
+    this->window.setTitle(title);
+}
+const char* mugg::Window::GetTitle() {
+    return this->title;
+}
+
 bool mugg::Window::Recreate() {
     return false;
 }
 
-void mugg::Window::Render() {
+void mugg::Window::SwapBuffers() {
     this->window.display();
 }
