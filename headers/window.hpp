@@ -26,6 +26,7 @@ namespace mugg {
             
             void SetOpen(bool open);
             bool IsOpen();
+            void Close();
 
             void SetVsync(bool enabled);
             bool GetVsync();

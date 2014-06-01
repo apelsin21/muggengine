@@ -100,6 +100,20 @@ namespace mugg {
             return 1;
         }
 
+        int windowIsOpen(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            lua_pushboolean(L, window->IsOpen());
+            return 1;
+        }
+       
+        int windowClose(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            window->Close();
+            return 0;
+        }
+
         luaL_Reg windowFuncs[] = {
             {"new", windowConstructor},
 
@@ -113,6 +127,9 @@ namespace mugg {
 
             {"set_fullscreen", windowSetFullscreen},
             {"get_fullscreen", windowGetFullscreen},
+
+            {"is_open", windowIsOpen},
+            {"close", windowClose},
 
             {"__gc", windowDeconstructor},
             {NULL, NULL}

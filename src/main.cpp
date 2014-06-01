@@ -9,9 +9,7 @@
 
 #include "window.hpp"
 #include "windowbinds.hpp"
-#include "inputhandler.hpp"
 #include "inputhandlerbinds.hpp"
-#include "defs.hpp"
 
 class Person {
     private:
@@ -81,12 +79,6 @@ int main() {
 
     system.RegisterMetatable(mugg::binds::windowFuncs, "mugg_Window", "Window");
     system.RegisterMetatable(mugg::binds::inputHandlerFuncs, "mugg_InputHandler", "InputHandler");
-
-    mugg::input::InputHandler input;
-    mugg::Window window(glm::vec2(1, 1), glm::vec2(1024, 1), "bajskorv");
-
-    while(!input.IsKeyDown("Escape")) {
-    }
 
 	system.DoFile("main.lua");
 

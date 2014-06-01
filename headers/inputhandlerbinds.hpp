@@ -34,8 +34,12 @@ namespace mugg {
         int inputHandlerIsKeyDown(lua_State* L) {
             mugg::input::InputHandler* input = checkInputHandler(L, 1);
 
-            const char* arg = luaL_checkstring(L, 2);
-            lua_pushboolean(L, input->IsKeyDown(arg));
+            int key = luaL_checkoption(L, 2, NULL, mugg::input::KeyString);
+   
+            //It's minus one because Lua begins arrays with 1 instead of 0
+            bool isPressed = input->IsKeyDown((mugg::input::Key)(key - 1));
+
+            lua_pushboolean(L, isPressed);
 
             return 1;
         }

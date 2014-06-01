@@ -57,6 +57,10 @@ void mugg::Window::SetOpen(bool open) {
 bool mugg::Window::IsOpen() {
     return this->open;
 }
+void mugg::Window::Close() {
+    this->open = false;
+    this->window.close();
+}
 
 void mugg::Window::SetActive(bool active) {
     this->active = active;
