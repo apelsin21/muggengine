@@ -5,7 +5,8 @@ window:set_vsync(true)
 
 input = InputHandler.new()
 
-start_time = os.clock()
+last_time = os.clock()
+frames = 0
 
 while window:is_open() == true do
     if input:is_key_down("Escape") == true then
@@ -13,10 +14,13 @@ while window:is_open() == true do
     end
 
     current_time = os.clock()
-    delta_time = current_time - start_time
-    start_time = current_time
+    frames = frames + 1
 
-    window:set_title(title .. " FPS: " .. 60 / delta_time)
+    if(current_time - last_time) >= 1 then
+        print(1000/frames .. " ms/frame")
+        frames = 0
+        last_time = current_time
+    end
 
     window:swap_buffers()
 end
