@@ -152,6 +152,14 @@ namespace mugg {
             return 1;
         }
 
+        int windowIsFocused(lua_State *L) {
+            mugg::Window* window = checkWindow(L, 1);
+            
+
+            lua_pushboolean(L, window->IsFocused());
+            return 1;
+        }
+
         int windowSwapBuffers(lua_State* L) {
             mugg::Window* window = checkWindow(L, 1);
 
@@ -181,7 +189,9 @@ namespace mugg {
 
             {"is_open", windowIsOpen},
             {"close", windowClose},
-            
+    
+            {"is_focused", windowIsFocused},
+
             {"swap_buffers", windowSwapBuffers},
 
             {"__gc", windowDeconstructor},

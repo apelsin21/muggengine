@@ -9,9 +9,10 @@ namespace mugg {
         private:
             sf::Window window;
             glm::vec2 resolution, position;
-            bool fullscreen, vsync, active, open;
+            bool fullscreen, vsync, active, open, focused;
             int framerateLimit;
             const char* title;
+            bool changed;
         public:
             Window(glm::vec2 resolution, glm::vec2 position, const char* title);
             ~Window();
@@ -38,12 +39,16 @@ namespace mugg {
             void SetActive(bool active);
             bool GetActive();
 
+            bool IsFocused();
+
             void SetTitle(const char* title);
             const char* GetTitle();
 
             //Sets new resolution, changes from fullscreen, etc.
             //Returns true on success, else false
             bool Recreate();
+
+            void ReactToEvents();            
 
             //Swaps front and back buffers
             void SwapBuffers();

@@ -11,6 +11,7 @@ mugg::Window::Window(glm::vec2 resolution, glm::vec2 position, const char* title
     this->fullscreen = false;
     this->open = true;
     this->title = title;
+    this->changed = false;
 }
 mugg::Window::~Window() {
     this->window.close();
@@ -27,6 +28,7 @@ glm::vec2 mugg::Window::GetPosition() {
 
 void mugg::Window::SetResolution(glm::vec2 resolution) {
     this->resolution = resolution;
+    this->changed = true;
 }
 glm::vec2 mugg::Window::GetResolution() {
     return this->resolution;
@@ -34,6 +36,7 @@ glm::vec2 mugg::Window::GetResolution() {
 
 void mugg::Window::SetFullscreen(bool fullscreen) {
     this->fullscreen = fullscreen;
+    this->changed = true;
 }
 bool mugg::Window::GetFullscreen() {
     return this->fullscreen;
@@ -80,9 +83,43 @@ const char* mugg::Window::GetTitle() {
 }
 
 bool mugg::Window::Recreate() {
-    return false;
+    if(!this->changed) {
+        return false;
+    }
+
+    return true;
+}
+
+bool mugg::Window::IsFocused() {
+    return this->focused;
+}
+
+void mugg::Window::ReactToEvents() {
+    sf::Event event;
+
+    while(this->window.pollEvent(event)) {
+        switch(event.type) {
+            case sf::Event::Closed:
+                this->Close();
+                break;
+            case sf::Event::Resized:
+                this->SetResolution(glm::vec2(event.size.width, event.size.height));
+                break;
+            case sf::Event::GainedFocus:
+                this->focused = true;
+                break;
+            case sf::Event::LostFocus:
+                this->focused = false;
+                break;
+            default:
+                //Nothing happened
+                break;
+        }
+    }
 }
 
 void mugg::Window::SwapBuffers() {
+    this->ReactToEvents();
+
     this->window.display();
 }
