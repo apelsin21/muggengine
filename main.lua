@@ -1,8 +1,8 @@
-title = "MuggEngine Lua window"
-
-window = Window.new(800, 600, title)
+window = Window.new(800, 600, "MuggEngine Window")
 
 input = InputHandler.new()
+
+start_time = os.clock()
 
 last_time = os.clock()
 frames = 0
@@ -23,3 +23,5 @@ while window:is_open() == true do
 
     window:swap_buffers()
 end
+
+print("Program ran for " .. os.clock() - start_time .. " seconds.")
