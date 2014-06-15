@@ -1,6 +1,9 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
+#define GLEW_STATIC
+#include <GL/glew.h>
+
 #include <SFML/Window.hpp>
 #include <glm/glm.hpp>
 
@@ -12,7 +15,7 @@ namespace mugg {
             bool fullscreen, vsync, active, open, focused;
             int framerateLimit;
             const char* title;
-            bool changed;
+            bool changed; //True if window needs to recreate, false if not
         public:
             Window(glm::vec2 resolution, glm::vec2 position, const char* title);
             ~Window();

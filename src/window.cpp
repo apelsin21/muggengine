@@ -2,6 +2,7 @@
 
 mugg::Window::Window(glm::vec2 resolution, glm::vec2 position, const char* title = "MuggEngine Window") {
     this->window.create(sf::VideoMode((int)resolution.x, (int)resolution.y), title, sf::Style::Default, sf::ContextSettings(32));
+
     this->resolution = resolution;
     this->position = position;
 
@@ -28,7 +29,6 @@ glm::vec2 mugg::Window::GetPosition() {
 
 void mugg::Window::SetResolution(glm::vec2 resolution) {
     this->resolution = resolution;
-    this->changed = true;
 }
 glm::vec2 mugg::Window::GetResolution() {
     return this->resolution;
@@ -83,8 +83,10 @@ const char* mugg::Window::GetTitle() {
 }
 
 bool mugg::Window::Recreate() {
-    if(!this->changed) {
-        return false;
+    if(this->GetFullscreen()) {
+        this->window.create(sf::VideoMode(this->GetResolution().x, this->GetResolution().y), this->GetTitle(), sf::Style::Fullscreen);
+    } else {
+        this->window.create(sf::VideoMode(this->GetResolution().x, this->GetResolution().y), this->GetTitle(), sf::Style::Default);
     }
 
     return true;
@@ -120,6 +122,10 @@ void mugg::Window::ReactToEvents() {
 
 void mugg::Window::SwapBuffers() {
     this->ReactToEvents();
+
+    if(this->changed) {
+        this->Recreate();
+    }
 
     this->window.display();
 }

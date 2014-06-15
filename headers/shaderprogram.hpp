@@ -13,13 +13,19 @@ namespace mugg {
             private:
                 GLuint programID, vsID, fsID;
                 std::string vsData, fsData;
-                bool compiled;
+                bool linked;
+
+                bool AddShaders(const char* vsFilepath, const char* fsFilepath);
+                void CompileShader(GLuint shaderID, const char* data);
+                bool CheckProgramForError();
+                //Returns true on success, false on failure
+                bool CheckShaderForError(GLuint shaderID);
             public:
                 ShaderProgram(const char* vsFilepath, const char* fsFilepath);
-                ShaderProgram();
                 ~ShaderProgram();
 
-
+               
+                bool Link();
         };
     }
 }
