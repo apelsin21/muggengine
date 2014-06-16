@@ -5,7 +5,10 @@
 #include <glm/glm.hpp>
 #include <SFML/System.hpp>
 
+#include <GL/glew.h>
+
 #include "scriptsystem.hpp"
+#include "texture2d.hpp"
 
 #include "windowbinds.hpp"
 #include "inputhandlerbinds.hpp"

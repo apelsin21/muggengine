@@ -3,7 +3,7 @@
 
 #include <SFML/System.hpp>
 
-#include "defs.hpp"
+#include "keydefs.hpp"
 
 namespace mugg {
     namespace input {

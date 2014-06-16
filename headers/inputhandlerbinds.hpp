@@ -3,7 +3,7 @@
 
 #include <lua.hpp>
 
-#include "defs.hpp"
+#include "keydefs.hpp"
 #include "inputhandler.hpp"
 
 namespace mugg {
