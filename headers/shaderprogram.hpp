@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 
 #include "fileutils.hpp"
+#include "graphicsdefs.hpp"
 
 namespace mugg {
     namespace core {

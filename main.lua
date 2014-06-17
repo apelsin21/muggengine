@@ -21,31 +21,39 @@ end
 
 backgroundColor = Color.new()
 
-while window:is_open() == true do
+function update()
     if input:is_key_down("Escape") == true and window:is_focused() == true then
         window:close()
     end
-
-    current_time = os.clock()
-    frames = frames + 1
-
-    if input:is_key_down("F11") == true then
+    
+    if input:is_key_down("Space") == true then
         backgroundColor:set_colors(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1)
     end
+    
+    frames = frames + 1
 
-    if(current_time-last_time) >= 1 then
+    if (os.clock() - last_time) >= 1 then
         print(1000/frames .. " ms/frame")
-
         frames = 0
-        last_time = current_time
+        last_time = os.time()
     end
+end
 
+function render()
     renderer:set_background_color(backgroundColor)
 
     renderer:begin_render(window:get_resolution_x(), window:get_resolution_y())
+    -----------------------
+    -- Render stuff here --
+    -----------------------
     renderer:end_render()
 
     window:swap_buffers()
+end
+
+while window:is_open() == true do
+    update()
+    render()
 end
 
 print("Program ran for " .. os.difftime(os.time(), start_time) .. " seconds.")
