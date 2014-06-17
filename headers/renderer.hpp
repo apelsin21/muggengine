@@ -23,7 +23,7 @@ namespace mugg {
                 Renderer();
                 ~Renderer();
 
-                void SetBackgroundColor(mugg::graphics::Color backgroundColor);
+                void SetBackgroundColor(mugg::graphics::Color color);
                 mugg::graphics::Color GetBackgroundColor();
 
                 void AddShaderProgram(mugg::core::ShaderProgram program);

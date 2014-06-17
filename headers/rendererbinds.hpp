@@ -10,6 +10,8 @@
 #include "colorbinds.hpp"
 #include "shaderprogrambinds.hpp"
 
+#include <iostream> 
+
 namespace mugg {
     namespace binds {
         mugg::graphics::Renderer* checkRenderer(lua_State* L, int n) {

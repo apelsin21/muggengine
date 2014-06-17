@@ -2,17 +2,12 @@
 
 mugg::graphics::Renderer::Renderer() {
     this->backgroundColor.a = 1.0f;
-
-    glewExperimental = GL_TRUE;
-    if(glewInit() != GLEW_OK) {
-        std::cout << "GLEW failed to initialize!\n";
-    }
 }
 mugg::graphics::Renderer::~Renderer() {
 }
 
-void mugg::graphics::Renderer::SetBackgroundColor(mugg::graphics::Color backgroundcolor) {
-    this->backgroundColor = backgroundColor;
+void mugg::graphics::Renderer::SetBackgroundColor(mugg::graphics::Color color) {
+    this->backgroundColor.Set(color);
 }
 mugg::graphics::Color mugg::graphics::Renderer::GetBackgroundColor() {
     return this->backgroundColor;

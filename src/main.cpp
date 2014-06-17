@@ -17,6 +17,14 @@
 #include "rendererbinds.hpp"
 
 int main() {
+    sf::Context context;
+
+    glewExperimental = true;
+    if(glewInit() != GLEW_OK) {
+        std::cout << "GLEW failed to initialize! Please fix your graphics drivers.\n";
+        return -1;
+    }
+
     mugg::ScriptSystem system(true);
 
     system.RegisterMetatable(mugg::binds::windowFuncs, "mugg_Window", "Window");
@@ -28,4 +36,5 @@ int main() {
     system.DoFile("main.lua");
 
     return 0;
+
 }

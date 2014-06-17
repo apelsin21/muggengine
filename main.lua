@@ -1,4 +1,5 @@
 window = Window.new(800, 600, "MuggEngine Window")
+window:set_vsync(true)
 
 input = InputHandler.new()
 
@@ -12,6 +13,12 @@ renderer = Renderer.new()
 shader_program = ShaderProgram.new("data/shaders/vertex.glsl", "data/shaders/fragment.glsl")
 shader_program:link()
 
+function randomFloat(min, max)
+    return min + math.random() * (max - min)
+end
+
+backgroundColor = Color.new()
+
 while window:is_open() == true do
     if input:is_key_down("Escape") == true and window:is_focused() == true then
         window:close()
@@ -21,18 +28,18 @@ while window:is_open() == true do
     frames = frames + 1
 
     if input:is_key_down("F11") == true then
-        if window:get_fullscreen() == true then
-            window:set_fullscreen(false)
-        else
-            window:set_fullscreen(true)
-        end
+        backgroundColor:set_colors(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1)
     end
 
     if(current_time-last_time) >= 1 then
         print(1000/frames .. " ms/frame")
+        
+        
         frames = 0
         last_time = current_time
     end
+
+    renderer:set_background_color(backgroundColor)
 
     renderer:begin_render(window:get_resolution_x(), window:get_resolution_y())
     renderer:end_render()
