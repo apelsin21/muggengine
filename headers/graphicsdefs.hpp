@@ -11,7 +11,7 @@ namespace mugg {
             VertexShader = GL_VERTEX_SHADER,
             FragmentShader = GL_FRAGMENT_SHADER,
             GeometryShader = GL_GEOMETRY_SHADER,
-        }
+        };
 
         static const char* ShaderTypeString[] = {
             "VertexShader",
