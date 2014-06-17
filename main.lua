@@ -13,6 +13,8 @@ renderer = Renderer.new()
 shader_program = ShaderProgram.new("data/shaders/vertex.glsl", "data/shaders/fragment.glsl")
 shader_program:link()
 
+renderer:add_shader_program(shader_program)
+
 function randomFloat(min, max)
     return min + math.random() * (max - min)
 end
@@ -33,8 +35,7 @@ while window:is_open() == true do
 
     if(current_time-last_time) >= 1 then
         print(1000/frames .. " ms/frame")
-        
-        
+
         frames = 0
         last_time = current_time
     end

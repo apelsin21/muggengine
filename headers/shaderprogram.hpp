@@ -26,6 +26,8 @@ namespace mugg {
 
                
                 bool Link();
+
+                GLuint GetProgramID();
         };
     }
 }

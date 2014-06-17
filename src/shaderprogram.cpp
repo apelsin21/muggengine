@@ -99,4 +99,7 @@ bool mugg::core::ShaderProgram::CheckProgramForError() {
     return true;
 }
 
+GLuint mugg::core::ShaderProgram::GetProgramID() {
+    return this->programID;
+}
 

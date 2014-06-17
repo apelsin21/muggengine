@@ -36,6 +36,12 @@ void mugg::graphics::Renderer::BeginRender(glm::vec2 viewportResolution = glm::v
     glClearColor(this->backgroundColor.r, this->backgroundColor.g, this->backgroundColor.b, this->backgroundColor.a);
 
     glViewport(0, 0, viewportResolution.x, viewportResolution.y);
+    
+    if(this->programVector.size() != 0) {
+        for(int i = 0; i <= this->programVector.size(); i++) {
+            glUseProgram(this->programVector[i].GetProgramID());
+        }
+    }
 }
 
 void mugg::graphics::Renderer::EndRender() {
