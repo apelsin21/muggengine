@@ -47,7 +47,6 @@ end
 while window:is_open() == true do
     update()
     render()
-
 end
 
 print("Program ran for " .. os.difftime(os.time(), start_time) .. " seconds.")
