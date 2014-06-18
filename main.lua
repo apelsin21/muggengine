@@ -32,7 +32,7 @@ function update()
     end
 
     deltatime = (os.clock() - last_time)
-    fps = deltatime / 1000
+    fps = 1/deltatime
     last_time = os.clock()
     window:set_title("Time: " .. os.difftime(os.time(), start_time) .. " s, ms/frame: " .. fps)
 end
