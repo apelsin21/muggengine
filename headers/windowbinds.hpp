@@ -121,7 +121,7 @@ namespace mugg {
             if(lua_isboolean(L, 2)) {
                 arg = lua_toboolean(L, 2);
             } else {
-                luaL_error(L, "Argument to set_vsync wasn't a boolean");
+                luaL_error(L, "Argument to function set_vsync() wasn't a boolean");
             }
 
             window->SetVsync(arg);
@@ -167,6 +167,27 @@ namespace mugg {
             return 0;
         }
 
+        int windowSetActive(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            bool arg;
+
+            if(lua_isboolean(L, 2)) {
+                arg = lua_toboolean(L, 2);
+            } else {
+                luaL_error(L, "Argument to function set_active() wasn't a boolean");
+            }
+
+            window->SetActive(arg);
+            return 0;
+        }
+        int windowGetActive(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            lua_pushboolean(L, window->GetActive());
+            return 1;
+        }
+
         luaL_Reg windowFuncs[] = {
             {"new", windowConstructor},
 
@@ -183,6 +204,9 @@ namespace mugg {
 
             {"set_vsync", windowSetVsync},
             {"get_vsync", windowGetVsync},
+
+            {"set_active", windowSetActive},
+            {"get_active", windowGetActive},
 
             {"set_title", windowSetTitle},
             {"get_title", windowGetTitle},

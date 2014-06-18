@@ -1,6 +1,6 @@
 #include "window.hpp"
 
-mugg::Window::Window(glm::vec2 resolution, glm::vec2 position, const char* title = "MuggEngine Window") {
+mugg::Window::Window(glm::vec2 resolution, glm::vec2 position, const char* title = "MuggEngine Window") { 
     this->window.create(sf::VideoMode((int)resolution.x, (int)resolution.y), title, sf::Style::Default, sf::ContextSettings(32));
 
     this->resolution = resolution;

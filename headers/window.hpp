@@ -7,6 +7,8 @@
 #include <SFML/Window.hpp>
 #include <glm/glm.hpp>
 
+#include <iostream>
+
 namespace mugg {
     class Window {
         private:
