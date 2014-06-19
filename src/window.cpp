@@ -14,9 +14,39 @@ mugg::Window::Window(glm::vec2 resolution, glm::vec2 position, const char* title
     this->title = title;
     this->changed = false;
 }
+mugg::Window::Window() {
+    this->framerateLimit = 0;
+    this->vsync = false;
+    this->fullscreen = false;
+    this->open = false;
+    this->title = "";
+    this->changed = false;
+}
 mugg::Window::~Window() {
     this->window.close();
-    
+}
+
+bool mugg::Window::Create(glm::vec2 resolution, glm::vec2 position, const char* title, bool fullscreen) {
+    if(this->open) {
+        std::cout << "Tried to create an open window!\n";
+        return false;
+    }
+
+    if(fullscreen) {
+        this->window.create(sf::VideoMode((int)resolution.x, (int)resolution.y), title, sf::Style::Fullscreen, sf::ContextSettings(32));
+        this->window.setPosition(sf::Vector2i((int)resolution.x, (int)resolution.y));
+    } else {
+        this->window.create(sf::VideoMode((int)resolution.x, (int)resolution.y), title, sf::Style::Default, sf::ContextSettings(32));
+        this->window.setPosition(sf::Vector2i((int)resolution.x, (int)resolution.y));
+    }
+
+    this->fullscreen = fullscreen;
+    this->title = title;
+    this->resolution = resolution;
+    this->position = position;
+    this->open = true;
+
+    return true;
 }
 
 void mugg::Window::SetPosition(glm::vec2 position) {

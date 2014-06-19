@@ -8,33 +8,23 @@
 
 namespace mugg {
     namespace binds {
+        static const char* InputHandlerPrivateName = "mugg_InputHandler";
+        static const char* InputHandlerPublicName = "InputHandler";
+
+        mugg::input::InputHandler* input = new mugg::input::InputHandler();
+        
         mugg::input::InputHandler* checkInputHandler(lua_State* L, int n) {
-            return *(mugg::input::InputHandler**)luaL_checkudata(L, n, "mugg_InputHandler");
-        }
-
-        int inputHandlerConstructor(lua_State *L) {
-            mugg::input::InputHandler** input = 
-                                        (mugg::input::InputHandler**)lua_newuserdata(L, sizeof(mugg::input::InputHandler*));
-            
-            *input = new mugg::input::InputHandler;
-
-            luaL_getmetatable(L, "mugg_InputHandler");
-            lua_setmetatable(L, -2);
-
-            return 1;
+            return *(mugg::input::InputHandler**)luaL_checkudata(L, n, InputHandlerPrivateName);
         }
 
         int inputHandlerDeconstructor(lua_State* L) {
-            mugg::input::InputHandler* input = checkInputHandler(L, 1);
             delete input;
             
             return 0;
         }
 
         int inputHandlerIsKeyDown(lua_State* L) {
-            mugg::input::InputHandler* input = checkInputHandler(L, 1);
-
-            int key = luaL_checkoption(L, 2, NULL, mugg::input::KeyString);
+            int key = luaL_checkoption(L, 1, NULL, mugg::input::KeyString);
    
             //It's minus one because Lua begins arrays with 1 instead of 0
             bool isPressed = input->IsKeyDown((mugg::input::Key)(key - 1));
@@ -45,8 +35,6 @@ namespace mugg {
         }
 
         luaL_Reg inputHandlerFuncs[] = {
-            {"new", inputHandlerConstructor},
-            
             {"is_key_down", inputHandlerIsKeyDown},
 
             {"__gc", inputHandlerDeconstructor},

@@ -7,15 +7,18 @@
 
 namespace mugg {
     namespace binds {
+        static const char* ColorPrivateName = "mugg_Color";
+        static const char* ColorPublicName = "Color";
+
         mugg::graphics::Color* checkColor(lua_State* L, int n) {
-            return *(mugg::graphics::Color**)luaL_checkudata(L, n, "mugg_Color");
+            return *(mugg::graphics::Color**)luaL_checkudata(L, n, ColorPrivateName);
         }
 
         int colorConstructor(lua_State* L) {
             mugg::graphics::Color** color = (mugg::graphics::Color**)lua_newuserdata(L, sizeof(mugg::graphics::Color*));
             *color = new mugg::graphics::Color();
 
-            luaL_getmetatable(L, "mugg_Color");
+            luaL_getmetatable(L, ColorPrivateName);
             lua_setmetatable(L, -2);
 
             return 1;

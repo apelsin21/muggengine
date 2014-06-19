@@ -20,7 +20,10 @@ namespace mugg {
             bool changed; //True if window needs to recreate, false if not
         public:
             Window(glm::vec2 resolution, glm::vec2 position, const char* title);
+            Window();
             ~Window();
+
+            bool Create(glm::vec2 resolution, glm::vec2 position, const char* title, bool fullscreen);
 
             void SetPosition(glm::vec2 position);
             glm::vec2 GetPosition();

@@ -7,8 +7,11 @@
 
 namespace mugg {
     namespace binds {
+        static const char* ShaderProgramPrivateName = "mugg_ShaderProgram";
+        static const char* ShaderProgramPublicName = "ShaderProgram";
+
         mugg::core::ShaderProgram* checkShaderProgram(lua_State* L, int n) {
-            return *(mugg::core::ShaderProgram**)luaL_checkudata(L, n, "mugg_ShaderProgram");
+            return *(mugg::core::ShaderProgram**)luaL_checkudata(L, n, ShaderProgramPrivateName);
         }
 
         int shaderProgramConstructor(lua_State* L) {
@@ -19,7 +22,7 @@ namespace mugg {
 
             *program = new mugg::core::ShaderProgram(vsFilepath, fsFilepath);
 
-            luaL_getmetatable(L, "mugg_ShaderProgram");
+            luaL_getmetatable(L, ShaderProgramPrivateName);
             lua_setmetatable(L, -2);
 
             return 1;
