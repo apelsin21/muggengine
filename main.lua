@@ -46,4 +46,4 @@ while Window.is_open() == true do
     render()
 end
 
-print("Program ran for " .. os.difftime(os.time(), start_time) .. " seconds.")
+print("Running time: " .. os.difftime(os.time(), start_time))
