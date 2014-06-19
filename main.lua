@@ -11,9 +11,9 @@ end
 
 backgroundColor = Color.new()
 
-last_time = os.clock()
-fps = 0
+last_time = os.time()
 deltatime = 0
+frames = 0
 
 function update()
     if Window.is_focused() == true then
@@ -27,11 +27,14 @@ function update()
         end
     end
 
-    deltatime = (os.clock() - last_time)
-    fps = 1/deltatime
-    last_time = os.clock()
-
-    Window.set_title(fps)
+    deltatime = os.difftime(os.time(), last_time)
+    frames = frames + 1
+    
+    if deltatime >= 1 then
+        Window.set_title("Running time: " .. os.difftime(os.time(), start_time) .. ", ms/frame: " .. 1000/frames)
+        frames = 0
+        last_time = last_time + 1;
+    end
 end
 
 function render()
