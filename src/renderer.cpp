@@ -42,55 +42,6 @@ void mugg::graphics::Renderer::BeginRender(glm::vec2 viewportResolution = glm::v
             glUseProgram(this->programVector[i].GetProgramID());
         }
     }
-
-    // Apply some transformations
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(0.f, 0.f, -200.f);
-    glRotatef(2.0f * 0.05f, 1.f, 0.f, 0.f);
-    glRotatef(2.0f * 0.03f, 0.f, 1.f, 0.f);
-    glRotatef(2.0f * 0.09f, 0.f, 0.f, 1.f);
-
-    // Draw a cube
-    glBegin(GL_QUADS);
-
-        glColor3f(1.f, 1.f, 0.f);
-        glVertex3f(-50.f, -50.f, -50.f);
-        glVertex3f(-50.f, 50.f, -50.f);
-        glVertex3f( 50.f, 50.f, -50.f);
-        glVertex3f( 50.f, -50.f, -50.f);
-
-        glColor3f(1.f, 1.f, 0.f);
-        glVertex3f(-50.f, -50.f, 50.f);
-        glVertex3f(-50.f, 50.f, 50.f);
-        glVertex3f( 50.f, 50.f, 50.f);
-        glVertex3f( 50.f, -50.f, 50.f);
-
-        glColor3f(0.f, 1.f, 1.f);
-        glVertex3f(-50.f, -50.f, -50.f);
-        glVertex3f(-50.f, 50.f, -50.f);
-        glVertex3f(-50.f, 50.f, 50.f);
-        glVertex3f(-50.f, -50.f, 50.f);
-
-        glColor3f(0.f, 1.f, 1.f);
-        glVertex3f(50.f, -50.f, -50.f);
-        glVertex3f(50.f, 50.f, -50.f);
-        glVertex3f(50.f, 50.f, 50.f);
-        glVertex3f(50.f, -50.f, 50.f);
-
-        glColor3f(1.f, 0.f, 1.f);
-        glVertex3f(-50.f, -50.f, 50.f);
-        glVertex3f(-50.f, -50.f, -50.f);
-        glVertex3f( 50.f, -50.f, -50.f);
-        glVertex3f( 50.f, -50.f, 50.f);
-
-        glColor3f(1.f, 0.f, 1.f);
-        glVertex3f(-50.f, 50.f, 50.f);
-        glVertex3f(-50.f, 50.f, -50.f);
-        glVertex3f( 50.f, 50.f, -50.f);
-        glVertex3f( 50.f, 50.f, 50.f);
-
-    glEnd();
 }
 
 void mugg::graphics::Renderer::EndRender() {
