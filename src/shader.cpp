@@ -5,26 +5,27 @@ mugg::graphics::Shader::Shader() {
     this->ID = 0;
     this->filepath = "";
     this->data = "";
+    this->loaded = false;
+    this->compiledSuccessfully = false;
 }
 mugg::graphics::Shader::Shader(mugg::graphics::ShaderType type, const char* filepath) {
     this->type = type;
     this->filepath = filepath;
     this->data = "";
     this->compiledSuccessfully = false;
+    this->loaded = false;
 
     this->GenID();
-    this->SetType(this->type);
+    this->SetType(type);
     this->LoadFromFilepath(filepath);
     this->Compile();
     
     this->CheckForErrors();
     
     if(!this->compiledSuccessfully)
-        std::cout << this->GetCompileLog() << std::endl;
+        std::cout << this->GetLog() << std::endl;
 }
 mugg::graphics::Shader::~Shader() {
-    if(!this->hasGeneratedID)
-        this->DeleteID();
 }
 
 void mugg::graphics::Shader::GenID() {
@@ -47,9 +48,10 @@ GLuint mugg::graphics::Shader::GetID() {
     return this->ID;
 }
 void mugg::graphics::Shader::DeleteID() {
-   this->hasGeneratedID = false;
-
-   glDeleteShader(this->ID);
+    if(this->hasGeneratedID) {
+        glDeleteShader(this->ID);
+        this->hasGeneratedID = false;
+    }
 }
 
 mugg::graphics::ShaderType mugg::graphics::Shader::GetType() {
@@ -74,16 +76,18 @@ bool mugg::graphics::Shader::GetCompiledSuccessfully() {
     return this->compiledSuccessfully;
 }
 
-const char* mugg::graphics::Shader::GetData() {
+std::string mugg::graphics::Shader::GetData() {
     return this->data;
 }
-void mugg::graphics::Shader::SetData(const char* data) {
+void mugg::graphics::Shader::SetData(std::string data) {
+    this->loaded = true;
     this->data = data;
 }
 
 bool mugg::graphics::Shader::LoadFromFilepath(const char* filepath) {
     if(filepath == "") {
         std::cout << "Tried to load shader from empty string!\n";
+        this->loaded = false;
         return false;
     }
 
@@ -91,29 +95,44 @@ bool mugg::graphics::Shader::LoadFromFilepath(const char* filepath) {
 
     if(!mugg::io::LoadTextFromFile(filepath, this->data)) {
         std::cout << "Failed to load shader from filepath: " << filepath << std::endl;
+        this->loaded = false;
+        return false;
+    }
+
+    this->loaded = true;
+
+    return true;
+}
+
+bool mugg::graphics::Shader::Compile() {
+    if(!this->Validate()) {
+        std::cout << "Tried to compile unvalid OpenGL shader!\n";
+        this->compiledSuccessfully = false;
+        return false;
+    }
+
+    const char* tempData = this->data.c_str();
+    glShaderSource(this->ID, 1, &tempData, NULL);
+    glCompileShader(this->ID);
+
+    this->CheckForErrors();
+
+    if(!this->compiledSuccessfully) {
+        std::cout << this->GetLog() << std::endl;
         return false;
     }
 
     return true;
 }
 
-void mugg::graphics::Shader::Compile() {
-    glShaderSource(this->ID, 1, &this->data, NULL);
-    glCompileShader(this->ID);
-}
-
 void mugg::graphics::Shader::CheckForErrors() {
     GLint result = GL_FALSE;
     glGetShaderiv(this->ID, GL_COMPILE_STATUS, &result);
 
-    if(result == GL_FALSE) {
-        this->compiledSuccessfully = false;
-    }
-
-    this->compiledSuccessfully = true;
+    this->compiledSuccessfully = result;
 }
 
-const char* mugg::graphics::Shader::GetCompileLog() {
+const char* mugg::graphics::Shader::GetLog() {
     GLint logLength = 0;
     glGetShaderiv(this->ID, GL_INFO_LOG_LENGTH, &logLength);
 
@@ -127,4 +146,14 @@ const char* mugg::graphics::Shader::GetCompileLog() {
     }
 
     return returnval.c_str();
+}
+
+bool mugg::graphics::Shader::Validate() {
+    GLboolean err = glIsShader(this->ID);
+
+    if(err == GL_FALSE) {
+        return false;
+    }
+    
+    return true;
 }

@@ -16,11 +16,12 @@ namespace mugg {
                 mugg::graphics::ShaderType type;
                 GLuint ID;
                 const char* filepath;
-                const char* data;
+                std::string data;
                 bool loaded, hasGeneratedID, compiledSuccessfully;
                 
                 void CheckForErrors();
-                const char* GetCompileLog();
+                const char* GetLog();
+                bool Validate();
             public:
                 Shader();
                 Shader(mugg::graphics::ShaderType type, const char* filepath);
@@ -34,8 +35,8 @@ namespace mugg {
                 mugg::graphics::ShaderType GetType();
                 void SetType(mugg::graphics::ShaderType type);
 
-                const char* GetData();
-                void SetData(const char* data);
+                std::string GetData();
+                void SetData(std::string data);
 
                 const char* GetFilepath();
                 void SetFilepath(const char* filepath);
@@ -45,7 +46,7 @@ namespace mugg {
 
                 bool LoadFromFilepath(const char* filepath);
 
-                void Compile();
+                bool Compile();
         };
     }
 }

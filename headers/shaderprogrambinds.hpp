@@ -37,6 +37,17 @@ namespace mugg {
             return 0;
         }
 
+        int shaderProgramAddShaderFromFile(lua_State* L) {
+            mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
+
+            mugg::graphics::ShaderType type = (mugg::graphics::ShaderType)luaL_checkoption(L, 2, NULL, mugg::graphics::ShaderTypeString);
+            const char* filepath = luaL_checkstring(L, 3);
+
+            program->AddShader(type, filepath);
+
+            return 0;
+        }
+
         int shaderProgramDestructor(lua_State* L) {
             mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
 
@@ -56,6 +67,7 @@ namespace mugg {
         luaL_Reg shaderProgramFuncs[] = {
             {"new", shaderProgramConstructor},
 
+            {"load_shader", shaderProgramAddShaderFromFile},
             {"add_shader", shaderProgramAddShader},
             {"link", shaderProgramLink},
             

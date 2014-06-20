@@ -29,12 +29,15 @@ namespace mugg {
                 void GenID();
 
                 void CheckForErrors();
-                const char* GetCompileLog();
+                const char* GetLog();
                 bool Link();
                 
                 bool AddShader(mugg::graphics::Shader shader);
+                bool AddShader(mugg::graphics::ShaderType type, const char* filepath);
 
                 bool GetCompiledSuccessfully();
+
+                bool Validate();
         };
     }
 }

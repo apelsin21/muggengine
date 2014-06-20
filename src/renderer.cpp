@@ -4,6 +4,11 @@ mugg::graphics::Renderer::Renderer() {
     this->backgroundColor.a = 1.0f;
 }
 mugg::graphics::Renderer::~Renderer() {
+    for(int i = 0; i < this->programVector.size(); i++) {
+        if(this->programVector[i].HasGeneratedID()) {
+            this->programVector[i].DeleteID();
+        }
+    }
 }
 
 void mugg::graphics::Renderer::SetBackgroundColor(mugg::graphics::Color color) {
@@ -34,9 +39,6 @@ std::vector<mugg::graphics::ShaderProgram> mugg::graphics::Renderer::GetShaderPr
 }
 
 bool mugg::graphics::Renderer::Initialize() {
-    glEnable(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_BLEND | GL_DEPTH_TEST);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDepthFunc(GL_ADD);
 }
 
 void mugg::graphics::Renderer::BeginRender(glm::vec2 viewportResolution = glm::vec2(800, 600)) {

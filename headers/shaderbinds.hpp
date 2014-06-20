@@ -19,11 +19,7 @@ namespace mugg {
         int shaderConstructor(lua_State* L) {
             mugg::graphics::Shader** shader = (mugg::graphics::Shader**)lua_newuserdata(L, sizeof(mugg::graphics::Shader*));
             
-            mugg::graphics::ShaderType type = (mugg::graphics::ShaderType)(luaL_checkoption(L, 1, NULL, mugg::graphics::ShaderTypeString));
-
-            const char* filepath = luaL_checkstring(L, 2);
-
-            *shader = new mugg::graphics::Shader(type, filepath);
+            *shader = new mugg::graphics::Shader();
             
             luaL_getmetatable(L, ShaderPrivateName);
             lua_setmetatable(L, -2);
@@ -33,6 +29,8 @@ namespace mugg {
 
         int shaderDeconstructor(lua_State* L) {
             mugg::graphics::Shader* shader = checkShader(L, 1);
+
+            std::cout << "Deleting shader with data: " << shader->GetData() << std::endl;
 
             delete shader;
 

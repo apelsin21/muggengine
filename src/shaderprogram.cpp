@@ -6,7 +6,6 @@ mugg::graphics::ShaderProgram::ShaderProgram() {
 }
 
 mugg::graphics::ShaderProgram::~ShaderProgram() {
-    this->DeleteID();
 }
 
 void mugg::graphics::ShaderProgram::DeleteID() {
@@ -23,8 +22,33 @@ bool mugg::graphics::ShaderProgram::HasGeneratedID() {
 }
 
 bool mugg::graphics::ShaderProgram::AddShader(Shader shader) {
-    if(!shader.GetCompiledSuccessfully() && !shader.GetLoaded()) {
-        std::cout << "Tried to add a shader with errors to shaderprogram!\n";
+    if(!shader.GetCompiledSuccessfully()) {
+        std::cout << "Tried to add a uncompiled shader to shaderprogram!\n";
+        return false;
+    }
+
+    this->shaderVector.push_back(shader);
+
+    return true;
+}
+
+bool mugg::graphics::ShaderProgram::AddShader(mugg::graphics::ShaderType type, const char* filepath) {
+    mugg::graphics::Shader shader;
+
+    shader.SetType(type);
+    shader.GenID();
+    shader.SetFilepath(filepath);
+
+    std::string data;
+    
+    if(!mugg::io::LoadTextFromFile(filepath, data)) {
+        std::cout << "Failed to load shader from path: " << filepath << std::endl;
+        return false;
+    }
+
+    shader.SetData(data);
+
+    if(!shader.Compile()) {
         return false;
     }
 
@@ -39,6 +63,7 @@ bool mugg::graphics::ShaderProgram::GetCompiledSuccessfully() {
 
 bool mugg::graphics::ShaderProgram::Link() {
     this->ID = glCreateProgram();
+    this->hasGeneratedID = true;
 
     if(this->shaderVector.size() != 0) {
         for(int i = 0; i < this->shaderVector.size(); i++) {
@@ -59,7 +84,7 @@ bool mugg::graphics::ShaderProgram::Link() {
 
     if(!this->compiledSuccessfully) {
         this->linked = false;
-        std::cout << this->GetCompileLog() << std::endl;
+        std::cout << this->GetLog() << std::endl;
         return false;
     }
 
@@ -81,7 +106,7 @@ void mugg::graphics::ShaderProgram::CheckForErrors() {
     this->compiledSuccessfully = true;
 }
 
-const char* mugg::graphics::ShaderProgram::GetCompileLog() {
+const char* mugg::graphics::ShaderProgram::GetLog() {
     int logLength = 0;
     glGetProgramiv(this->ID, GL_INFO_LOG_LENGTH, &logLength);
     
@@ -97,3 +122,16 @@ const char* mugg::graphics::ShaderProgram::GetCompileLog() {
     return returnval.c_str();
 }
 
+bool mugg::graphics::ShaderProgram::Validate() {
+    int result = GL_FALSE;
+
+    glGetProgramiv(this->ID, GL_VALIDATE_STATUS, &result);
+
+    if(result == GL_FALSE) {
+        std::cout << "Validation log: " << this->GetLog() << std::endl;
+
+        return false;
+    }
+
+    return true;
+}

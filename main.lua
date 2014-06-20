@@ -2,16 +2,14 @@ Window.create(800, 600, 0, 0, "MuggEngine Window", false)
 
 start_time = os.time()
 
-
-vertex_shader = Shader.new("VertexShader", "data/shaders/vertex.glsl")
-fragment_shader = Shader.new("FragmentShader", "data/shaders/fragment.glsl")
-
 shader_program = ShaderProgram.new()
 
-shader_program:add_shader(vertex_shader)
-shader_program:add_shader(fragment_shader)
+shader_program:load_shader("VertexShader", "data/shaders/vertex.glsl")
+shader_program:load_shader("FragmentShader", "data/shaders/fragment.glsl")
 
 shader_program:link()
+
+Renderer.initialize()
 
 Renderer.add_shader_program(shader_program)
 
