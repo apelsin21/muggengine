@@ -57,5 +57,3 @@ while Window.is_open() == true do
     update()
     render()
 end
-
-print("Running time: " .. os.difftime(os.time(), start_time))
