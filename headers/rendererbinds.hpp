@@ -58,7 +58,7 @@ namespace mugg {
         }
 
         int rendererAddShaderProgram(lua_State* L) {
-            mugg::core::ShaderProgram* shaderProgram = checkShaderProgram(L, 1);
+            mugg::graphics::ShaderProgram* shaderProgram = checkShaderProgram(L, 1);
         
             renderer->AddShaderProgram(*shaderProgram);
 
@@ -72,8 +72,8 @@ namespace mugg {
         }
 
         int rendererBeginRender(lua_State* L) {
-            float resX = luaL_checknumber(L, 1);
-            float resY = luaL_checknumber(L, 2);
+            int resX = luaL_checknumber(L, 1);
+            int resY = luaL_checknumber(L, 2);
 
             renderer->BeginRender(glm::vec2(resX, resY));
 

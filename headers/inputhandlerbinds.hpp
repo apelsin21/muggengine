@@ -26,7 +26,7 @@ namespace mugg {
         int inputHandlerIsKeyDown(lua_State* L) {
             int key = luaL_checkoption(L, 1, NULL, mugg::input::KeyString);
    
-            //It's minus one because Lua begins arrays with 1 instead of 0
+            //It's minus one because KeyString has an appended null value
             bool isPressed = input->IsKeyDown((mugg::input::Key)(key - 1));
 
             lua_pushboolean(L, isPressed);

@@ -2,33 +2,39 @@
 #define SHADERPROGRAM_HPP
 
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include <GL/glew.h>
 
 #include "fileutils.hpp"
 #include "graphicsdefs.hpp"
+#include "shader.hpp"
 
 namespace mugg {
-    namespace core {
+    namespace graphics {
         class ShaderProgram {
             private:
-                GLuint programID, vsID, fsID;
-                std::string vsData, fsData;
-                bool linked;
+                GLuint ID;
+                bool linked, hasGeneratedID, compiledSuccessfully;
 
-                bool AddShaders(const char* vsFilepath, const char* fsFilepath);
-                void CompileShader(GLuint shaderID, const char* data);
-                bool CheckProgramForError();
-                //Returns true on success, false on failure
-                bool CheckShaderForError(GLuint shaderID);
+                std::vector<mugg::graphics::Shader> shaderVector;
             public:
-                ShaderProgram(const char* vsFilepath, const char* fsFilepath);
+                ShaderProgram();
                 ~ShaderProgram();
+                
+                GLuint GetID();
+                bool HasGeneratedID();
+                void DeleteID();
+                void GenID();
 
-               
+                void CheckForErrors();
+                const char* GetCompileLog();
                 bool Link();
+                
+                bool AddShader(mugg::graphics::Shader shader);
 
-                GLuint GetProgramID();
+                bool GetCompiledSuccessfully();
         };
     }
 }

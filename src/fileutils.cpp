@@ -20,3 +20,15 @@ bool mugg::io::LoadTextFromFile(const char* filepath, std::string &outString) {
 
     return true;
 }
+
+bool mugg::io::LoadTextFromFile(const char* filepath, const char* &outString) {
+    std::string data;
+    
+    if(!mugg::io::LoadTextFromFile(filepath, data)) {
+        return false;
+    }
+
+    outString = data.c_str();
+
+    return true;
+}

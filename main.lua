@@ -2,18 +2,28 @@ Window.create(800, 600, 0, 0, "MuggEngine Window", false)
 
 start_time = os.time()
 
-shader_program = ShaderProgram.new("data/shaders/vertex.glsl", "data/shaders/fragment.glsl")
+
+vertex_shader = Shader.new("VertexShader", "data/shaders/vertex.glsl")
+fragment_shader = Shader.new("FragmentShader", "data/shaders/fragment.glsl")
+
+shader_program = ShaderProgram.new()
+
+shader_program:add_shader(vertex_shader)
+shader_program:add_shader(fragment_shader)
+
 shader_program:link()
 
-function randomFloat(min, max)
-    return min + math.random() * (max - min)
-end
+Renderer.add_shader_program(shader_program)
 
 backgroundColor = Color.new()
 
 last_time = os.time()
 deltatime = 0
 frames = 0
+
+function randomFloat(min, max)
+    return min + math.random() * (max - min)
+end
 
 function update()
     if Window.is_focused() == true then
@@ -27,10 +37,9 @@ function update()
         end
     end
 
-    deltatime = os.difftime(os.time(), last_time)
     frames = frames + 1
     
-    if deltatime >= 1 then
+    if os.difftime(os.time(), last_time) >= 1 then
         Window.set_title("Running time: " .. os.difftime(os.time(), start_time) .. ", ms/frame: " .. 1000/frames)
         frames = 0
         last_time = last_time + 1;

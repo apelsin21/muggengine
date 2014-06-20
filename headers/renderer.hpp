@@ -16,7 +16,7 @@ namespace mugg {
     namespace graphics {
         class Renderer {
             private:
-                std::vector<mugg::core::ShaderProgram> programVector;
+                std::vector<mugg::graphics::ShaderProgram> programVector;
                 mugg::graphics::Color backgroundColor;
                 glm::vec2 viewportResolution;
             public:
@@ -26,9 +26,9 @@ namespace mugg {
                 void SetBackgroundColor(mugg::graphics::Color color);
                 mugg::graphics::Color GetBackgroundColor();
 
-                void AddShaderProgram(mugg::core::ShaderProgram program);
-                mugg::core::ShaderProgram GetShaderProgramByIndex(int index);
-                std::vector<mugg::core::ShaderProgram> GetShaderProgramVector();
+                bool AddShaderProgram(mugg::graphics::ShaderProgram program);
+                mugg::graphics::ShaderProgram GetShaderProgramByIndex(int index);
+                std::vector<mugg::graphics::ShaderProgram> GetShaderProgramVector();
                 
                 bool Initialize();
                 

@@ -1,105 +1,99 @@
 #include "shaderprogram.hpp"
 
-mugg::core::ShaderProgram::ShaderProgram(const char* vsFilepath, const char* fsFilepath) {
-    this->programID = glCreateProgram();
-    this->vsID = glCreateShader(GL_VERTEX_SHADER);
-    this->fsID = glCreateShader(GL_FRAGMENT_SHADER);
-    
+mugg::graphics::ShaderProgram::ShaderProgram() {
     this->linked = false;
-
-    if(!this->AddShaders(vsFilepath, fsFilepath)) {
-        std::cout << "Failed to load vertex shader " << vsFilepath << " and fragment shader " << fsFilepath << std::endl;
-    }
-
+    this->compiledSuccessfully = false;
 }
 
-mugg::core::ShaderProgram::~ShaderProgram() {
-    glDeleteProgram(this->programID);
+mugg::graphics::ShaderProgram::~ShaderProgram() {
+    this->DeleteID();
 }
 
-bool mugg::core::ShaderProgram::AddShaders(const char* vsFilepath, const char* fsFilepath) {
-    if(!mugg::io::LoadTextFromFile(vsFilepath, this->vsData)) {
-        std::cout << "Failed to load vertex shader " << vsFilepath << " from disk.\n";
+void mugg::graphics::ShaderProgram::DeleteID() {
+    if(this->hasGeneratedID)
+        glDeleteProgram(this->ID);
+
+    this->hasGeneratedID = false;
+}
+GLuint mugg::graphics::ShaderProgram::GetID() {
+    return this->ID;
+}
+bool mugg::graphics::ShaderProgram::HasGeneratedID() {
+    return this->hasGeneratedID;
+}
+
+bool mugg::graphics::ShaderProgram::AddShader(Shader shader) {
+    if(!shader.GetCompiledSuccessfully() && !shader.GetLoaded()) {
+        std::cout << "Tried to add a shader with errors to shaderprogram!\n";
         return false;
     }
-    if(!mugg::io::LoadTextFromFile(fsFilepath, this->fsData)) {
-        std::cout << "Failed to load fragment shader " << fsFilepath << " from disk.\n";
-        return false;
-    }
+
+    this->shaderVector.push_back(shader);
 
     return true;
 }
 
-void mugg::core::ShaderProgram::CompileShader(GLuint shaderID, const char* data) {
-    glShaderSource(shaderID, 1, &data, NULL);
-    glCompileShader(shaderID); 
+bool mugg::graphics::ShaderProgram::GetCompiledSuccessfully() {
+    return this->compiledSuccessfully;
 }
 
-bool mugg::core::ShaderProgram::CheckShaderForError(GLuint shaderID) {
-    GLint result = GL_FALSE;
-    int logLength = 0;
+bool mugg::graphics::ShaderProgram::Link() {
+    this->ID = glCreateProgram();
 
-    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &result);
-    glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &logLength);
+    if(this->shaderVector.size() != 0) {
+        for(int i = 0; i < this->shaderVector.size(); i++) {
+            glAttachShader(this->ID, shaderVector[i].GetID());
+        }
+    } else {
+        std::cout << "Tried to link shaderless shaderprogram!\n";
+        this->compiledSuccessfully = false;
+        return false;
+    }
+
+    glLinkProgram(this->ID);
+    
+    for(int i = 0; i < this->shaderVector.size(); i++)
+        this->shaderVector[i].DeleteID();
+    
+    this->CheckForErrors();
+
+    if(!this->compiledSuccessfully) {
+        this->linked = false;
+        std::cout << this->GetCompileLog() << std::endl;
+        return false;
+    }
+
+    this->compiledSuccessfully = true;
+    this->linked = true;
+
+    return true;
+}
+
+void mugg::graphics::ShaderProgram::CheckForErrors() {
+    GLint result = GL_FALSE;
+
+    glGetProgramiv(this->ID, GL_LINK_STATUS, &result);
 
     if(result == GL_FALSE) {
-        GLchar buffer[logLength];
-        glGetShaderInfoLog(shaderID, logLength, NULL, buffer);
-        std::cout << buffer << std::endl;
-
-        return false;
+        this->compiledSuccessfully = false;
     }
 
-    return true;
+    this->compiledSuccessfully = true;
 }
 
-bool mugg::core::ShaderProgram::Link() {    
-    this->CompileShader(this->vsID, this->vsData.c_str());
-    if(!this->CheckShaderForError(this->vsID)) {
-        std::cout << "Vertex Shader has errors!\n";
-        return false;
-    }
-    
-    this->CompileShader(this->fsID, this->fsData.c_str());
-    if(!this->CheckShaderForError(this->fsID)) {
-        std::cout << "Fragment Shader has errors!\n";
-        return false;
-    }
-
-    glAttachShader(this->programID, this->vsID);
-    glAttachShader(this->programID, this->fsID);
-
-    glLinkProgram(this->programID);
-    
-    glDeleteShader(this->vsID);
-    glDeleteShader(this->fsID);
-
-    if(!this->CheckProgramForError()) {
-        return false;
-    }
-
-    return true;
-}
-
-bool mugg::core::ShaderProgram::CheckProgramForError() {
-    GLint result = GL_FALSE;
+const char* mugg::graphics::ShaderProgram::GetCompileLog() {
     int logLength = 0;
+    glGetProgramiv(this->ID, GL_INFO_LOG_LENGTH, &logLength);
+    
+    GLchar buffer[logLength];
+    glGetProgramInfoLog(this->ID, logLength, NULL, buffer);
 
-    glGetProgramiv(this->programID, GL_LINK_STATUS, &result);
-    glGetProgramiv(this->programID, GL_INFO_LOG_LENGTH, &logLength);
+    std::string returnval;
 
-    if(result == GL_FALSE) {
-        GLchar buffer[logLength];
-        glGetProgramInfoLog(this->programID, logLength, NULL, buffer);
-        std::cout << buffer << std::endl;
-
-        return false;
+    for(int i = 0; i <= logLength; i++) {
+        returnval += buffer[i];
     }
 
-    return true;
-}
-
-GLuint mugg::core::ShaderProgram::GetProgramID() {
-    return this->programID;
+    return returnval.c_str();
 }
 

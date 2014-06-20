@@ -14,15 +14,22 @@ mugg::graphics::Color mugg::graphics::Renderer::GetBackgroundColor() {
     return this->backgroundColor;
 }
 
-void mugg::graphics::Renderer::AddShaderProgram(mugg::core::ShaderProgram shaderProgram) {
-    this->programVector.push_back(shaderProgram);
+bool mugg::graphics::Renderer::AddShaderProgram(mugg::graphics::ShaderProgram shaderProgram) {
+    if(shaderProgram.GetCompiledSuccessfully()) {
+        this->programVector.push_back(shaderProgram);
+        return true;
+    }
+    
+    std::cout << "Tried to add a shaderprogram with errors!\n";
+    
+    return false;
 }
-mugg::core::ShaderProgram mugg::graphics::Renderer::GetShaderProgramByIndex(int index) {
+mugg::graphics::ShaderProgram mugg::graphics::Renderer::GetShaderProgramByIndex(int index) {
     if(this->programVector.size() != 0) {
         return this->programVector[index];
     }
 }
-std::vector<mugg::core::ShaderProgram> mugg::graphics::Renderer::GetShaderProgramVector() {
+std::vector<mugg::graphics::ShaderProgram> mugg::graphics::Renderer::GetShaderProgramVector() {
     return this->programVector;
 }
 
@@ -35,11 +42,14 @@ bool mugg::graphics::Renderer::Initialize() {
 void mugg::graphics::Renderer::BeginRender(glm::vec2 viewportResolution = glm::vec2(800, 600)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glViewport(0, 0, viewportResolution.x, viewportResolution.y);
+    if(viewportResolution != this->viewportResolution) {
+        this->viewportResolution = viewportResolution;
+        glViewport(0, 0, viewportResolution.x, viewportResolution.y);
+    }
     
     if(this->programVector.size() != 0) {
-        for(int i = 0; i <= this->programVector.size(); i++) {
-            glUseProgram(this->programVector[i].GetProgramID());
+        for(int i = 0; i < this->programVector.size(); i++) {
+            glUseProgram(this->programVector[i].GetID());
         }
     }
 }
