@@ -38,6 +38,8 @@ namespace mugg {
                 bool GetCompiledSuccessfully();
 
                 bool Validate();
+
+                GLint GetNumberOfAttachedShaders();
         };
     }
 }

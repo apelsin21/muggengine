@@ -56,6 +56,14 @@ namespace mugg {
             return 0;
         }
 
+        int shaderProgramGetNumberOfAttachedShaders(lua_State* L) {
+            mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
+
+            lua_pushnumber(L, program->GetNumberOfAttachedShaders());
+
+            return 1;
+        }
+
         int shaderProgramLink(lua_State* L) {
             mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
 
@@ -71,6 +79,8 @@ namespace mugg {
             {"add_shader", shaderProgramAddShader},
             {"link", shaderProgramLink},
             
+            {"get_number_of_attached_shaders", shaderProgramGetNumberOfAttachedShaders},
+
             {"__gc", shaderProgramDestructor},
             {NULL, NULL}
         };

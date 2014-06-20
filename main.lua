@@ -3,11 +3,11 @@ Window.create(800, 600, 0, 0, "MuggEngine Window", false)
 start_time = os.time()
 
 shader_program = ShaderProgram.new()
-
 shader_program:load_shader("VertexShader", "data/shaders/vertex.glsl")
 shader_program:load_shader("FragmentShader", "data/shaders/fragment.glsl")
-
 shader_program:link()
+
+print("shader_program has " .. shader_program:get_number_of_attached_shaders() .. " shaders")
 
 Renderer.initialize()
 

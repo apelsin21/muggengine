@@ -135,3 +135,11 @@ bool mugg::graphics::ShaderProgram::Validate() {
 
     return true;
 }
+
+GLint mugg::graphics::ShaderProgram::GetNumberOfAttachedShaders() {
+    GLint numberOfShaders = 0;
+
+    glGetProgramiv(this->ID, GL_ATTACHED_SHADERS, &numberOfShaders);
+
+    return numberOfShaders;
+}
