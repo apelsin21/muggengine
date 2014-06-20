@@ -1,5 +1,7 @@
 #version 130
 
+in vec4 position;
+
 void main() {
-    gl_Position = vec4(0, 0, 0, 0); 
+    gl_Position = position; 
 }
