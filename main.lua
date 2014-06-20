@@ -7,8 +7,6 @@ shader_program:load_shader("VertexShader", "data/shaders/vertex.glsl")
 shader_program:load_shader("FragmentShader", "data/shaders/fragment.glsl")
 shader_program:link()
 
-print("shader_program has " .. shader_program:get_number_of_attached_shaders() .. " shaders")
-
 Renderer.initialize()
 
 Renderer.add_shader_program(shader_program)
@@ -27,6 +25,10 @@ function update()
     if Window.is_focused() == true then
         if InputHandler.is_key_down("Escape") == true then
             Window.close()
+        end
+
+        if InputHandler.is_key_down("F1") == true then
+            dofile("main.lua")
         end
 
         if InputHandler.is_key_down("Space") == true then
