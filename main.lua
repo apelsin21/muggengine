@@ -11,11 +11,11 @@ Renderer.initialize()
 
 Renderer.add_shader_program(shader_program)
 
-backgroundColor = Color.new()
-
 last_time = os.time()
 deltatime = 0
 frames = 0
+
+texture = Texture2D.new("data/textures/test.png")
 
 function randomFloat(min, max)
     return min + math.random() * (max - min)
@@ -27,13 +27,8 @@ function update()
             Window.close()
         end
 
-        if InputHandler.is_key_down("F1") == true then
-            dofile("main.lua")
-        end
-
         if InputHandler.is_key_down("Space") == true then
-            backgroundColor:set_colors(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1)
-            Renderer.set_background_color(backgroundColor)
+            Renderer.set_background_color(Color.new(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1))
         end
     end
 

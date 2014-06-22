@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
+#include "graphicsdefs.hpp"
+
 namespace mugg {
     namespace graphics {
         static GLfloat fallbackTexture[] = {
@@ -17,13 +19,14 @@ namespace mugg {
         class Texture2D {
             private:
                 sf::Image image;
-                GLuint textureID;
+                GLuint ID;
                 glm::vec2 resolution;
                 const char* filepath;
                 GLenum magFilter, minFilter;
                 GLenum wrapS, wrapT;
             public:
                 Texture2D(GLenum magFilter, GLenum minFilter, GLenum wrapS, GLenum wrapT);
+                Texture2D(const char* filepath);
                 ~Texture2D();
 
                 bool LoadFromFilepath(const char* filepath);

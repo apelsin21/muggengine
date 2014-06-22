@@ -17,6 +17,7 @@
 #include "shaderprogrambinds.hpp"
 #include "shaderbinds.hpp"
 #include "rendererbinds.hpp"
+#include "texture2dbinds.hpp"
 
 void checkForError() {
     GLenum errorCode;    
@@ -71,8 +72,8 @@ int main() {
     //24 depth bits
     //8 stencil bits
     //0 antialiasing
-    //OpenGL version 3.0
-    sf::ContextSettings settings(24, 8, 0, 3, 0);
+    //OpenGL version 2.1
+    sf::ContextSettings settings(24, 8, 0, 2, 1);
     sf::Context context(settings, 800, 600);
 
     glewExperimental = true;
@@ -92,6 +93,7 @@ int main() {
     system.RegisterMetatable(mugg::binds::shaderProgramFuncs, mugg::binds::ShaderProgramPrivateName, mugg::binds::ShaderProgramPublicName);
     system.RegisterMetatable(mugg::binds::rendererFuncs, mugg::binds::RendererPrivateName, mugg::binds::RendererPublicName);
     system.RegisterMetatable(mugg::binds::shaderFuncs, mugg::binds::ShaderPrivateName, mugg::binds::ShaderPublicName);
+    system.RegisterMetatable(mugg::binds::texture2DFuncs, mugg::binds::Texture2DPrivateName, mugg::binds::Texture2DPublicName);
 
     system.DoFile("main.lua");
 

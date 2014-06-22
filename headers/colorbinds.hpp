@@ -23,6 +23,21 @@ namespace mugg {
 
             return 1;
         }
+        int colorConstructorWithParams(lua_State* L) {
+            mugg::graphics::Color** color = (mugg::graphics::Color**)lua_newuserdata(L, sizeof(mugg::graphics::Color*));
+            
+            float r = luaL_checknumber(L, 1);
+            float g = luaL_checknumber(L, 2);
+            float b = luaL_checknumber(L, 3);
+            float a = luaL_checknumber(L, 4);
+            
+            *color = new mugg::graphics::Color(r, g, b, a);
+
+            luaL_getmetatable(L, ColorPrivateName);
+            lua_setmetatable(L, -2);
+
+            return 1;
+        }
 
         int colorDestructor(lua_State* L) {
             mugg::graphics::Color* color = checkColor(L, 1);
@@ -113,6 +128,7 @@ namespace mugg {
 
         luaL_Reg colorFuncs[] = {
             {"new", colorConstructor},
+            {"new", colorConstructorWithParams},
 
             {"set_colors", colorSetColors},
 

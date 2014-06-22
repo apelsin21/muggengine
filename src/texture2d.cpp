@@ -1,16 +1,27 @@
 #include "texture2d.hpp"
 
 mugg::graphics::Texture2D::Texture2D(GLenum magFilter, GLenum minFilter, GLenum wrapS, GLenum wrapT) {
-    glGenTextures(1, &this->textureID);
+    glGenTextures(1, &this->ID);
     this->filepath = "";
     this->magFilter = magFilter;
     this->minFilter = minFilter;
     this->wrapS = wrapS;
     this->wrapT = wrapT;
 }
+mugg::graphics::Texture2D::Texture2D(const char* filepath) {
+    glGenTextures(1, &this->ID);
+
+    this->filepath = filepath;
+    this->magFilter = GL_NEAREST;
+    this->minFilter = GL_NEAREST;
+    this->wrapS = GL_REPEAT;
+    this->wrapT = GL_REPEAT;
+
+    this->LoadFromFilepath(filepath);
+}
 
 mugg::graphics::Texture2D::~Texture2D() {
-    glDeleteTextures(1, &this->textureID);
+    glDeleteTextures(1, &this->ID);
 }
 
 bool mugg::graphics::Texture2D::LoadFromFilepath(const char* filepath) {
@@ -46,7 +57,7 @@ bool mugg::graphics::Texture2D::LoadFromFilepath(const char* filepath) {
 }
 
 void mugg::graphics::Texture2D::Bind() {
-    glBindTexture(GL_TEXTURE_2D, this->textureID);
+    glBindTexture(GL_TEXTURE_2D, this->ID);
 }
 
 void mugg::graphics::Texture2D::UnBind() {
