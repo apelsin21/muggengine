@@ -4,48 +4,55 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-#include <SFML/Window.hpp>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
 #include <iostream>
 
+#include "keydefs.hpp"
+
 namespace mugg {
     class Window {
         private:
-            sf::Window window;
-            glm::vec2 resolution, position;
-            bool fullscreen, vsync, active, open, focused;
+            GLFWwindow* window;
+            int width, height, posX, posY;
+            bool fullscreen, vsync, open, focused, iconified, visible;
             int framerateLimit;
             const char* title;
             bool changed; //True if window needs to recreate, false if not
         public:
-            Window(glm::vec2 resolution, glm::vec2 position, const char* title);
+            Window(int width, int height, const char* title);
             Window();
             ~Window();
 
-            bool Create(glm::vec2 resolution, glm::vec2 position, const char* title, bool fullscreen);
-
-            void SetPosition(glm::vec2 position);
-            glm::vec2 GetPosition();
-
-            void SetResolution(glm::vec2 resolution);
-            glm::vec2 GetResolution();
-
-            void SetFullscreen(bool fullscreen);
-            bool GetFullscreen();
-            
-            void SetOpen(bool open);
+            bool Open(int width, int height, const char* title);
             bool IsOpen();
             void Close();
+            
+            void SetPosition(int x, int y);
+            int GetPositionX();
+            int GetPositionY();
+
+            void SetSize(int width, int height);
+            void GetSize(int &out_width, int &out_height);
+
+            void SetResolution(int width, int height);
+            int GetWidth();
+            int GetHeight();
+            
+            void GetFramebufferSize(int &out_width, int &out_height);
+
+            void SetFullscreen(bool fullscreen, int monitor);
+            bool GetFullscreen();
+
+            void SetIconified(bool iconified);
+            bool IsIconified();
 
             void SetVsync(bool enabled);
             bool GetVsync();
 
             void SetFramerateLimit(int limit);
             int GetFramerateLimit();
-
-            void SetActive(bool active);
-            bool GetActive();
 
             bool IsFocused();
 
@@ -57,6 +64,10 @@ namespace mugg {
             bool Recreate();
 
             void ReactToEvents();            
+
+            bool IsKeyDown(mugg::input::Key key);
+            bool IsKeyStringDown(const char* string);
+            mugg::input::Key GetLastPressedKey();
 
             //Swaps front and back buffers
             void SwapBuffers();

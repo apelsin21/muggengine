@@ -3,11 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(LIBRARIES
     lua
-    sfml-audio
-    sfml-graphics
-    sfml-network
-    sfml-system
-    sfml-window
+    glfw
     freetype
     assimp
     GLEW

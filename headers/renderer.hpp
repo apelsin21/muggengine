@@ -3,6 +3,7 @@
 
 #include "shaderprogram.hpp"
 #include "color.hpp"
+#include "window.hpp"
 
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -18,7 +19,7 @@ namespace mugg {
             private:
                 std::vector<mugg::graphics::ShaderProgram> programVector;
                 mugg::graphics::Color backgroundColor;
-                glm::vec2 viewportResolution;
+                int fbWidth, fbHeight;
             public:
                 Renderer();
                 ~Renderer();
@@ -32,8 +33,8 @@ namespace mugg {
                 
                 bool Initialize();
                 
-                void BeginRender(glm::vec2 viewportResolution);
-                void EndRender();
+                void Render(mugg::Window window);
+                void Render(int width, int height);
         };
 
     }

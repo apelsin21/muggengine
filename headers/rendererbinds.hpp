@@ -17,8 +17,6 @@ namespace mugg {
         static const char* RendererPrivateName = "mugg_Renderer";
         static const char* RendererPublicName = "Renderer";
 
-        mugg::graphics::Renderer* renderer = new mugg::graphics::Renderer();
-        
         mugg::graphics::Renderer* checkRenderer(lua_State* L, int n) {
             return *(mugg::graphics::Renderer**)luaL_checkudata(L, n, RendererPrivateName);
         }
@@ -34,18 +32,24 @@ namespace mugg {
         }
 
         int rendererDeconstructor(lua_State* L) {
+            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
+
             delete renderer;
 
             return 0;
         }
 
         int rendererSetBackgroundColor(lua_State* L) {
-            renderer->SetBackgroundColor(*checkColor(L, 1));
+            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
+
+            renderer->SetBackgroundColor(*checkColor(L, 2));
 
             return 0;
         }
 
         int rendererGetBackgroundColor(lua_State* L) {
+            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
+
             mugg::graphics::Color** color = (mugg::graphics::Color**)lua_newuserdata(L, sizeof(mugg::graphics::Color*));
             *color = new mugg::graphics::Color(renderer->GetBackgroundColor().r,
                                               renderer->GetBackgroundColor().g,
@@ -58,7 +62,9 @@ namespace mugg {
         }
 
         int rendererAddShaderProgram(lua_State* L) {
-            mugg::graphics::ShaderProgram* shaderProgram = checkShaderProgram(L, 1);
+            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
+
+            mugg::graphics::ShaderProgram* shaderProgram = checkShaderProgram(L, 2);
         
             renderer->AddShaderProgram(*shaderProgram);
 
@@ -66,27 +72,27 @@ namespace mugg {
         }
 
         int rendererInitialize(lua_State* L) {
+            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
+
             renderer->Initialize();
 
             return 0;
         }
 
-        int rendererBeginRender(lua_State* L) {
-            int resX = luaL_checknumber(L, 1);
-            int resY = luaL_checknumber(L, 2);
+        int rendererRender(lua_State* L) {
+            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
 
-            renderer->BeginRender(glm::vec2(resX, resY));
+            int width = luaL_checknumber(L, 2);
+            int height = luaL_checknumber(L, 3);
 
-            return 0;
-        }
-
-        int rendererEndRender(lua_State* L) {
-            renderer->EndRender();
+            renderer->Render(width, height);
 
             return 0;
         }
 
         luaL_Reg rendererFuncs[] = {
+            {"new", rendererConstructor},
+
             {"set_background_color", rendererSetBackgroundColor},
             {"get_background_color", rendererGetBackgroundColor},
 
@@ -94,8 +100,7 @@ namespace mugg {
 
             {"initialize", rendererInitialize},
 
-            {"begin_render", rendererBeginRender},
-            {"end_render", rendererEndRender},
+            {"render", rendererRender},
 
             {"__gc", rendererDeconstructor},
             {NULL, NULL}

@@ -4,26 +4,33 @@
 #include "window.hpp"
 
 #include <lua.hpp>
-#include <glm/glm.hpp>
 
 namespace mugg {
     namespace binds {
         static const char* WindowPrivateName = "mugg_Window";
         static const char* WindowPublicName = "Window";
 
-        mugg::Window* window = new mugg::Window();
-
         mugg::Window* checkWindow(lua_State* L, int n) {
             return *(mugg::Window**)luaL_checkudata(L, n, WindowPrivateName);
         }
 
         int windowConstructor(lua_State* L) {
-            double x = luaL_checknumber(L, 1);
-            double y = luaL_checknumber(L, 2);
+            mugg::Window** window = (Window**)lua_newuserdata(L, sizeof(mugg::Window*));
+            *window = new mugg::Window();
+
+            luaL_getmetatable(L, WindowPrivateName);
+            lua_setmetatable(L, -2);
+
+            return 1;
+        }
+
+        int windowConstructorParams(lua_State* L) {
+            int width = (int)luaL_checknumber(L, 1);
+            int height = (int)luaL_checknumber(L, 2);
             const char* title = luaL_checkstring(L, 3);
 
-            mugg::Window** window = (Window**)lua_newuserdata(L, sizeof(mugg::Window*));
-            *window = new mugg::Window(glm::vec2(x, y), glm::vec2(0, 0), title);
+            mugg::Window** window = (mugg::Window**)lua_newuserdata(L, sizeof(mugg::Window*));
+            *window = new mugg::Window(width, height, title);
 
             luaL_getmetatable(L, WindowPrivateName);
             lua_setmetatable(L, -2);
@@ -32,97 +39,115 @@ namespace mugg {
         }
 
         int windowDeconstructor(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+            
             delete window;
 
             return 0;
         }
 
-        int windowCreate(lua_State* L) {
-            int resX = luaL_checknumber(L, 1);
-            int resY = luaL_checknumber(L, 2);
-            int posX = luaL_checknumber(L, 3);
-            int posY = luaL_checknumber(L, 4);
-            const char* title = luaL_checkstring(L, 5);
+        int windowOpen(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
             
-            bool fullscreen;
-
-            if(lua_isboolean(L, 6)) {
-                fullscreen = lua_toboolean(L, 6);
-            } else {
-                luaL_error(L, "Argument to set_fullscreen wasn't a boolean\n");
-            }
+            int width = luaL_checknumber(L, 2);
+            int height = luaL_checknumber(L, 3);
+            const char* title = luaL_checkstring(L, 4);
             
-            window->Create(glm::vec2(resX, resY), glm::vec2(posX, posY), title, fullscreen);
+            window->Open(width, height, title);
 
             return 0;
         }
 
         int windowSetPosition(lua_State* L) {
-            double x = luaL_checknumber(L, 1);
-            double y = luaL_checknumber(L, 2);
+            mugg::Window* window = checkWindow(L, 1);
 
-            window->SetPosition(glm::vec2(x, y));
+            int x = (int)luaL_checknumber(L, 2);
+            int y = (int)luaL_checknumber(L, 3);
+
+            window->SetPosition(x, y);
 
             return 0;
         }
         int windowGetPositionX(lua_State* L) {
-            lua_pushnumber(L, window->GetPosition().x);
+            mugg::Window* window = checkWindow(L, 1);
+            
+            lua_pushnumber(L, window->GetPositionX());
             return 1;
         }
         int windowGetPositionY(lua_State* L) {
-            lua_pushnumber(L, window->GetPosition().y);
+            mugg::Window* window = checkWindow(L, 1);
+
+            lua_pushnumber(L, window->GetPositionY());
             return 1;
         }
 
         int windowSetResolution(lua_State* L) {
-            double x = luaL_checknumber(L, 1);
-            double y = luaL_checknumber(L, 2);
+            mugg::Window* window = checkWindow(L, 1);
 
-            window->SetResolution(glm::vec2(x, y));
+            int width = (int)luaL_checknumber(L, 2);
+            int height = (int)luaL_checknumber(L, 3);
+
+            window->SetResolution(width, height);
 
             return 0;
         }
-        int windowGetResolutionX(lua_State* L) {
-            lua_pushnumber(L, window->GetResolution().x);
+        int windowGetWidth(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            lua_pushnumber(L, window->GetWidth());
             return 1;
         }
-        int windowGetResolutionY(lua_State* L) {
-            lua_pushnumber(L, window->GetResolution().y);
+        int windowGetHeight(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            lua_pushnumber(L, window->GetHeight());
             return 1;
         }
 
         int windowSetFullscreen(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+            
             bool arg;
 
-            if(lua_isboolean(L, 1)) {
-                arg = lua_toboolean(L, 1);
+            if(lua_isboolean(L, 2)) {
+                arg = lua_toboolean(L, 2);
             } else {
                 luaL_error(L, "Argument to set_fullscreen wasn't a boolean\n");
             }
 
-            window->SetFullscreen(arg);
+            int monitor = luaL_checknumber(L, 3);
+
+            window->SetFullscreen(arg, monitor);
             return 0;
         }
         int windowGetFullscreen(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
             lua_pushboolean(L, window->GetFullscreen());
             return 1;
         }
 
         int windowIsOpen(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
             lua_pushboolean(L, window->IsOpen());
             return 1;
         }
        
         int windowClose(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
             window->Close();
             return 0;
         }
 
         int windowSetVsync(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
             bool arg;
 
-            if(lua_isboolean(L, 1)) {
-                arg = lua_toboolean(L, 1);
+            if(lua_isboolean(L, 2)) {
+                arg = lua_toboolean(L, 2);
             } else {
                 luaL_error(L, "Argument to function set_vsync() wasn't a boolean");
             }
@@ -131,68 +156,86 @@ namespace mugg {
             return 0;
         }
         int windowGetVsync(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
             lua_pushboolean(L, window->GetVsync());
             return 1;
         }
 
         int windowSetTitle(lua_State* L) {
-            const char* arg = luaL_checkstring(L, 1);
+            mugg::Window* window = checkWindow(L, 1);
+
+            const char* arg = luaL_checkstring(L, 2);
 
             window->SetTitle(arg);
 
             return 0;
         }
         int windowGetTitle(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+            
             lua_pushstring(L, window->GetTitle());
             return 1;
         }
 
+        int windowIsKeyDown(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            const char* keystring = luaL_checkstring(L, 2);
+
+            bool isPressed = window->IsKeyStringDown(keystring);
+
+            lua_pushboolean(L, isPressed);
+
+            return 1;
+        }
+
+        int windowGetLastPressedKey(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            const char* lastPressed = mugg::input::KeyString[(int)mugg::input::lastPressedKey];
+
+            lua_pushstring(L, lastPressed);
+
+            return 1;
+        }
+
         int windowIsFocused(lua_State *L) {
+            mugg::Window* window = checkWindow(L, 1);
+
             lua_pushboolean(L, window->IsFocused());
             return 1;
         }
 
         int windowSwapBuffers(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+            
             window->SwapBuffers();
             return 0;
         }
 
-        int windowSetActive(lua_State* L) {
-            bool arg;
-
-            if(lua_isboolean(L, 1)) {
-                arg = lua_toboolean(L, 1);
-            } else {
-                luaL_error(L, "Argument to function set_active() wasn't a boolean");
-            }
-
-            window->SetActive(arg);
-            return 0;
-        }
-        int windowGetActive(lua_State* L) {
-            lua_pushboolean(L, window->GetActive());
-            return 1;
-        }
-
         luaL_Reg windowFuncs[] = {
-            {"create", windowCreate},
+            {"new", windowConstructor},
+            {"new", windowConstructorParams},
+
+            {"open", windowOpen},
+
+            {"is_key_down", windowIsKeyDown},
+            {"get_last_pressed_key", windowGetLastPressedKey},
 
             {"set_position", windowSetPosition},
             {"get_position_x", windowGetPositionX},
             {"get_position_y", windowGetPositionY},
 
             {"set_resolution", windowSetResolution},
-            {"get_resolution_x", windowGetResolutionX},
-            {"get_resolution_y", windowGetResolutionY},
+            {"get_width", windowGetWidth},
+            {"get_height", windowGetHeight},
 
             {"set_fullscreen", windowSetFullscreen},
             {"get_fullscreen", windowGetFullscreen},
 
             {"set_vsync", windowSetVsync},
             {"get_vsync", windowGetVsync},
-
-            {"set_active", windowSetActive},
-            {"get_active", windowGetActive},
 
             {"set_title", windowSetTitle},
             {"get_title", windowGetTitle},

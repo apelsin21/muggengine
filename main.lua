@@ -1,4 +1,4 @@
-Window.create(800, 600, 0, 0, "MuggEngine Window", false)
+window = Window.new(800, 600, "GLFW WINDOW TEST")
 
 start_time = os.time()
 
@@ -7,48 +7,47 @@ shader_program:load_shader("VertexShader", "data/shaders/vertex.glsl")
 shader_program:load_shader("FragmentShader", "data/shaders/fragment.glsl")
 shader_program:link()
 
-Renderer.initialize()
+renderer = Renderer.new()
 
-Renderer.add_shader_program(shader_program)
+renderer:initialize()
+
+renderer:add_shader_program(shader_program)
 
 last_time = os.time()
 deltatime = 0
 frames = 0
-
-texture = Texture2D.new("data/textures/test.png")
 
 function randomFloat(min, max)
     return min + math.random() * (max - min)
 end
 
 function update()
-    if Window.is_focused() == true then
-        if InputHandler.is_key_down("Escape") == true then
-            Window.close()
-        end
+    frames = frames + 1
 
-        if InputHandler.is_key_down("Space") == true then
-            Renderer.set_background_color(Color.new(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1))
-        end
+    if window:is_key_down("space") == true then
+        renderer:set_background_color(Color.new(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1))
     end
 
-    frames = frames + 1
-    
     if os.difftime(os.time(), last_time) >= 1 then
-        Window.set_title("Running time: " .. os.difftime(os.time(), start_time) .. ", ms/frame: " .. 1000/frames)
+        window:set_title("Running time: " .. os.difftime(os.time(), start_time) .. ", ms/frame: " .. 1000/frames)
         frames = 0
         last_time = last_time + 1;
     end
 end
 
 function render()
-    Renderer.begin_render(Window.get_resolution_x(), Window.get_resolution_y())
-    Renderer.end_render()
-    
-    Window.swap_buffers()
+    if window:is_key_down("escape") == true then
+        window:close()
+    end
+
+    if window:is_focused() == true then
+        renderer:render(window:get_width(), window:get_height())
+    end
+
+    window:swap_buffers()
 end
 
-while Window.is_open() == true do
+while window:is_open() == true do
     update()
     render()
 end

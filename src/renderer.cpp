@@ -41,12 +41,16 @@ std::vector<mugg::graphics::ShaderProgram> mugg::graphics::Renderer::GetShaderPr
 bool mugg::graphics::Renderer::Initialize() {
 }
 
-void mugg::graphics::Renderer::BeginRender(glm::vec2 viewportResolution = glm::vec2(800, 600)) {
+void mugg::graphics::Renderer::Render(mugg::Window window) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if(viewportResolution != this->viewportResolution) {
-        this->viewportResolution = viewportResolution;
-        glViewport(0, 0, viewportResolution.x, viewportResolution.y);
+    int width, height;
+    window.GetFramebufferSize(width, height);
+
+    if(width != this->fbWidth && height != this->fbHeight) {
+        this->fbWidth = width;
+        this->fbHeight = height;
+        glViewport(0, 0, this->fbWidth, this->fbHeight);
     }
     
     if(this->programVector.size() != 0) {
@@ -56,5 +60,18 @@ void mugg::graphics::Renderer::BeginRender(glm::vec2 viewportResolution = glm::v
     }
 }
 
-void mugg::graphics::Renderer::EndRender() {
+void mugg::graphics::Renderer::Render(int width, int height) {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    if(width != this->fbWidth && height != this->fbHeight) {
+        this->fbWidth = width;
+        this->fbHeight = height;
+        glViewport(0, 0, this->fbWidth, this->fbHeight);
+    }
+    
+    if(this->programVector.size() != 0) {
+        for(int i = 0; i < this->programVector.size(); i++) {
+            glUseProgram(this->programVector[i].GetID());
+        }
+    }
 }
