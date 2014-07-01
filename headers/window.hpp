@@ -19,8 +19,8 @@ namespace mugg {
         private:
             GLFWwindow* window;
             int width, height, posX, posY;
-            bool fullscreen, vsync, open, focused, iconified, visible;
-            int framerateLimit;
+            bool fullscreen, open, focused, iconified, visible;
+            int swapInterval;
             const char* title;
             bool changed; //True if window needs to recreate, false if not
         public:
@@ -51,8 +51,8 @@ namespace mugg {
             void SetIconified(bool iconified);
             bool IsIconified();
 
-            void SetVsync(bool enabled);
-            bool GetVsync();
+            void SetSwapInterval(int interval);
+            int GetSwapInterval();
 
             void SetFramerateLimit(int limit);
             int GetFramerateLimit();

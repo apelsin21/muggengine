@@ -10,12 +10,12 @@ mugg::Window::Window(int width, int height, const char* title) {
     this->height = 0;
     this->posX = 0;
     this->posY = 0;
-    
+    this->swapInterval = 0;
+
     //Strings
     this->title = "";
 
     //Boolean values
-    this->vsync = false;
     this->fullscreen = false;
     this->changed = false;
     this->open = false;
@@ -31,12 +31,12 @@ mugg::Window::Window() {
     this->height = 0;
     this->posX = 0;
     this->posY = 0;
+    this->swapInterval = 0;
     
     //Strings
     this->title = "";
 
     //Boolean values
-    this->vsync = false;
     this->fullscreen = false;
     this->changed = false;
     this->open = false;
@@ -173,11 +173,11 @@ bool mugg::Window::GetFullscreen() {
     return this->fullscreen;
 }
 
-void mugg::Window::SetVsync(bool enabled) {
-    this->vsync = enabled;
+void mugg::Window::SetSwapInterval(int interval) {
+    this->swapInterval = interval;
 }
-bool mugg::Window::GetVsync() {
-    return this->vsync;
+int mugg::Window::GetSwapInterval() {
+    return this->swapInterval;
 }
 
 void mugg::Window::SetTitle(const char* title) {

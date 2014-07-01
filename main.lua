@@ -21,11 +21,19 @@ function randomFloat(min, max)
     return min + math.random() * (max - min)
 end
 
+i = 0
+
 function update()
     frames = frames + 1
 
     if window:is_key_down("space") == true then
         renderer:set_background_color(Color.new(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1))
+    end
+
+    if window:is_key_down("enter") == true then
+        i = i + 1
+        window:set_swap_interval(i)
+        print("Swap interval: " .. i)
     end
 
     if os.difftime(os.time(), last_time) >= 1 then

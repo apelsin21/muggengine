@@ -139,24 +139,18 @@ namespace mugg {
             return 0;
         }
 
-        int windowSetVsync(lua_State* L) {
+        int windowSetSwapInterval(lua_State* L) {
             mugg::Window* window = checkWindow(L, 1);
 
-            bool arg;
-
-            if(lua_isboolean(L, 2)) {
-                arg = lua_toboolean(L, 2);
-            } else {
-                luaL_error(L, "Argument to function set_vsync() wasn't a boolean");
-            }
-
-            window->SetVsync(arg);
+            window->SetSwapInterval((int)luaL_checknumber(L, 2));
+            
             return 0;
         }
-        int windowGetVsync(lua_State* L) {
+        int windowGetSwapInterval(lua_State* L) {
             mugg::Window* window = checkWindow(L, 1);
 
-            lua_pushboolean(L, window->GetVsync());
+            lua_pushnumber(L, window->GetSwapInterval());
+
             return 1;
         }
 
@@ -232,8 +226,8 @@ namespace mugg {
             {"set_fullscreen", windowSetFullscreen},
             {"get_fullscreen", windowGetFullscreen},
 
-            {"set_vsync", windowSetVsync},
-            {"get_vsync", windowGetVsync},
+            {"set_swap_interval", windowSetSwapInterval},
+            {"get_swap_interval", windowGetSwapInterval},
 
             {"set_title", windowSetTitle},
             {"get_title", windowGetTitle},
