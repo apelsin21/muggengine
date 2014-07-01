@@ -82,10 +82,7 @@ namespace mugg {
         int rendererRender(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
 
-            int width = luaL_checknumber(L, 2);
-            int height = luaL_checknumber(L, 3);
-
-            renderer->Render(width, height);
+            renderer->Render();
 
             return 0;
         }

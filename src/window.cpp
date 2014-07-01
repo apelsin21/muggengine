@@ -1,28 +1,74 @@
 #include "window.hpp"
 
-mugg::Window::Window(int width, int height, const char* title) {
-    this->Open(width, height, title);
+static void mugg::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
 }
-mugg::Window::Window() {
-    this->framerateLimit = 0;
-    this->vsync = false;
-    this->fullscreen = false;
-    this->open = false;
-    this->title = "";
-    this->changed = false;
+
+mugg::Window::Window(int width, int height, const char* title) {
+    //Numeric values
     this->width = 0;
     this->height = 0;
     this->posX = 0;
     this->posY = 0;
+    
+    //Strings
+    this->title = "";
+
+    //Boolean values
+    this->vsync = false;
+    this->fullscreen = false;
+    this->changed = false;
+    this->open = false;
+    this->focused = false;
+    this->iconified = false;
+    this->visible = false;
+    
+    this->Open(width, height, title);
+}
+mugg::Window::Window() {
+    //Numeric values
+    this->width = 0;
+    this->height = 0;
+    this->posX = 0;
+    this->posY = 0;
+    
+    //Strings
+    this->title = "";
+
+    //Boolean values
+    this->vsync = false;
+    this->fullscreen = false;
+    this->changed = false;
+    this->open = false;
+    this->focused = false;
+    this->iconified = false;
+    this->visible = false;
 }
 mugg::Window::~Window() {
     this->Close();
+
+    if(this->width != 0 || this->height != 0)
+        glfwTerminate();
 }
 
 bool mugg::Window::Open(int width, int height, const char* title) {
+    glfwSetErrorCallback(mugg::error::glfwErrorCallback);
+
+    if(!glfwInit()) {
+        std::cerr << "GLFW failed to initialize!\n";
+        return false;
+    }
+    
     this->window = glfwCreateWindow(width, height, title, NULL, NULL);
 
+    if(!window) {
+        std::cerr << "Failed to create a GLFW window!\n";
+        glfwTerminate();
+        return false;
+    }
+
     glfwSetKeyCallback(this->window, mugg::input::glfwKeyCallback);
+    glfwSetFramebufferSizeCallback(this->window, mugg::framebufferSizeCallback);
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -48,10 +94,8 @@ bool mugg::Window::Open(int width, int height, const char* title) {
     return true;
 }
 void mugg::Window::Close() {
-    if(this->open) {
-        glfwDestroyWindow(this->window);
-        this->open = false;
-    }
+    this->open = false;
+    glfwSetWindowShouldClose(this->window, true);
 }
 bool mugg::Window::IsOpen() {
     return this->open;
@@ -92,6 +136,7 @@ bool mugg::Window::IsIconified() {
 void mugg::Window::SetResolution(int width, int height) {
     this->width = width;
     this->height = height;
+    this->changed = true;
 }
 int mugg::Window::GetWidth() {
     return this->width;
@@ -114,9 +159,15 @@ void mugg::Window::GetFramebufferSize(int &out_width, int &out_height) {
     out_height = temp_height;
 }
 
-void mugg::Window::SetFullscreen(bool fullscreen, int monitor) {
-    this->fullscreen = fullscreen;
-    this->changed = true;
+void mugg::Window::SetFullscreen(bool fullscreen) {
+    if(fullscreen) {
+        this->window = glfwCreateWindow(this->width, this->height, this->title, glfwGetPrimaryMonitor(), NULL);
+        this->changed = true;
+        this->fullscreen = fullscreen;
+    } else {
+        this->window = glfwCreateWindow(this->width, this->height, this->title, NULL, NULL);
+        this->fullscreen = fullscreen;
+    }
 }
 bool mugg::Window::GetFullscreen() {
     return this->fullscreen;
@@ -158,246 +209,250 @@ bool mugg::Window::IsKeyStringDown(const char* cstring) {
 
     if(string == "space")
     	key = GLFW_KEY_SPACE;
-    if(string == "apostrophe")
+    else if(string == "apostrophe")
     	key = GLFW_KEY_APOSTROPHE;
-    if(string == "comma")
+    else if(string == "comma")
     	key = GLFW_KEY_COMMA;
-    if(string == "minus")
+    else if(string == "minus")
     	key = GLFW_KEY_MINUS;
-    if(string == "peroid")
+    else if(string == "peroid")
     	key = GLFW_KEY_PERIOD;
-    if(string == "slash")
+    else if(string == "slash")
     	key = GLFW_KEY_SLASH;
-    if(string == "num_0")
+    else if(string == "num_0")
     	key = GLFW_KEY_0;
-    if(string == "num_1")
+    else if(string == "num_1")
     	key = GLFW_KEY_1;
-    if(string == "num_2")
+    else if(string == "num_2")
     	key = GLFW_KEY_2;
-    if(string == "num_3")
+    else if(string == "num_3")
     	key = GLFW_KEY_3;
-    if(string == "num_4")
+    else if(string == "num_4")
     	key = GLFW_KEY_4;              
-    if(string == "num_5")
+    else if(string == "num_5")
     	key = GLFW_KEY_5;
-    if(string == "num_6")
+    else if(string == "num_6")
     	key = GLFW_KEY_6;
-    if(string == "num_7")
+    else if(string == "num_7")
     	key = GLFW_KEY_7;
-    if(string == "num_8")
+    else if(string == "num_8")
     	key = GLFW_KEY_8;
-    if(string == "num_9")
+    else if(string == "num_9")
     	key = GLFW_KEY_9;
-    if(string == "semicolon")
+    else if(string == "semicolon")
     	key = GLFW_KEY_SEMICOLON;
-    if(string == "equal")
+    else if(string == "equal")
     	key = GLFW_KEY_EQUAL;
-    if(string == "a")
+    else if(string == "a")
     	key = GLFW_KEY_A;
-    if(string == "b")
+    else if(string == "b")
     	key = GLFW_KEY_B;
-    if(string == "c")
+    else if(string == "c")
     	key = GLFW_KEY_C;
-    if(string == "d")
+    else if(string == "d")
     	key = GLFW_KEY_D;
-    if(string == "e")
+    else if(string == "e")
     	key = GLFW_KEY_E;
-    if(string == "f")
+    else if(string == "f")
     	key = GLFW_KEY_F;
-    if(string == "g")
+    else if(string == "g")
     	key = GLFW_KEY_G;
-    if(string == "h")
+    else if(string == "h")
     	key = GLFW_KEY_H;
-    if(string == "i")
+    else if(string == "i")
     	key = GLFW_KEY_I;
-    if(string == "j")
+    else if(string == "j")
     	key = GLFW_KEY_J;
-    if(string == "k")
+    else if(string == "k")
     	key = GLFW_KEY_K;
-    if(string == "l")
+    else if(string == "l")
     	key = GLFW_KEY_L;
-    if(string == "m")
+    else if(string == "m")
     	key = GLFW_KEY_M;
-    if(string == "n")
+    else if(string == "n")
     	key = GLFW_KEY_N;
-    if(string == "o")
+    else if(string == "o")
     	key = GLFW_KEY_O;
-    if(string == "p")
+    else if(string == "p")
     	key = GLFW_KEY_P;
-    if(string == "q")
+    else if(string == "q")
     	key = GLFW_KEY_Q;
-    if(string == "r")
+    else if(string == "r")
     	key = GLFW_KEY_R;
-    if(string == "s")
+    else if(string == "s")
     	key = GLFW_KEY_S;
-    if(string == "t")
+    else if(string == "t")
     	key = GLFW_KEY_T;
-    if(string == "u")
+    else if(string == "u")
     	key = GLFW_KEY_U;
-    if(string == "v")
+    else if(string == "v")
     	key = GLFW_KEY_V;
-    if(string == "w")
+    else if(string == "w")
     	key = GLFW_KEY_W;
-    if(string == "x")
+    else if(string == "x")
     	key = GLFW_KEY_X;
-    if(string == "y")
+    else if(string == "y")
     	key = GLFW_KEY_Y;
-    if(string == "z")
+    else if(string == "z")
     	key = GLFW_KEY_Z;
-    if(string == "left_bracket")
+    else if(string == "left_bracket")
     	key = GLFW_KEY_LEFT_BRACKET;
-    if(string == "backslash")
+    else if(string == "backslash")
     	key = GLFW_KEY_BACKSLASH;
-    if(string == "right_bracket")
+    else if(string == "right_bracket")
     	key = GLFW_KEY_RIGHT_BRACKET;
-    if(string == "grave_accent")
+    else if(string == "grave_accent")
     	key = GLFW_KEY_GRAVE_ACCENT;
-    if(string == "world_1")
+    else if(string == "world_1")
     	key = GLFW_KEY_WORLD_1;
-    if(string == "world_2")
+    else if(string == "world_2")
     	key = GLFW_KEY_WORLD_2;
-    if(string == "escape")
+    else if(string == "escape")
     	key = GLFW_KEY_ESCAPE;
-    if(string == "enter")
+    else if(string == "enter")
     	key = GLFW_KEY_ENTER;
-    if(string == "tab")
+    else if(string == "tab")
     	key = GLFW_KEY_TAB;
-    if(string == "backspace")
+    else if(string == "backspace")
     	key = GLFW_KEY_BACKSPACE;
-    if(string == "insert")
+    else if(string == "insert")
     	key = GLFW_KEY_INSERT;
-    if(string == "delete")
+    else if(string == "delete")
     	key = GLFW_KEY_DELETE;
-    if(string == "right")
+    else if(string == "right")
     	key = GLFW_KEY_RIGHT;
-    if(string == "left")
+    else if(string == "left")
     	key = GLFW_KEY_LEFT;
-    if(string == "down")
+    else if(string == "down")
     	key = GLFW_KEY_DOWN;
-    if(string == "up")
+    else if(string == "up")
     	key = GLFW_KEY_UP;
-    if(string == "page_up")
+    else if(string == "page_up")
     	key = GLFW_KEY_PAGE_UP;
-    if(string == "page_down")
+    else if(string == "page_down")
     	key = GLFW_KEY_PAGE_DOWN;
-    if(string == "home")
+    else if(string == "home")
     	key = GLFW_KEY_HOME;
-    if(string == "end")
+    else if(string == "end")
     	key = GLFW_KEY_END;
-    if(string == "caps_lock")
+    else if(string == "caps_lock")
     	key = GLFW_KEY_CAPS_LOCK;
-    if(string == "scroll_lock")
+    else if(string == "scroll_lock")
     	key = GLFW_KEY_SCROLL_LOCK;
-    if(string == "num_lock")
+    else if(string == "num_lock")
     	key = GLFW_KEY_NUM_LOCK;
-    if(string == "print_screen")
+    else if(string == "print_screen")
     	key = GLFW_KEY_PRINT_SCREEN;
-    if(string == "pause")
+    else if(string == "pause")
     	key = GLFW_KEY_PAUSE;
-    if(string == "f1")
+    else if(string == "f1")
     	key = GLFW_KEY_F1;
-    if(string == "f2")
+    else if(string == "f2")
     	key = GLFW_KEY_F2;
-    if(string == "f3")
+    else if(string == "f3")
     	key = GLFW_KEY_F3;
-    if(string == "f4")
+    else if(string == "f4")
     	key = GLFW_KEY_F4;
-    if(string == "f5")
+    else if(string == "f5")
     	key = GLFW_KEY_F5;
-    if(string == "f6")
+    else if(string == "f6")
     	key = GLFW_KEY_F6;
-    if(string == "f7")
+    else if(string == "f7")
     	key = GLFW_KEY_F7;
-    if(string == "f8")
+    else if(string == "f8")
     	key = GLFW_KEY_F8;
-    if(string == "f9")
+    else if(string == "f9")
     	key = GLFW_KEY_F9;
-    if(string == "f10")
+    else if(string == "f10")
     	key = GLFW_KEY_F10;
-    if(string == "f11")
+    else if(string == "f11")
     	key = GLFW_KEY_F11;
-    if(string == "f12")
+    else if(string == "f12")
     	key = GLFW_KEY_F12;
-    if(string == "f13")
+    else if(string == "f13")
     	key = GLFW_KEY_F13;
-    if(string == "f14")
+    else if(string == "f14")
     	key = GLFW_KEY_F14;
-    if(string == "f15")
+    else if(string == "f15")
     	key = GLFW_KEY_F15;
-    if(string == "f16")
+    else if(string == "f16")
     	key = GLFW_KEY_F16;
-    if(string == "f17")
+    else if(string == "f17")
     	key = GLFW_KEY_F17;
-    if(string == "f18")
+    else if(string == "f18")
     	key = GLFW_KEY_F18;
-    if(string == "f19")
+    else if(string == "f19")
     	key = GLFW_KEY_F19;
-    if(string == "f20")
+    else if(string == "f20")
     	key = GLFW_KEY_F20;
-    if(string == "f21")
+    else if(string == "f21")
     	key = GLFW_KEY_F21;
-    if(string == "f22")
+    else if(string == "f22")
     	key = GLFW_KEY_F22;
-    if(string == "f23")
+    else if(string == "f23")
     	key = GLFW_KEY_F23;
-    if(string == "f24")
+    else if(string == "f24")
     	key = GLFW_KEY_F24;
-    if(string == "f25")
+    else if(string == "f25")
     	key = GLFW_KEY_F25;
-    if(string == "kp_0")
+    else if(string == "kp_0")
     	key = GLFW_KEY_KP_0;
-    if(string == "kp_1")
+    else if(string == "kp_1")
     	key = GLFW_KEY_KP_1;
-    if(string == "kp_2")
+    else if(string == "kp_2")
     	key = GLFW_KEY_KP_2;
-    if(string == "kp_3")
+    else if(string == "kp_3")
     	key = GLFW_KEY_KP_3;
-    if(string == "kp_4")
+    else if(string == "kp_4")
     	key = GLFW_KEY_KP_4;
-    if(string == "kp_5")
+    else if(string == "kp_5")
     	key = GLFW_KEY_KP_5;
-    if(string == "kp_6")
+    else if(string == "kp_6")
     	key = GLFW_KEY_KP_6;
-    if(string == "kp_7")
+    else if(string == "kp_7")
     	key = GLFW_KEY_KP_7;
-    if(string == "kp_8")
+    else if(string == "kp_8")
     	key = GLFW_KEY_KP_8;
-    if(string == "kp_9")
+    else if(string == "kp_9")
     	key = GLFW_KEY_KP_9;
-    if(string == "kp_decimal")
+    else if(string == "kp_decimal")
     	key = GLFW_KEY_KP_DECIMAL;
-    if(string == "kp_divide")
+    else if(string == "kp_divide")
     	key = GLFW_KEY_KP_DIVIDE;
-    if(string == "kp_multiply")
+    else if(string == "kp_multiply")
     	key = GLFW_KEY_KP_MULTIPLY;
-    if(string == "kp_subtract")
+    else if(string == "kp_subtract")
     	key = GLFW_KEY_KP_SUBTRACT;
-    if(string == "kp_add")
+    else if(string == "kp_add")
     	key = GLFW_KEY_KP_ADD;
-    if(string == "kp_enter")
+    else if(string == "kp_enter")
     	key = GLFW_KEY_KP_ENTER;
-    if(string == "kp_equal")
+    else if(string == "kp_equal")
     	key = GLFW_KEY_KP_EQUAL;
-    if(string == "left_shift")
+    else if(string == "left_shift")
     	key = GLFW_KEY_LEFT_SHIFT;
-    if(string == "left_control")
+    else if(string == "left_control")
     	key = GLFW_KEY_LEFT_CONTROL;
-    if(string == "left_alt")
+    else if(string == "left_alt")
     	key = GLFW_KEY_LEFT_ALT;
-    if(string == "left_super")
+    else if(string == "left_super")
     	key = GLFW_KEY_LEFT_SUPER;
-    if(string == "right_shift")
+    else if(string == "right_shift")
     	key = GLFW_KEY_RIGHT_SHIFT;
-    if(string == "right_control")
+    else if(string == "right_control")
     	key = GLFW_KEY_RIGHT_CONTROL;
-    if(string == "right_alt")
+    else if(string == "right_alt")
     	key = GLFW_KEY_RIGHT_ALT;
-    if(string == "right_super")
+    else if(string == "right_super")
     	key = GLFW_KEY_RIGHT_SUPER;
-    if(string == "menu")
+    else if(string == "menu")
     	key = GLFW_KEY_MENU;
-    if(string == "last")
+    else if(string == "last")
         key = GLFW_KEY_LAST;
+    else {
+        std::cout << "Checked for keypress that doesn't exist!\n";
+        return false;
+    }
 
     if(key != GLFW_KEY_UNKNOWN && glfwGetKey(this->window, key) == GLFW_PRESS) {
         return true;
@@ -409,7 +464,7 @@ mugg::input::Key GetLastPressedKey() {
     return mugg::input::lastPressedKey;
 }
 
-void mugg::Window::ReactToEvents() {
+void mugg::Window::PollEvents() {
     if(glfwGetWindowAttrib(this->window, GLFW_FOCUSED))
         this->focused = true;
     else
@@ -426,8 +481,12 @@ void mugg::Window::ReactToEvents() {
         this->visible = false;
 }
 
+void mugg::Window::ReactToEvents() {
+}
+
 void mugg::Window::SwapBuffers() {
     if(this->open) {
+        this->PollEvents();
         this->ReactToEvents();
 
         glfwSwapBuffers(this->window);

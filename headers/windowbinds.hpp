@@ -115,9 +115,7 @@ namespace mugg {
                 luaL_error(L, "Argument to set_fullscreen wasn't a boolean\n");
             }
 
-            int monitor = luaL_checknumber(L, 3);
-
-            window->SetFullscreen(arg, monitor);
+            window->SetFullscreen(arg);
             return 0;
         }
         int windowGetFullscreen(lua_State* L) {

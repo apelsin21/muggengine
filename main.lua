@@ -41,7 +41,7 @@ function render()
     end
 
     if window:is_focused() == true then
-        renderer:render(window:get_width(), window:get_height())
+        renderer:render()
     end
 
     window:swap_buffers()

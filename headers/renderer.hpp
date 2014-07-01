@@ -19,7 +19,6 @@ namespace mugg {
             private:
                 std::vector<mugg::graphics::ShaderProgram> programVector;
                 mugg::graphics::Color backgroundColor;
-                int fbWidth, fbHeight;
             public:
                 Renderer();
                 ~Renderer();
@@ -33,8 +32,7 @@ namespace mugg {
                 
                 bool Initialize();
                 
-                void Render(mugg::Window window);
-                void Render(int width, int height);
+                void Render();
         };
 
     }

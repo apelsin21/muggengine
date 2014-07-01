@@ -65,13 +65,6 @@ void checkForError() {
 }
 
 int main() {
-    glfwSetErrorCallback(mugg::error::glfwErrorCallback);
-
-    if(!glfwInit()) {
-        std::cerr << "GLFW failed to initialize!\n";
-        return -1;
-    }
-
     mugg::ScriptSystem system(true);
 
     system.RegisterMetatable(mugg::binds::windowFuncs, mugg::binds::WindowPrivateName, mugg::binds::WindowPublicName);
@@ -83,8 +76,6 @@ int main() {
     system.DoFile("main.lua");
 
     checkForError();
-
-    glfwTerminate();
 
     return 0;
 }

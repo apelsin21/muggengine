@@ -10,8 +10,11 @@
 #include <iostream>
 
 #include "keydefs.hpp"
+#include "errorhandling.hpp"
 
 namespace mugg {
+    static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+
     class Window {
         private:
             GLFWwindow* window;
@@ -42,7 +45,7 @@ namespace mugg {
             
             void GetFramebufferSize(int &out_width, int &out_height);
 
-            void SetFullscreen(bool fullscreen, int monitor);
+            void SetFullscreen(bool fullscreen);
             bool GetFullscreen();
 
             void SetIconified(bool iconified);
@@ -63,6 +66,7 @@ namespace mugg {
             //Returns true on success, else false
             bool Recreate();
 
+            void PollEvents();
             void ReactToEvents();            
 
             bool IsKeyDown(mugg::input::Key key);

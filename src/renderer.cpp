@@ -41,34 +41,9 @@ std::vector<mugg::graphics::ShaderProgram> mugg::graphics::Renderer::GetShaderPr
 bool mugg::graphics::Renderer::Initialize() {
 }
 
-void mugg::graphics::Renderer::Render(mugg::Window window) {
+void mugg::graphics::Renderer::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    int width, height;
-    window.GetFramebufferSize(width, height);
-
-    if(width != this->fbWidth && height != this->fbHeight) {
-        this->fbWidth = width;
-        this->fbHeight = height;
-        glViewport(0, 0, this->fbWidth, this->fbHeight);
-    }
-    
-    if(this->programVector.size() != 0) {
-        for(int i = 0; i < this->programVector.size(); i++) {
-            glUseProgram(this->programVector[i].GetID());
-        }
-    }
-}
-
-void mugg::graphics::Renderer::Render(int width, int height) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    if(width != this->fbWidth && height != this->fbHeight) {
-        this->fbWidth = width;
-        this->fbHeight = height;
-        glViewport(0, 0, this->fbWidth, this->fbHeight);
-    }
-    
     if(this->programVector.size() != 0) {
         for(int i = 0; i < this->programVector.size(); i++) {
             glUseProgram(this->programVector[i].GetID());
