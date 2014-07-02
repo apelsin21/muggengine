@@ -25,11 +25,11 @@ end
 function update()
     frames = frames + 1
 
-    if window:is_key_down("space") == true then
+    if window:is_key_down("space") then
         renderer:set_background_color(Color.new(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1))
     end
 
-    if window:is_key_down("left_control") == true and window:is_key_down("v") == true then
+    if window:is_key_down("left_control") and window:is_key_down("v") then
         print("Clipboard contains: \"" .. window:get_clipboard() .. "\"")
     end
 
@@ -41,18 +41,18 @@ function update()
 end
 
 function render()
-    if window:is_key_down("escape") == true then
+    if window:is_key_down("escape") then
         window:close()
     end
 
-    if window:is_focused() == true then
+    if window:is_focused() then
         renderer:render()
     end
 
     window:swap_buffers()
 end
 
-while window:is_open() == true do
+while window:is_open() do
     update()
     render()
 end
