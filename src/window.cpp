@@ -3,6 +3,9 @@
 static void mugg::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
+static void mugg::closeCallback(GLFWwindow* window) {
+    glfwSetWindowShouldClose(window, true);
+}
 
 mugg::Window::Window(int width, int height, const char* title) {
     //Numeric values
@@ -69,6 +72,7 @@ bool mugg::Window::Open(int width, int height, const char* title) {
 
     glfwSetKeyCallback(this->window, mugg::input::glfwKeyCallback);
     glfwSetFramebufferSizeCallback(this->window, mugg::framebufferSizeCallback);
+    glfwSetWindowCloseCallback(this->window, mugg::closeCallback);
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -482,6 +486,8 @@ void mugg::Window::PollEvents() {
 }
 
 void mugg::Window::ReactToEvents() {
+    if(glfwWindowShouldClose(this->window))
+        this->Close();
 }
 
 const char* mugg::Window::GetClipboard() {

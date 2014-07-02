@@ -1,4 +1,5 @@
-window = Window.new(800, 600, "First window")
+title = "MuggEngine Window"
+window = Window.new(800, 600, title)
 
 start_time = os.time()
 
@@ -33,7 +34,7 @@ function update()
     end
 
     if os.difftime(os.time(), last_time) >= 1 then
-        window:set_title("Running time: " .. os.difftime(os.time(), start_time) .. ", ms/frame: " .. 1000/frames)
+        window:set_title(title .. " || time: " .. os.difftime(os.time(), start_time) .. " || ms/frame: " .. 1000/frames)
         frames = 0
         last_time = last_time + 1;
     end

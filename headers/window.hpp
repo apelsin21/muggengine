@@ -14,6 +14,7 @@
 
 namespace mugg {
     static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+    static void closeCallback(GLFWwindow* window);
 
     class Window {
         private:
