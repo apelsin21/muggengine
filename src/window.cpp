@@ -484,6 +484,16 @@ void mugg::Window::PollEvents() {
 void mugg::Window::ReactToEvents() {
 }
 
+const char* mugg::Window::GetClipboard() {
+    if(glfwGetClipboardString(this->window) == NULL)
+        return "";
+    else
+        return glfwGetClipboardString(this->window);
+}
+void mugg::Window::SetClipboard(const char* string) {
+    glfwSetClipboardString(this->window, string);
+}
+
 void mugg::Window::SwapBuffers() {
     if(this->open) {
         this->PollEvents();

@@ -69,6 +69,9 @@ namespace mugg {
             void PollEvents();
             void ReactToEvents();            
 
+            const char* GetClipboard();
+            void SetClipboard(const char* string);
+
             bool IsKeyDown(mugg::input::Key key);
             bool IsKeyStringDown(const char* string);
             mugg::input::Key GetLastPressedKey();

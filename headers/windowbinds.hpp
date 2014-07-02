@@ -192,6 +192,23 @@ namespace mugg {
             return 1;
         }
 
+        int windowSetClipboard(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            const char* arg = luaL_checkstring(L, 2);
+
+            window->SetClipboard(arg);
+
+            return 0;
+        }
+        int windowGetClipboard(lua_State* L) {
+            mugg::Window* window = checkWindow(L, 1);
+
+            lua_pushstring(L, window->GetClipboard());
+
+            return 1;
+        }
+
         int windowIsFocused(lua_State *L) {
             mugg::Window* window = checkWindow(L, 1);
 
@@ -235,6 +252,9 @@ namespace mugg {
             {"is_open", windowIsOpen},
             {"close", windowClose},
     
+            {"get_clipboard", windowGetClipboard},
+            {"set_clipboard", windowSetClipboard},
+
             {"is_focused", windowIsFocused},
 
             {"swap_buffers", windowSwapBuffers},

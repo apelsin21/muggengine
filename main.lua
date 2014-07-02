@@ -1,4 +1,4 @@
-window = Window.new(800, 600, "GLFW WINDOW TEST")
+window = Window.new(800, 600, "First window")
 
 start_time = os.time()
 
@@ -21,8 +21,6 @@ function randomFloat(min, max)
     return min + math.random() * (max - min)
 end
 
-i = 0
-
 function update()
     frames = frames + 1
 
@@ -30,10 +28,8 @@ function update()
         renderer:set_background_color(Color.new(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1))
     end
 
-    if window:is_key_down("enter") == true then
-        i = i + 1
-        window:set_swap_interval(i)
-        print("Swap interval: " .. i)
+    if window:is_key_down("left_control") == true and window:is_key_down("v") == true then
+        print("Clipboard contains: \"" .. window:get_clipboard() .. "\"")
     end
 
     if os.difftime(os.time(), last_time) >= 1 then
