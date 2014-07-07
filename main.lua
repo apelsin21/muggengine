@@ -14,6 +14,11 @@ renderer:initialize()
 
 renderer:add_shader_program(shader_program)
 
+texture = Texture2D.new()
+texture:load("data/textures/test.png", "Repeat", "Nearest", false)
+
+print("Texture has ID: " .. texture:get_gl_id() .. ", filepath: " .. texture:get_filepath() .. ", resolution: " .. texture:get_width() .. "x" .. texture:get_height() .. ", bpp: " .. texture:get_bpp() .. ", colors used: " .. texture:get_colors_used())
+
 last_time = os.time()
 deltatime = 0
 frames = 0

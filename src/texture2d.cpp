@@ -11,6 +11,8 @@ mugg::graphics::Texture2D::Texture2D() {
 
     this->loaded = false;
     this->hasGeneratedID = false;
+    
+    this->GenID();
 }
 mugg::graphics::Texture2D::~Texture2D() {
     if(hasGeneratedID)
@@ -20,17 +22,11 @@ mugg::graphics::Texture2D::~Texture2D() {
 }
 
 bool mugg::graphics::Texture2D::LoadFromFile(const char* filepath, mugg::graphics::TextureRepeatPattern pattern, mugg::graphics::TextureFilter filter, bool mipMaps) {
-    if(!this->hasGeneratedID) {
-        if(!this->GenID()) {
-            std::cout << "Failed to generate an OpenGL texture ID!\n";
-            return false;
-        }
-    }
-    
     this->format = FreeImage_GetFileType(filepath, 0);
     
     if(!this->format) {
         std::cout << "Failed to get format of " << filepath << ", corrupt or invalid image!\n";
+        this->loaded = false;
         return false;
     }
     
@@ -38,11 +34,23 @@ bool mugg::graphics::Texture2D::LoadFromFile(const char* filepath, mugg::graphic
 
     if(!this->bitmap) {
         std::cout << "Failed to load image " << filepath << ", corrupt or invalid image!\n";
+        this->loaded = false;
         return false;
     }
 
-    this->Bind();
+    this->bitmap = FreeImage_ConvertTo32Bits(this->bitmap);
     
+    this->Bind();
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, FreeImage_GetWidth(this->bitmap), FreeImage_GetHeight(this->bitmap), 0, GL_BGRA, GL_UNSIGNED_BYTE, (GLvoid*)FreeImage_GetBits(this->bitmap));
+
+    GLenum error = glGetError();
+    if(error) {
+        std::cout << "There was an error sending the texture to OpenGL!\n";
+        this->loaded = false;
+        return false;
+    }
+
     switch(pattern) {
         case mugg::graphics::TextureRepeatPattern::Repeat:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -50,6 +58,7 @@ bool mugg::graphics::Texture2D::LoadFromFile(const char* filepath, mugg::graphic
             break;
         default:
             std::cout << "Used texture repeat pattern for " << filepath << " isn't implemented yet!\n";
+            this->loaded = false;
             return false;
             break;
     }
@@ -71,19 +80,22 @@ bool mugg::graphics::Texture2D::LoadFromFile(const char* filepath, mugg::graphic
             break;
         default:
             std::cout << "Used texture filter for " << filepath << " isn't implemented yet!\n";
+            this->loaded = false;
             return false;
             break;
     }
-
+    
     this->width = FreeImage_GetWidth(this->bitmap);
     this->height = FreeImage_GetHeight(this->bitmap);
     this->bpp = FreeImage_GetBPP(this->bitmap);
     this->colorsUsed = FreeImage_GetColorsUsed(this->bitmap);
+    
     this->filepath = filepath;
     this->filter = filter;
     this->pattern = pattern;
-    this->loaded = true;
     this->mipMaps = mipMaps;
+    
+    this->loaded = true;
     return true;
 }
 

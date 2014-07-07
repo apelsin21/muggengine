@@ -9,15 +9,25 @@ namespace mugg {
             Nearest,
             Linear,
         };
+        static const char* TextureFilterString[] = {
+            "Nearest",
+            "Linear",
+            NULL
+        };
+
         enum TextureRepeatPattern {
             Repeat,
         };
+        static const char* TextureRepeatPatternString[] = {
+            "Repeat",
+            NULL
+        };
+
         enum ShaderType {
             VertexShader,
             FragmentShader,
             GeometryShader,
         };
-
         static const char* ShaderTypeString[] = {
             "VertexShader",
             "FragmentShader",

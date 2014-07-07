@@ -15,6 +15,7 @@
 #include "shaderprogrambinds.hpp"
 #include "shaderbinds.hpp"
 #include "rendererbinds.hpp"
+#include "texture2dbinds.hpp"
 
 void checkForError() {
     GLenum errorCode;    
@@ -73,14 +74,9 @@ int main() {
     system.RegisterMetatable(mugg::binds::shaderProgramFuncs, mugg::binds::ShaderProgramPrivateName, mugg::binds::ShaderProgramPublicName);
     system.RegisterMetatable(mugg::binds::rendererFuncs, mugg::binds::RendererPrivateName, mugg::binds::RendererPublicName);
     system.RegisterMetatable(mugg::binds::shaderFuncs, mugg::binds::ShaderPrivateName, mugg::binds::ShaderPublicName);
+    system.RegisterMetatable(mugg::binds::texture2DFuncs, mugg::binds::Texture2DPrivateName, mugg::binds::Texture2DPublicName);
 
     system.DoFile("main.lua");
-
-    mugg::graphics::Texture2D texture;
-
-    texture.LoadFromFile("data/textures/test.png", mugg::graphics::TextureRepeatPattern::Repeat, mugg::graphics::TextureFilter::Nearest, false);
-
-    std::cout << "Texture res: " << texture.GetWidth() << "x" << texture.GetHeight() << ", BPP: " << texture.GetBPP() << " colors used: " << texture.GetColorsUsed() << std::endl;
 
     checkForError();
 
