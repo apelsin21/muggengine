@@ -6,6 +6,7 @@ set(LIBRARIES
     glfw
     enet
     freetype
+    freeimage
     assimp
     GLEW
     GL

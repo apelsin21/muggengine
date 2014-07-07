@@ -8,6 +8,7 @@
 #include "shader.hpp"
 #include "errorhandling.hpp"
 #include "keydefs.hpp"
+#include "texture2d.hpp"
 
 #include "windowbinds.hpp"
 #include "colorbinds.hpp"
@@ -74,6 +75,12 @@ int main() {
     system.RegisterMetatable(mugg::binds::shaderFuncs, mugg::binds::ShaderPrivateName, mugg::binds::ShaderPublicName);
 
     system.DoFile("main.lua");
+
+    mugg::graphics::Texture2D texture;
+
+    texture.LoadFromFile("data/textures/test.png", mugg::graphics::TextureRepeatPattern::Repeat, mugg::graphics::TextureFilter::Nearest, false);
+
+    std::cout << "Texture res: " << texture.GetWidth() << "x" << texture.GetHeight() << ", BPP: " << texture.GetBPP() << " colors used: " << texture.GetColorsUsed() << std::endl;
 
     checkForError();
 

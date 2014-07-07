@@ -29,6 +29,10 @@ function update()
         renderer:set_background_color(Color.new(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1))
     end
 
+    if window:is_key_down("left_control") and window:is_key_down("c") then
+        print("woo")
+    end
+
     if window:is_key_down("left_control") and window:is_key_down("v") then
         print("Clipboard contains: \"" .. window:get_clipboard() .. "\"")
     end

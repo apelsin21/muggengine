@@ -6,6 +6,11 @@
 namespace mugg {
     namespace graphics {
         enum TextureFilter {            
+            Nearest,
+            Linear,
+        };
+        enum TextureRepeatPattern {
+            Repeat,
         };
         enum ShaderType {
             VertexShader,
