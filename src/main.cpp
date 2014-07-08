@@ -3,12 +3,9 @@
 
 #include <lua.hpp>
 #include <glm/glm.hpp>
+#include <enet/enet.h>
 
 #include "scriptsystem.hpp"
-#include "shader.hpp"
-#include "errorhandling.hpp"
-#include "keydefs.hpp"
-#include "texture2d.hpp"
 
 #include "windowbinds.hpp"
 #include "colorbinds.hpp"
@@ -16,6 +13,7 @@
 #include "shaderbinds.hpp"
 #include "rendererbinds.hpp"
 #include "texture2dbinds.hpp"
+#include "serverbinds.hpp"
 
 void checkForError() {
     GLenum errorCode;    
@@ -67,6 +65,11 @@ void checkForError() {
 }
 
 int main() {
+    if(enet_initialize() != 0) {
+        std::cout << "Error occurred while initializing ENet!\n";
+        return -1;
+    }
+    
     mugg::ScriptSystem system(true);
 
     system.RegisterMetatable(mugg::binds::windowFuncs, mugg::binds::WindowPrivateName, mugg::binds::WindowPublicName);
@@ -75,10 +78,13 @@ int main() {
     system.RegisterMetatable(mugg::binds::rendererFuncs, mugg::binds::RendererPrivateName, mugg::binds::RendererPublicName);
     system.RegisterMetatable(mugg::binds::shaderFuncs, mugg::binds::ShaderPrivateName, mugg::binds::ShaderPublicName);
     system.RegisterMetatable(mugg::binds::texture2DFuncs, mugg::binds::Texture2DPrivateName, mugg::binds::Texture2DPublicName);
+    system.RegisterMetatable(mugg::binds::serverFuncs, mugg::binds::ServerPrivateName, mugg::binds::ServerPublicName);
 
     system.DoFile("main.lua");
 
     checkForError();
+    
+    enet_deinitialize();
 
     return 0;
 }

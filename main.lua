@@ -17,11 +17,14 @@ renderer:add_shader_program(shader_program)
 texture = Texture2D.new()
 texture:load("data/textures/test.png", "Repeat", "Nearest", false)
 
-print("Texture has ID: " .. texture:get_gl_id() .. ", filepath: " .. texture:get_filepath() .. ", resolution: " .. texture:get_width() .. "x" .. texture:get_height() .. ", bpp: " .. texture:get_bpp() .. ", colors used: " .. texture:get_colors_used())
-
 last_time = os.time()
-deltatime = 0
 frames = 0
+
+server = Server.new()
+server:initialize(1234)
+
+print("### SERVER INFO ###")
+print("Max connections: " .. server:get_max_connections() .. " max channels: " .. server:get_max_channels() .. " in throttle: " .. server:get_in_throttle() .. " out throttle: " .. server:get_out_throttle())
 
 function randomFloat(min, max)
     return min + math.random() * (max - min)
@@ -34,10 +37,6 @@ function update()
         renderer:set_background_color(Color.new(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1))
     end
 
-    if window:is_key_down("left_control") and window:is_key_down("c") then
-        print("woo")
-    end
-
     if window:is_key_down("left_control") and window:is_key_down("v") then
         print("Clipboard contains: \"" .. window:get_clipboard() .. "\"")
     end
@@ -47,6 +46,8 @@ function update()
         frames = 0
         last_time = last_time + 1;
     end
+
+    server:poll(0)
 end
 
 function render()
