@@ -65,23 +65,12 @@ bool mugg::net::Server::Initialize(unsigned short port) {
     return true;
 }
 
-int mugg::net::Server::GetMaxConnections() {
-    return this->maxConnections;
-}
-int mugg::net::Server::GetMaxChannels() {
-    return this->maxChannels;
-}
-int mugg::net::Server::GetIncThrottle() {
-    return this->incThrottle;
-}
-int mugg::net::Server::GetOutThrottle() {
-    return this->outThrottle;
-}
-bool mugg::net::Server::IsInitialized() {
-    return this->initialized;
-}
-
 void mugg::net::Server::PollEvents(int timeout = 0) {
+    if(!this->initialized) {
+        std::cout << "Tried to poll non-initialized server!\n";
+        return;
+    }
+    
     while(enet_host_service(this->host, &this->event, timeout) > 0) {
         switch(event.type) {
             case ENET_EVENT_TYPE_CONNECT:

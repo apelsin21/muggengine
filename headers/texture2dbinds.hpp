@@ -134,7 +134,7 @@ namespace mugg {
 
             {"is_loaded", texture2DGetLoaded},
             {"has_generated_id", texture2DGetHasGeneratedID},
-            {"uses_mip_maps", texture2DGetUsesMipMaps},
+            {"uses_mipmaps", texture2DGetUsesMipMaps},
 
             {"__gc", texture2DDeconstructor},
             {NULL, NULL}

@@ -1,9 +1,8 @@
+#define GLEW_STATIC
+#include <GL/glew.h>
+
 #include <string>
 #include <iostream>
-
-#include <lua.hpp>
-#include <glm/glm.hpp>
-#include <enet/enet.h>
 
 #include "scriptsystem.hpp"
 
@@ -14,6 +13,7 @@
 #include "rendererbinds.hpp"
 #include "texture2dbinds.hpp"
 #include "serverbinds.hpp"
+#include "clientbinds.hpp"
 
 void checkForError() {
     GLenum errorCode;    
@@ -79,6 +79,7 @@ int main() {
     system.RegisterMetatable(mugg::binds::shaderFuncs, mugg::binds::ShaderPrivateName, mugg::binds::ShaderPublicName);
     system.RegisterMetatable(mugg::binds::texture2DFuncs, mugg::binds::Texture2DPrivateName, mugg::binds::Texture2DPublicName);
     system.RegisterMetatable(mugg::binds::serverFuncs, mugg::binds::ServerPrivateName, mugg::binds::ServerPublicName);
+    system.RegisterMetatable(mugg::binds::clientFuncs, mugg::binds::ClientPrivateName, mugg::binds::ClientPublicName);
 
     system.DoFile("main.lua");
 

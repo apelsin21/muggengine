@@ -20,11 +20,8 @@ texture:load("data/textures/test.png", "Repeat", "Nearest", false)
 last_time = os.time()
 frames = 0
 
-server = Server.new()
-server:initialize(1234)
-
-print("### SERVER INFO ###")
-print("Max connections: " .. server:get_max_connections() .. " max channels: " .. server:get_max_channels() .. " in throttle: " .. server:get_in_throttle() .. " out throttle: " .. server:get_out_throttle())
+client = Client.new()
+client:initialize(2, 0, 0)
 
 function randomFloat(min, max)
     return min + math.random() * (max - min)
@@ -33,12 +30,12 @@ end
 function update()
     frames = frames + 1
 
+    if window:is_key_down("escape") then
+        window:close()
+    end
+    
     if window:is_key_down("space") then
         renderer:set_background_color(Color.new(randomFloat(0, 1), randomFloat(0, 1), randomFloat(0, 1), 1))
-    end
-
-    if window:is_key_down("left_control") and window:is_key_down("v") then
-        print("Clipboard contains: \"" .. window:get_clipboard() .. "\"")
     end
 
     if os.difftime(os.time(), last_time) >= 1 then
@@ -47,13 +44,18 @@ function update()
         last_time = last_time + 1;
     end
 
-    server:poll(0)
+    if client:is_connected() == false then
+        client:connect("192.168.1.91", 8080, 5000)
+    else
+        if window:is_key_down("enter") then
+            client:disconnect(3000)
+        end
+    end
+
+    client:poll(0)
 end
 
 function render()
-    if window:is_key_down("escape") then
-        window:close()
-    end
 
     if window:is_focused() then
         renderer:render()
