@@ -32,7 +32,7 @@ namespace mugg {
                 
                 bool Initialize();
                 
-                void Render();
+                void Draw();
         };
 
     }

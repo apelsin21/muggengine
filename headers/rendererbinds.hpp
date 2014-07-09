@@ -79,10 +79,10 @@ namespace mugg {
             return 0;
         }
 
-        int rendererRender(lua_State* L) {
+        int rendererDraw(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
 
-            renderer->Render();
+            renderer->Draw();
 
             return 0;
         }
@@ -97,7 +97,7 @@ namespace mugg {
 
             {"initialize", rendererInitialize},
 
-            {"render", rendererRender},
+            {"draw", rendererDraw},
 
             {"__gc", rendererDeconstructor},
             {NULL, NULL}

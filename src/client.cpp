@@ -55,7 +55,7 @@ bool mugg::net::Client::Connect(const char* address, unsigned short port, int ti
     this->peer = enet_host_connect(this->host, &this->address, this->maxChannels, 0);
 
     if(this->peer == NULL) {
-        std::cout << "No available peers to connect to " << address << ":" << port << "!\n";
+        std::cout << "No connection available to connect to " << address << ":" << port << "!\n";
         this->connected = false;
         return false;
     }
@@ -65,18 +65,20 @@ bool mugg::net::Client::Connect(const char* address, unsigned short port, int ti
         return true;
     }
 
+    //Connecting failed, forcefully reset.
     enet_peer_reset(this->peer);
 
     this->connected = false;
     return false;
 }
+//If it doesn't get a disconnect event within the timeout, it forcefully resets the connection, which sends no disconnect
+//event to the other end
 void mugg::net::Client::Disconnect(int timeout = 3000) {
     if(!this->initialized) {
         std::cout << "Tried to disconnect an uninitialized client!\n";
         return;
     }
     else if(!this->connected) {
-        std::cout << "Tried to disconnect an unconnected client!\n";
         return;
     }
 
@@ -93,7 +95,6 @@ void mugg::net::Client::Disconnect(int timeout = 3000) {
         }
     }
 
-    //Disconnect forcefully, since it hasn't got a disconnect event
     enet_peer_reset(this->peer);
 }
 

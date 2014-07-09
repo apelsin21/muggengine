@@ -16,6 +16,8 @@ namespace mugg {
             private:
                 std::vector<ENetAddress> connectedClients;
                 int numberOfClients;
+
+                const char* AddressToString(ENetAddress address);
             public:
                 Server();
                 ~Server();
@@ -27,6 +29,9 @@ namespace mugg {
                 unsigned short GetClientPortByIndex(unsigned int index);
 
                 int GetNumberOfClients();
+
+                void DisconnectAllClients();
+                void DisconnectClient();
 
                 void PollEvents(int timeout);
         };

@@ -66,6 +66,21 @@ bool mugg::net::Server::Initialize(unsigned short port) {
     return true;
 }
 
+const char* mugg::net::Server::AddressToString(ENetAddress address) {
+    std::string temp;
+    temp += address.host & 0xFF;
+    temp += ".";
+    temp += (address.host >> 8) & 0xFF;
+    temp += ".";
+    temp += (address.host >> 16) & 0xFF;
+    temp += ".";
+    temp += (address.host >> 24) & 0xFF;
+    temp += ":";
+    temp += address.port;
+
+    return temp.c_str();
+}
+
 const char* mugg::net::Server::GetClientAddressByIndex(unsigned int index) {
     if(!this->initialized) {
         std::cout << "Tried to get client address of uninitialized server!\n";
@@ -81,18 +96,7 @@ const char* mugg::net::Server::GetClientAddressByIndex(unsigned int index) {
         std::cout << "Tried to get out of bounds address from server!\n";
         return "";
     } else {
-        std::string address;
-        address += this->connectedClients[index].host & 0xFF;
-        address += ".";
-        address += (this->connectedClients[index].host >> 8) & 0xFF;
-        address += ".";
-        address += (this->connectedClients[index].host >> 16) & 0xFF;
-        address += ".";
-        address += (this->connectedClients[index].host >> 24) & 0xFF;
-        address += ":";
-        address += this->connectedClients[index].port;
-        
-        return address.c_str();        
+        return this->AddressToString(this->connectedClients[index]);        
     }
 }
 
@@ -116,7 +120,7 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
                     while(enet_host_service(this->host, &this->event, 3000) > 0) {
                         switch(this->event.type) {
                             case ENET_EVENT_TYPE_RECEIVE:
-                                enet_packet_destroy(event.packet);
+                                enet_packet_destroy(this->event.packet);
                                 break;
                             case ENET_EVENT_TYPE_DISCONNECT:
                                 break;
@@ -124,8 +128,8 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
                     }
 
                 } else {
-                    std::cout << event.peer->address.host << ":" << event.peer->address.port << " has connected.\n";
-                    this->connectedClients.push_back(event.peer->address);
+                    std::cout << this->AddressToString(this->event.peer->address) << " has connected.\n";
+                    this->connectedClients.push_back(this->event.peer->address);
                     this->latestEvent = mugg::net::Event::Connected;
                     
                     this->numberOfClients++;

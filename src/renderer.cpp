@@ -41,7 +41,7 @@ std::vector<mugg::graphics::ShaderProgram> mugg::graphics::Renderer::GetShaderPr
 bool mugg::graphics::Renderer::Initialize() {
 }
 
-void mugg::graphics::Renderer::Render() {
+void mugg::graphics::Renderer::Draw() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if(this->programVector.size() != 0) {
