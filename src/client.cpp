@@ -118,6 +118,7 @@ void mugg::net::Client::PollEvents(int timeout = 0) {
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 std::cout << "CLIENT: DISCONNECT EVENT\n";
+                this->connected = false;
                 break;
         }
     }

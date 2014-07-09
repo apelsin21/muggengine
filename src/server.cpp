@@ -67,18 +67,17 @@ bool mugg::net::Server::Initialize(unsigned short port) {
 }
 
 const char* mugg::net::Server::AddressToString(ENetAddress address) {
-    std::string temp;
-    temp += address.host & 0xFF;
-    temp += ".";
-    temp += (address.host >> 8) & 0xFF;
-    temp += ".";
-    temp += (address.host >> 16) & 0xFF;
-    temp += ".";
-    temp += (address.host >> 24) & 0xFF;
-    temp += ":";
-    temp += address.port;
+    unsigned char bytes[4];
+    bytes[0] = address.host & 0xFF;
+    bytes[1] = (address.host >> 8) & 0xFF;
+    bytes[2] = (address.host >> 16) & 0xFF;
+    bytes[3] = (address.host >> 24) & 0xFF;   
 
-    return temp.c_str();
+    char buffer[100];
+
+    snprintf(buffer, 100, "%d.%d.%d.%d:%d", bytes[0], bytes[1], bytes[2], bytes[3], address.port);
+
+    return std::string(buffer).c_str();
 }
 
 const char* mugg::net::Server::GetClientAddressByIndex(unsigned int index) {
@@ -152,8 +151,7 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
 
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
-                std::cout << event.peer->address.host << ":" << event.peer->address.port << " AKA: " << event.peer->data << " has disconnected!\n";
-                event.peer->data = NULL;
+                std::cout << this->AddressToString(this->event.peer->address) << " has disconnected!\n";
 
                 if(this->numberOfClients != 0) {
                     this->numberOfClients--;
