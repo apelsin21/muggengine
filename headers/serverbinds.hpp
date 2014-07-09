@@ -104,6 +104,14 @@ namespace mugg {
             return 1;
         }
 
+        int serverGetClientAddressByIndex(lua_State* L) {
+            mugg::net::Server* server = checkServer(L, 1);
+
+            lua_pushstring(L, server->GetClientAddressByIndex(luaL_checknumber(L, 2)));
+
+            return 1;
+        }
+
         luaL_Reg serverFuncs[] = {
             {"new", serverConstructor},
 
@@ -115,6 +123,8 @@ namespace mugg {
             {"get_in_throttle", serverGetIncThrottle},
             {"get_out_throttle", serverGetOutThrottle},
             {"is_initialized", serverIsInitialized},
+            
+            {"get_client_address_by_index", serverGetClientAddressByIndex},
 
             {"poll", serverPollEvents},
 

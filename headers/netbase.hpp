@@ -3,6 +3,8 @@
 
 #include <enet/enet.h>
 
+#include "netdefs.hpp"
+
 namespace mugg {
     namespace net {
         class NetBase {
@@ -11,6 +13,8 @@ namespace mugg {
                 ENetHost* host;
                 ENetEvent event;
             
+                mugg::net::Event latestEvent;
+
                 int maxConnections, maxChannels;
                 int incThrottle, outThrottle;
                 bool initialized;
@@ -29,6 +33,10 @@ namespace mugg {
                 }
                 bool IsInitialized() {
                     return this->initialized;
+                }
+
+                mugg::net::Event GetLatestEvent() {
+                    return this->latestEvent;
                 }
         };
     }

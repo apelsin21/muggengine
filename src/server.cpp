@@ -65,6 +65,36 @@ bool mugg::net::Server::Initialize(unsigned short port) {
     return true;
 }
 
+const char* mugg::net::Server::GetClientAddressByIndex(unsigned int index) {
+    if(!this->initialized) {
+        std::cout << "Tried to get client address of uninitialized server!\n";
+        return "";
+    }
+
+    if(this->connectedClients.size() <= 0) {
+        std::cout << "Tried to get client address of server with no clients!\n";
+        return "";
+    }
+
+    if(index > this->connectedClients.size()) {
+        std::cout << "Tried to get out of bounds address from server!\n";
+        return "";
+    } else {
+        std::string address;
+        address += this->connectedClients[index].host & 0xFF;
+        address += ".";
+        address += (this->connectedClients[index].host >> 8) & 0xFF;
+        address += ".";
+        address += (this->connectedClients[index].host >> 16) & 0xFF;
+        address += ".";
+        address += (this->connectedClients[index].host >> 24) & 0xFF;
+        address += ":";
+        address += this->connectedClients[index].port;
+        
+        return address.c_str();        
+    }
+}
+
 void mugg::net::Server::PollEvents(int timeout = 0) {
     if(!this->initialized) {
         std::cout << "Tried to poll non-initialized server!\n";
@@ -75,9 +105,11 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
         switch(event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 std::cout << event.peer->address.host << ":" << event.peer->address.port << " has connected.\n";
-                event.peer->data = (void*)"bajsballe";
+                this->connectedClients.push_back(event.peer->address);
+                this->latestEvent = mugg::net::Event::Connected;
                 break;
             case ENET_EVENT_TYPE_NONE:
+                this->latestEvent = mugg::net::Event::None;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 std::cout << "Recieved packet from "
@@ -89,10 +121,15 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
                             << " on channel: "
                             << event.channelID
                             << std::endl;
+                this->latestEvent = mugg::net::Event::Received;
+
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 std::cout << event.peer->address.host << ":" << event.peer->address.port << " AKA: " << event.peer->data << " has disconnected!\n";
                 event.peer->data = NULL;
+
+                this->latestEvent = mugg::net::Event::Disconnected;
+
                 break;
         }
     }
