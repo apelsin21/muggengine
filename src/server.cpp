@@ -7,7 +7,7 @@ mugg::net::Server::Server() {
     this->outThrottle = 0;
     
     this->address.host = ENET_HOST_ANY;
-    this->address.port = 1234;
+    this->address.port = 2300;
     
     this->initialized = false;
 }

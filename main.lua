@@ -45,14 +45,13 @@ function update()
     end
 
     if client:is_connected() == false then
-        client:connect("192.168.1.91", 8080, 5000)
+        client:connect("mugg.is", 2300, 5000)
     else
         if window:is_key_down("enter") then
             client:disconnect(3000)
         end
     end
 
-    client:poll(0)
 end
 
 function render()

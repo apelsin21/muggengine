@@ -5,6 +5,7 @@ mugg::net::Client::Client() {
     this->maxChannels = 2;
     this->incThrottle = 0;
     this->outThrottle = 0;
+    this->address.port = 2300;
 
     this->initialized = false;
     this->connected = false;
