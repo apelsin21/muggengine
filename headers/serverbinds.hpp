@@ -112,6 +112,14 @@ namespace mugg {
             return 1;
         }
 
+        int serverGetNumberOfClients(lua_State* L) {
+            mugg::net::Server* server = checkServer(L, 1);
+
+            lua_pushnumber(L, server->GetNumberOfClients());
+        
+            return 1;
+        }
+
         luaL_Reg serverFuncs[] = {
             {"new", serverConstructor},
 
@@ -123,7 +131,7 @@ namespace mugg {
             {"get_in_throttle", serverGetIncThrottle},
             {"get_out_throttle", serverGetOutThrottle},
             {"is_initialized", serverIsInitialized},
-            
+            {"get_number_of_clients", serverGetNumberOfClients},
             {"get_client_address_by_index", serverGetClientAddressByIndex},
 
             {"poll", serverPollEvents},

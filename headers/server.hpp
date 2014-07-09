@@ -15,6 +15,7 @@ namespace mugg {
         class Server : public NetBase {
             private:
                 std::vector<ENetAddress> connectedClients;
+                int numberOfClients;
             public:
                 Server();
                 ~Server();
@@ -24,6 +25,8 @@ namespace mugg {
                 
                 const char* GetClientAddressByIndex(unsigned int index);
                 unsigned short GetClientPortByIndex(unsigned int index);
+
+                int GetNumberOfClients();
 
                 void PollEvents(int timeout);
         };
