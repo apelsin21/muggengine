@@ -1,13 +1,9 @@
 local input
 
-repeat
-    print("Do you want to be client or server? \"quit\" exits the program.")
-    input = io.read()
+print("Enter name of script you want to run, \"quit\" exits the program.")
+input = io.read()
 
-    if input == "client" then
-        dofile("data/scripts/client.lua")
-    end
-    if input == "server" then
-        dofile("data/scripts/server.lua")
-    end
-until input == "client" or input == "server" or input == "quit"
+if input == "quit" then
+else
+    dofile("data/scripts/" .. input .. ".lua")
+end

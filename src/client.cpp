@@ -3,8 +3,8 @@
 mugg::net::Client::Client() {
     this->maxConnections = 1;
     this->maxChannels = 2;
-    this->incThrottle = 0;
-    this->outThrottle = 0;
+    this->inLimit = 0;
+    this->outLimit = 0;
     this->address.port = 2300;
 
     this->initialized = false;
@@ -18,8 +18,8 @@ mugg::net::Client::~Client() {
         enet_host_destroy(this->host);
 }
 
-bool mugg::net::Client::Initialize(int maxChannels = 2, int incThrottle = 0, int outThrottle = 0) {
-    this->host = enet_host_create(NULL, 1, maxChannels, incThrottle, outThrottle);
+bool mugg::net::Client::Initialize(int maxChannels = 2, unsigned int inLimit = 0, unsigned int outLimit = 0) {
+    this->host = enet_host_create(NULL, 1, maxChannels, inLimit, outLimit);
 
     if(this->host == NULL) {
         std::cout << "Error occurred initializing an ENet client!\n";
@@ -102,6 +102,21 @@ bool mugg::net::Client::IsConnected() {
     return this->connected;
 }
 
+bool mugg::net::Client::SendPacket(mugg::net::StringPacket packet, unsigned int channel) {
+    if(!this->initialized) {
+        std::cout << "Client tried to send a packet, but isn't initialized!\n";
+        return false;
+    }
+    if(!this->connected) {
+        std::cout << "Client tried to send a packet, but it isn't connected!\n";
+        return false;
+    }
+    
+    enet_peer_send(this->peer, channel, packet.GetInternalPacket());
+
+    return true;
+}
+
 void mugg::net::Client::PollEvents(int timeout = 0) {
     if(!this->initialized) {
         std::cout << "Tried to poll an unintialized client!\n";
@@ -111,7 +126,7 @@ void mugg::net::Client::PollEvents(int timeout = 0) {
     while(enet_host_service(this->host, &this->event, timeout) > 0) {
         switch(this->event.type) {
             case ENET_EVENT_TYPE_CONNECT:
-                std::cout << "CLIENT: CONNECT EVENT\n";
+                this->peer = event.peer;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 std::cout << "CLIENT: RECEIVE EVENT\n";

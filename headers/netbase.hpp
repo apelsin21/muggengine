@@ -16,7 +16,7 @@ namespace mugg {
                 mugg::net::Event latestEvent;
 
                 int maxConnections, maxChannels;
-                int incThrottle, outThrottle;
+                unsigned int inLimit, outLimit;
                 bool initialized;
             public:
                 int GetMaxConnections() {
@@ -25,11 +25,11 @@ namespace mugg {
                 int GetMaxChannels() {
                     return this->maxChannels;
                 }
-                int GetIncThrottle() {
-                    return this->incThrottle;
+                unsigned int GetInLimit() {
+                    return this->inLimit;
                 }
-                int GetOutThrottle() {
-                    return this->outThrottle;
+                unsigned int GetOutLimit() {
+                    return this->outLimit;
                 }
                 bool IsInitialized() {
                     return this->initialized;

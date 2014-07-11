@@ -16,6 +16,18 @@ namespace mugg {
             "None",
             NULL
         };
+
+        enum PacketFlag {
+            Reliable,
+            Unsequenced,
+            Sent
+        };
+        static const char* PacketFlagString[] = {
+            "Reliable",
+            "Unsequenced",
+            "Sent",
+            NULL
+        };
     }
 }
 

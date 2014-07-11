@@ -23,7 +23,7 @@ namespace mugg {
                 Server();
                 ~Server();
 
-                bool Initialize(const char* address, unsigned short port, int maxConnections, int maxChannels, int incThrottle, int outThrottle);
+                bool Initialize(const char* address, unsigned short port, int maxConnections, int maxChannels, unsigned int inLimit, unsigned int outLimit);
                 bool Initialize(unsigned short port);
                 
                 const char* GetClientAddressByIndex(unsigned int index);
@@ -33,6 +33,8 @@ namespace mugg {
 
                 void DisconnectAllClients();
                 void DisconnectClient();
+    
+                void SetBandwidthLimit(unsigned int inLimit, unsigned int outLimit);
 
                 void PollEvents(int timeout);
         };

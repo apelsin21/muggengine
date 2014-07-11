@@ -4,6 +4,8 @@
 #include <lua.hpp>
 
 #include "client.hpp"
+#include "stringpacket.hpp"
+#include "stringpacketbinds.hpp"
 
 namespace mugg {
     namespace binds {
@@ -84,6 +86,17 @@ namespace mugg {
             return 1;
         }
 
+        int clientSendStringPacket(lua_State* L) {
+            mugg::net::Client* client = checkClient(L, 1);
+
+            mugg::net::StringPacket* packet = checkStringPacket(L, 2);
+            unsigned int channel = luaL_checknumber(L, 3);
+
+            client->SendPacket(*packet, channel);
+
+            return 0;
+        }
+        
         luaL_Reg clientFuncs[] = {
             {"new", clientConstructor},
 
@@ -93,6 +106,8 @@ namespace mugg {
             {"disconnect", clientDisconnect},
 
             {"is_connected", clientIsConnected},
+
+            {"send_string_packet", clientSendStringPacket},
 
             {"poll", clientPollEvents},
 

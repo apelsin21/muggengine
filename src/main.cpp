@@ -14,6 +14,7 @@
 #include "texture2dbinds.hpp"
 #include "serverbinds.hpp"
 #include "clientbinds.hpp"
+#include "stringpacketbinds.hpp"
 
 void checkForError() {
     GLenum errorCode;    
@@ -80,6 +81,7 @@ int main() {
     system.RegisterMetatable(mugg::binds::texture2DFuncs, mugg::binds::Texture2DPrivateName, mugg::binds::Texture2DPublicName);
     system.RegisterMetatable(mugg::binds::serverFuncs, mugg::binds::ServerPrivateName, mugg::binds::ServerPublicName);
     system.RegisterMetatable(mugg::binds::clientFuncs, mugg::binds::ClientPrivateName, mugg::binds::ClientPublicName);
+    system.RegisterMetatable(mugg::binds::stringPacketFuncs, mugg::binds::StringPacketPrivateName, mugg::binds::StringPacketPublicName);
 
     system.DoFile("main.lua");
 

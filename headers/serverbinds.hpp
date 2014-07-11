@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "server.hpp"
+#include "netdefs.hpp"
 
 namespace mugg {
     namespace binds {
@@ -82,17 +83,17 @@ namespace mugg {
 
             return 1;
         }
-        int serverGetIncThrottle(lua_State* L) {
+        int serverGetInLimit(lua_State* L) {
             mugg::net::Server* server = checkServer(L, 1);
 
-            lua_pushnumber(L, server->GetIncThrottle());
+            lua_pushnumber(L, server->GetInLimit());
 
             return 1;
         }
-        int serverGetOutThrottle(lua_State* L) {
+        int serverGetOutLimit(lua_State* L) {
             mugg::net::Server* server = checkServer(L, 1);
 
-            lua_pushnumber(L, server->GetOutThrottle());
+            lua_pushnumber(L, server->GetOutLimit());
 
             return 1;
         }
@@ -120,6 +121,27 @@ namespace mugg {
             return 1;
         }
 
+        int serverGetLatestEvent(lua_State* L) {
+            mugg::net::Server* server = checkServer(L, 1);
+
+            int eventIndex = server->GetLatestEvent();
+
+            lua_pushstring(L, mugg::net::EventString[eventIndex]);
+
+            return 1;
+        }
+
+        int serverSetBandwidthLimit(lua_State* L) {
+            mugg::net::Server* server = checkServer(L, 1);
+
+            unsigned int inLimit = luaL_checknumber(L, 2);
+            unsigned int outLimit = luaL_checknumber(L, 3);
+
+            server->SetBandwidthLimit(inLimit, outLimit);
+
+            return 0;
+        }
+
         luaL_Reg serverFuncs[] = {
             {"new", serverConstructor},
 
@@ -128,11 +150,18 @@ namespace mugg {
 
             {"get_max_connections", serverGetMaxConnections},
             {"get_max_channels", serverGetMaxChannels},
-            {"get_in_throttle", serverGetIncThrottle},
-            {"get_out_throttle", serverGetOutThrottle},
+            
+            {"get_in_limit", serverGetInLimit},
+            {"get_out_throttle", serverGetOutLimit},
+            
             {"is_initialized", serverIsInitialized},
+            
             {"get_number_of_clients", serverGetNumberOfClients},
             {"get_client_address_by_index", serverGetClientAddressByIndex},
+
+            {"set_bandwidth_limit", serverSetBandwidthLimit},
+
+            {"get_latest_event", serverGetLatestEvent},
 
             {"poll", serverPollEvents},
 

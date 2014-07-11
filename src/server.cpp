@@ -3,21 +3,23 @@
 mugg::net::Server::Server() {
     this->maxConnections = 5;
     this->maxChannels = 2;
-    this->incThrottle = 0;
-    this->outThrottle = 0;
+    this->inLimit = 0;
+    this->outLimit = 0;
     this->numberOfClients = 0;
 
     this->address.host = ENET_HOST_ANY;
     this->address.port = 2300;
     
     this->initialized = false;
+
+    this->latestEvent = mugg::net::Event::None;
 }
 mugg::net::Server::~Server() {
     if(this->initialized)
         enet_host_destroy(this->host);
 }
 
-bool mugg::net::Server::Initialize(const char* address, unsigned short port, int maxConnections, int maxChannels, int incThrottle, int outThrottle) {
+bool mugg::net::Server::Initialize(const char* address, unsigned short port, int maxConnections, int maxChannels, unsigned int inLimit, unsigned int outLimit) {
     if(address == "") {
         std::cout << "Tried to bind server to empty address!\n";
         this->initialized = false;
@@ -33,13 +35,18 @@ bool mugg::net::Server::Initialize(const char* address, unsigned short port, int
     enet_address_set_host(&this->address, address);
     this->address.port = port;
 
-    this->host = enet_host_create(&this->address, maxConnections, maxChannels, incThrottle, outThrottle);
+    this->host = enet_host_create(&this->address, maxConnections, maxChannels, inLimit, outLimit);
 
     if(this->host == NULL) {
         std::cout << "Failed to create ENet host!\n";
         this->initialized = false;
         return false;
     }
+
+    this->inLimit = inLimit;
+    this->outLimit = outLimit;
+    this->maxConnections = maxConnections;
+    this->maxChannels = maxChannels;
 
     this->initialized = true;
     return true;
@@ -54,7 +61,7 @@ bool mugg::net::Server::Initialize(unsigned short port) {
 
     this->address.port = port;
 
-    this->host = enet_host_create(&this->address, this->maxConnections, this->maxChannels, this->incThrottle, this->outThrottle);
+    this->host = enet_host_create(&this->address, this->maxConnections, this->maxChannels, this->inLimit, this->outLimit);
 
     if(this->host == NULL) {
         std::cout << "Failed to create ENet host!\n";
@@ -103,6 +110,10 @@ int mugg::net::Server::GetNumberOfClients() {
     return this->numberOfClients;
 }
 
+void mugg::net::Server::SetBandwidthLimit(unsigned int incThrottle, unsigned int outThrottle) {
+    enet_host_bandwidth_limit(this->host, incThrottle, outThrottle);
+}
+
 void mugg::net::Server::PollEvents(int timeout = 0) {
     if(!this->initialized) {
         std::cout << "Tried to poll non-initialized server!\n";
@@ -127,10 +138,8 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
                     }
 
                 } else {
-                    std::cout << this->AddressToString(this->event.peer->address) << " has connected.\n";
-                    this->connectedClients.push_back(this->event.peer->address);
                     this->latestEvent = mugg::net::Event::Connected;
-                    
+                    this->connectedClients.push_back(this->event.peer->address);
                     this->numberOfClients++;
                 }    
                 break;
@@ -151,8 +160,6 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
 
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
-                std::cout << this->AddressToString(this->event.peer->address) << " has disconnected!\n";
-
                 if(this->numberOfClients != 0) {
                     this->numberOfClients--;
                 }
