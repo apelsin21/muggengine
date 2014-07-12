@@ -13,7 +13,7 @@ namespace mugg {
                 ENetPacket* packet;
                 ENetPacketFlag internalFlag;
                 mugg::net::PacketFlag flag;
-                std::size_t size = 0;
+                std::size_t size;
             public:
                 void SetFlag(mugg::net::PacketFlag flag) {
                     this->flag = flag;

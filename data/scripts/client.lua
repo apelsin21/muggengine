@@ -8,35 +8,39 @@ renderer:initialize()
 
 packet = StringPacket.new()
 
-local message
+local input
 
-while window:is_open() do
-    if client:is_connected() then
-        renderer:set_background_color(Color.new(0, 1, 0, 1))
-    else
-        renderer:set_background_color(Color.new(0, 0, 0, 1))
-    end
+print("Enter address to connect to:")
+input = io.read()
 
-    if window:is_key_down("escape") then
-        window:close()
-    elseif window:is_key_down("delete") then
-        if client:is_connected() == false then
-            client:connect("127.0.0.1", 2300, 3000)
-        else
-            client:disconnect(3000)
+client:connect(input, 2300, 5000)
+
+if client:is_connected() then
+    renderer:set_background_color(Color.new(0, 1, 0, 1))
+    
+    while window:is_open() do
+        if window:is_key_down("escape") then
+            window:close()
+        elseif window:is_key_down("enter") then
+            print("Enter message to send:")
+            input = io.read()
+   
+            if input ~= "" then
+                packet:set_data(input, "Reliable")
+                client:send_string_packet(packet, 0)
+            end
+        elseif window:is_key_down("insert") then
+            packet:set_data(window:get_clipboard(), "Reliable")
+            client:send_string_packet(packet, 0)
         end
-    elseif window:is_key_down("enter") then
-        print("Enter message to send:")
-        input = io.read()
-
-        packet:set_data(input, "Reliable")
-        client:send_string_packet(packet, 0)
+    
+        client:poll(0)
+    
+        renderer:draw()
+        window:swap_buffers()
     end
 
-    client:poll(0)
-
-    renderer:draw()
-    window:swap_buffers()
+    client:disconnect(3000)
+else
+    print("Failed to connect to " .. input .. ":" .. 2300)
 end
-
-client:disconnect(3000)
