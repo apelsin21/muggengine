@@ -43,10 +43,6 @@ void mugg::graphics::Shader::GenID() {
 
     this->hasGeneratedID = true;
 }
-
-GLuint mugg::graphics::Shader::GetID() {
-    return this->ID;
-}
 void mugg::graphics::Shader::DeleteID() {
     if(this->hasGeneratedID) {
         glDeleteShader(this->ID);

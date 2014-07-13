@@ -8,13 +8,13 @@
 
 #include "graphicsdefs.hpp"
 #include "fileutils.hpp"
+#include "renderable.hpp"
 
 namespace mugg {
     namespace graphics {
-        class Shader {
+        class Shader : public Renderable {
             private:
                 mugg::graphics::ShaderType type;
-                GLuint ID;
                 const char* filepath;
                 std::string data;
                 bool loaded, hasGeneratedID, compiledSuccessfully;
@@ -29,7 +29,6 @@ namespace mugg {
 
                 void GenID();
 
-                GLuint GetID();
                 void DeleteID();
 
                 mugg::graphics::ShaderType GetType();

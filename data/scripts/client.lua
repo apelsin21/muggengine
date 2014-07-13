@@ -29,7 +29,7 @@ if client:is_connected() then
                 packet:set_data(input, "Reliable")
                 client:send_string_packet(packet, 0)
             end
-        elseif window:is_key_down("insert") then
+        elseif window:is_key_down("insert") and window:get_clipboard() ~= "" then
             packet:set_data(window:get_clipboard(), "Reliable")
             client:send_string_packet(packet, 0)
         end

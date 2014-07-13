@@ -130,7 +130,7 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
                     this->latestEvent = mugg::net::Event::Connected;
                     this->connectedClients.push_back(this->event.peer->address);
                     this->numberOfClients++;
-                    std::cout << this->AddressToString(this->event.peer->address) << " has connected!\n";
+                    std::cout << this->AddressToString(this->event.peer->address) << " connected!\n";
                 }    
                 break;
             case ENET_EVENT_TYPE_NONE:
@@ -138,7 +138,7 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 std::cout << this->AddressToString(event.peer->address)
-                            << " sent: "
+                            << ": "
                             << this->event.packet->data
                             << std::endl;
                 this->latestEvent = mugg::net::Event::Received;
@@ -149,7 +149,7 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
                     this->numberOfClients--;
                 }
 
-                std::cout << this->AddressToString(this->event.peer->address) << " has disconnected!\n";
+                std::cout << this->AddressToString(this->event.peer->address) << " disconnected!\n";
 
                 this->latestEvent = mugg::net::Event::Disconnected;
 

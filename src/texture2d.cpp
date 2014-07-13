@@ -114,9 +114,6 @@ int mugg::graphics::Texture2D::GetColorsUsed() {
 const char* mugg::graphics::Texture2D::GetFilepath() {
     return this->filepath;
 }
-GLuint mugg::graphics::Texture2D::GetID() {
-    return this->ID;
-}
 
 bool mugg::graphics::Texture2D::IsLoaded() {
     return this->loaded;

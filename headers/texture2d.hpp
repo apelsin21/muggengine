@@ -6,15 +6,14 @@
 #include <GL/glew.h>
 
 #include "graphicsdefs.hpp"
+#include "renderable.hpp"
 
 namespace mugg {
     namespace graphics {
-        class Texture2D {
+        class Texture2D : public Renderable {
             private:
                 FREE_IMAGE_FORMAT format;
                 FIBITMAP* bitmap;
-                
-                GLuint ID;
                 
                 mugg::graphics::TextureFilter filter;
                 mugg::graphics::TextureRepeatPattern pattern;
@@ -35,7 +34,6 @@ namespace mugg {
                 int GetHeight();
                 int GetBPP();
                 int GetColorsUsed();
-                GLuint GetID();
                 
                 bool IsLoaded();
                 bool HasGeneratedID();

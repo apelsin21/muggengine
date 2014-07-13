@@ -14,9 +14,6 @@ void mugg::graphics::ShaderProgram::DeleteID() {
 
     this->hasGeneratedID = false;
 }
-GLuint mugg::graphics::ShaderProgram::GetID() {
-    return this->ID;
-}
 bool mugg::graphics::ShaderProgram::HasGeneratedID() {
     return this->hasGeneratedID;
 }

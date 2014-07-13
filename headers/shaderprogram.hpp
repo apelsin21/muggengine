@@ -10,12 +10,12 @@
 #include "fileutils.hpp"
 #include "graphicsdefs.hpp"
 #include "shader.hpp"
+#include "renderable.hpp"
 
 namespace mugg {
     namespace graphics {
-        class ShaderProgram {
+        class ShaderProgram : public Renderable {
             private:
-                GLuint ID;
                 bool linked, hasGeneratedID, compiledSuccessfully;
 
                 std::vector<mugg::graphics::Shader> shaderVector;
@@ -23,7 +23,6 @@ namespace mugg {
                 ShaderProgram();
                 ~ShaderProgram();
                 
-                GLuint GetID();
                 bool HasGeneratedID();
                 void DeleteID();
                 void GenID();
