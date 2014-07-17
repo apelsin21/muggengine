@@ -33,7 +33,7 @@ namespace mugg {
             return 0;
         }
 
-        int texture2DLoadFromFile(lua_State* L) {
+        int texture2DLoad(lua_State* L) {
             mugg::graphics::Texture2D* texture = checkTexture2D(L, 1);
 
             const char* filepath = luaL_checkstring(L, 2);
@@ -48,7 +48,7 @@ namespace mugg {
                 luaL_error(L, "Argument to load_from_file wasn't a boolean\n");
             }
 
-            texture->LoadFromFile(filepath, pattern, filter, mipMaps);
+            texture->Load(filepath, pattern, filter, mipMaps);
 
             return 0;
         }
@@ -56,7 +56,7 @@ namespace mugg {
         int texture2DGetFilepath(lua_State* L) {
             mugg::graphics::Texture2D* texture = checkTexture2D(L, 1);
 
-            lua_pushstring(L, texture->GetFilepath());
+            lua_pushstring(L, texture->GetFilepath().c_str());
 
             return 1;
         }
@@ -121,7 +121,7 @@ namespace mugg {
         luaL_Reg texture2DFuncs[] = {
             {"new", texture2DConstructor},
 
-            {"load", texture2DLoadFromFile},
+            {"load", texture2DLoad},
             {"get_filepath", texture2DGetFilepath},
 
             {"get_width", texture2DGetWidth},

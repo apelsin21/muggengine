@@ -13,11 +13,11 @@ namespace mugg {
                 const char* data;
             public:
                 StringPacket();
-                StringPacket(const char* data, mugg::net::PacketFlag flag);
+                StringPacket(const char*, mugg::net::PacketFlag);
 
-                void SetData(const char* data, mugg::net::PacketFlag flag);
-                void AppendData(const char* data);
-                void Truncate(std::size_t size);
+                void SetData(const char*, mugg::net::PacketFlag);
+                void AppendData(const char*);
+                void Truncate(std::size_t);
                 const char* GetData();
         };
     }

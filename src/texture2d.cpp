@@ -7,7 +7,6 @@ mugg::graphics::Texture2D::Texture2D() {
     this->ID = 0;
     this->colorsUsed = -1;
     this->bitmap = nullptr;
-    this->filepath = "";
 
     this->loaded = false;
     this->hasGeneratedID = false;
@@ -21,8 +20,12 @@ mugg::graphics::Texture2D::~Texture2D() {
     FreeImage_Unload(this->bitmap);
 }
 
-bool mugg::graphics::Texture2D::LoadFromFile(const char* filepath, mugg::graphics::TextureRepeatPattern pattern, mugg::graphics::TextureFilter filter, bool mipMaps) {
-    this->format = FreeImage_GetFileType(filepath, 0);
+bool mugg::graphics::Texture2D::Load(std::string filepath) {
+    return this->Load(filepath, mugg::graphics::TextureRepeatPattern::Repeat, mugg::graphics::TextureFilter::Linear, false);
+}
+
+bool mugg::graphics::Texture2D::Load(std::string filepath, mugg::graphics::TextureRepeatPattern pattern, mugg::graphics::TextureFilter filter, bool mipMaps) {
+    this->format = FreeImage_GetFileType(filepath.c_str(), 0);
     
     if(!this->format) {
         std::cout << "Failed to get format of " << filepath << ", corrupt or invalid image!\n";
@@ -30,7 +33,7 @@ bool mugg::graphics::Texture2D::LoadFromFile(const char* filepath, mugg::graphic
         return false;
     }
     
-    this->bitmap = FreeImage_Load(this->format, filepath);
+    this->bitmap = FreeImage_Load(this->format, filepath.c_str());
 
     if(!this->bitmap) {
         std::cout << "Failed to load image " << filepath << ", corrupt or invalid image!\n";
@@ -111,7 +114,7 @@ int mugg::graphics::Texture2D::GetBPP() {
 int mugg::graphics::Texture2D::GetColorsUsed() {
     return this->colorsUsed;
 }
-const char* mugg::graphics::Texture2D::GetFilepath() {
+std::string mugg::graphics::Texture2D::GetFilepath() {
     return this->filepath;
 }
 

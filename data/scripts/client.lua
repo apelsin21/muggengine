@@ -15,6 +15,9 @@ input = io.read()
 
 client:connect(input, 2300, 5000)
 
+start_time = os.time()
+last_time = os.time()
+
 if client:is_connected() then
     renderer:set_background_color(Color.new(0, 1, 0, 1))
     
@@ -32,6 +35,12 @@ if client:is_connected() then
         elseif window:is_key_down("insert") and window:get_clipboard() ~= "" then
             packet:set_data(window:get_clipboard(), "Reliable")
             client:send_string_packet(packet, 0)
+        end
+
+        if os.difftime(os.time() - start_time) >= 1 then
+            packet:set_data("My running time is: " .. os.difftime(os.time(), last_time) .. " seconds.", "Reliable")
+            client:send_string_packet(packet, 0)
+            start_time = os.time()
         end
     
         client:poll(0)

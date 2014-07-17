@@ -1,9 +1,11 @@
 #ifndef TEXTURE2D_HPP
 #define TEXTURE2D_HPP
 
-#include <FreeImage.h>
 #include <iostream>
+#include <string>
+
 #include <GL/glew.h>
+#include <FreeImage.h>
 
 #include "graphicsdefs.hpp"
 #include "renderable.hpp"
@@ -19,7 +21,7 @@ namespace mugg {
                 mugg::graphics::TextureRepeatPattern pattern;
 
                 int width, height, bpp, colorsUsed;
-                const char* filepath;
+                std::string filepath;
                 bool loaded, hasGeneratedID, mipMaps;
                 
                 bool GenID();
@@ -27,8 +29,9 @@ namespace mugg {
                 Texture2D();
                 ~Texture2D();
 
-                bool LoadFromFile(const char* filepath, mugg::graphics::TextureRepeatPattern pattern, mugg::graphics::TextureFilter filter, bool mipMaps);
-                const char* GetFilepath();
+                bool Load(std::string, mugg::graphics::TextureRepeatPattern, mugg::graphics::TextureFilter, bool);
+                bool Load(std::string);
+                std::string GetFilepath();
 
                 int GetWidth();
                 int GetHeight();
