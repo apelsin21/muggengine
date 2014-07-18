@@ -65,7 +65,7 @@ void checkForError() {
     } while(errorCode != GL_NO_ERROR);
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     if(enet_initialize() != 0) {
         std::cout << "Error occurred while initializing ENet!\n";
         return -1;
