@@ -15,6 +15,7 @@
 #include "serverbinds.hpp"
 #include "clientbinds.hpp"
 #include "stringpacketbinds.hpp"
+#include "netmanagerbinds.hpp"
 
 void checkForError() {
     GLenum errorCode;    
@@ -82,6 +83,7 @@ int main(int argc, char* argv[]) {
     system.RegisterMetatable(mugg::binds::serverFuncs, mugg::binds::ServerPrivateName, mugg::binds::ServerPublicName);
     system.RegisterMetatable(mugg::binds::clientFuncs, mugg::binds::ClientPrivateName, mugg::binds::ClientPublicName);
     system.RegisterMetatable(mugg::binds::stringPacketFuncs, mugg::binds::StringPacketPrivateName, mugg::binds::StringPacketPublicName);
+    system.RegisterMetatable(mugg::binds::netManagerFuncs, mugg::binds::NetManagerPrivateName, mugg::binds::NetManagerPublicName);
 
     system.DoFile("main.lua");
 

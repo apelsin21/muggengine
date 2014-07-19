@@ -59,9 +59,11 @@ int mugg::net::NetManager::GetNumberOfServers() {
 }
 
 void mugg::net::NetManager::Start() {
-    if(this->threads.size() == 0) }
-        this->threads.push_back(std::thread(&mugg::net::NetManager::Poll(), this));
+    if(this->threads.size() == 0) {
+        this->threads.push_back(std::thread(&mugg::net::NetManager::Poll, this));
     }
+    
+    this->running = true;
 }
 void mugg::net::NetManager::Stop() {
     if(this->threads.size() > 0) {
@@ -69,6 +71,43 @@ void mugg::net::NetManager::Stop() {
             this->threads[this->threads.size()].join();
         }
     }
+
+    this->running = false;
+}
+void mugg::net::NetManager::Break() {
+    if(this->threads.size() != 0) {
+        for(int i = 0; i <= this->threads.size(); i++) {
+            switch(this->threads[i].joinable()) {
+                case true:
+                    this->threads[i].join();
+                    break;
+                case false:
+                    break;
+            }
+        }
+    }    
 }
 
-
+void mugg::net::NetManager::Poll() {
+    if(this->clientQueue.size() != 0) {
+        for(int i = 0; i <= this->clientQueue.size(); i++) {
+            this->clients.push_back(this->clientQueue[i]);
+            this->clientQueue.erase(this->clientQueue.begin() + i);
+        }
+    }
+    if(this->serverQueue.size() != 0) {
+        for(int i = 0; i <= this->serverQueue.size(); i++) {
+            this->servers.push_back(this->serverQueue[i]);
+            this->serverQueue.erase(this->serverQueue.begin() + 1);
+        }
+    }
+    
+    while(running) {
+        for(int i = 0; i <= this->clients.size(); i++) {
+            this->clients[i].PollEvents(0);
+        }
+        for(int i = 0; i <= this->servers.size(); i++) {
+            this->servers[i].PollEvents(0);
+        }
+    }
+}

@@ -3,10 +3,14 @@
 
 #include "renderable.hpp"
 #include "texture2d.hpp"
+#include "color.hpp"
 
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 
 #include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include <vector>
 #include <iostream>
@@ -16,20 +20,32 @@ namespace mugg {
     namespace graphics {
         class Mesh : public Renderable {
             private:
-                std::vector<mugg::graphics::Texture2D> textureVector;
+                std::vector<mugg::graphics::Texture2D> diffuseTextures;
+                std::vector<mugg::graphics::Texture2D> normalTextures;
+                std::vector<mugg::graphics::Texture2D> specularTextures;
+                
+                std::vector<glm::vec4> vertices;
+                std::vector<glm::vec2> uvs;
+                std::vector<mugg::graphics::Color> colors;
+
                 std::string filepath;
 
                 GLuint VBOID; //Vertex Buffer Object ID
                 GLuint IBID; //Index Buffer ID
                 unsigned int numberOfIndices;
 
-                bool isLoaded;
+                bool loaded;
+
+                void ProcessAssimpScene(const aiScene*);
+                void Clear();
+                void GenIDS();
             public:
                 Mesh();
                 ~Mesh();
 
-                std::vector<mugg::graphics::Texture2D> GetTextureVector();
-                mugg::graphics::Texture2D GetTextureByIndex(int);
+                std::vector<mugg::graphics::Texture2D> GetDiffuseTextures();
+                bool GetDiffuseTextureByIndex(int, mugg::graphics::Texture2D&);
+                void AddDiffuseTexture(mugg::graphics::Texture2D);
 
                 GLuint GetVBOID();
                 void SetVBOID(GLuint VBOID);
