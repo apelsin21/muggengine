@@ -27,6 +27,7 @@ namespace mugg {
                 bool GenID();
             public:
                 Texture2D();
+                Texture2D(std::string);
                 ~Texture2D();
 
                 bool Load(std::string, mugg::graphics::TextureRepeatPattern, mugg::graphics::TextureFilter, bool);

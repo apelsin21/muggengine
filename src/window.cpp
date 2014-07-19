@@ -8,6 +8,8 @@ static void mugg::closeCallback(GLFWwindow* window) {
 }
 
 mugg::Window::Window(int width, int height, const char* title) {
+    this->window = nullptr;
+    
     //Numeric values
     this->width = 0;
     this->height = 0;
@@ -50,7 +52,7 @@ mugg::Window::Window() {
 mugg::Window::~Window() {
     this->Close();
 
-    if(this->width != 0 || this->height != 0)
+    if(this->window != nullptr)
         glfwTerminate();
 }
 

@@ -3,21 +3,39 @@
 mugg::graphics::Texture2D::Texture2D() {
     this->width = 0;
     this->height = 0;
-    this->bpp = -1;
+    this->bpp = 0;
     this->ID = 0;
-    this->colorsUsed = -1;
+    this->colorsUsed = 0;
+
     this->bitmap = nullptr;
+    this->format = FIF_UNKNOWN;
 
     this->loaded = false;
+    this->mipMaps = false;
     this->hasGeneratedID = false;
     
     this->GenID();
 }
+mugg::graphics::Texture2D::Texture2D(std::string filepath) {
+    this->width = 0;
+    this->height = 0;
+    this->bpp = 0;
+    this->ID = 0;
+    this->colorsUsed = 0;
+
+    this->bitmap = nullptr;
+    this->format = FIF_UNKNOWN;
+
+    this->loaded = false;
+    this->mipMaps = false;
+    this->hasGeneratedID = false;
+    
+    this->GenID();
+    this->Load(filepath);
+}
 mugg::graphics::Texture2D::~Texture2D() {
     if(hasGeneratedID)
         glDeleteTextures(1, &this->ID);
-
-    FreeImage_Unload(this->bitmap);
 }
 
 bool mugg::graphics::Texture2D::Load(std::string filepath) {
@@ -97,7 +115,9 @@ bool mugg::graphics::Texture2D::Load(std::string filepath, mugg::graphics::Textu
     this->filter = filter;
     this->pattern = pattern;
     this->mipMaps = mipMaps;
-    
+   
+    FreeImage_Unload(this->bitmap);
+
     this->loaded = true;
     return true;
 }

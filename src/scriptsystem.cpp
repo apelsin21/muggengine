@@ -2,7 +2,6 @@
 
 mugg::ScriptSystem::ScriptSystem(bool useStandardLibrary = false) {
     this->state = luaL_newstate();
-
     this->UseStandardLibrary(useStandardLibrary);
 }
 

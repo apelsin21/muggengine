@@ -10,7 +10,7 @@ namespace mugg {
         class NetBase {
             protected:
                 ENetAddress address;
-                ENetHost* host;
+                ENetHost* host = nullptr;
                 ENetEvent event;
             
                 mugg::net::Event latestEvent;

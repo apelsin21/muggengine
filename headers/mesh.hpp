@@ -13,6 +13,7 @@
 #include <assimp/postprocess.h>
 
 #include <vector>
+#include <assert.h>
 #include <iostream>
 #include <string>
 
@@ -20,32 +21,43 @@ namespace mugg {
     namespace graphics {
         class Mesh : public Renderable {
             private:
-                std::vector<mugg::graphics::Texture2D> diffuseTextures;
-                std::vector<mugg::graphics::Texture2D> normalTextures;
-                std::vector<mugg::graphics::Texture2D> specularTextures;
-                
-                std::vector<glm::vec4> vertices;
+                std::vector<mugg::graphics::Texture2D> textures;
+
+                std::vector<glm::vec3> vertices;
+                std::vector<unsigned int> indices;
                 std::vector<glm::vec2> uvs;
-                std::vector<mugg::graphics::Color> colors;
+                std::vector<glm::vec3> normals;
 
                 std::string filepath;
 
                 GLuint VBOID; //Vertex Buffer Object ID
                 GLuint IBID; //Index Buffer ID
                 unsigned int numberOfIndices;
+                std::vector<unsigned int> materialIndices;
 
                 bool loaded;
 
                 void ProcessAssimpScene(const aiScene*);
+                void ProcessAssimpMesh(unsigned int, const aiMesh*);
+                void ProcessAssimpMaterials(const aiScene*);
+                void FillBuffers();
+                
                 void Clear();
                 void GenIDS();
             public:
                 Mesh();
+                Mesh(std::string);
                 ~Mesh();
 
-                std::vector<mugg::graphics::Texture2D> GetDiffuseTextures();
-                bool GetDiffuseTextureByIndex(int, mugg::graphics::Texture2D&);
-                void AddDiffuseTexture(mugg::graphics::Texture2D);
+                std::vector<mugg::graphics::Texture2D> GetTextures();
+                bool GetTextureByIndex(int, mugg::graphics::Texture2D&);
+                void AddTexture(mugg::graphics::Texture2D);
+
+                int GetNumberOfTextures();
+                int GetNumberOfVertices();
+                int GetNumberOfIndices();
+                int GetNumberOfUVS();
+                int GetNumberOfNormals();
 
                 GLuint GetVBOID();
                 void SetVBOID(GLuint VBOID);

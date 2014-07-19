@@ -10,10 +10,10 @@ namespace mugg {
     namespace net {
         class PacketBase {
             protected:
-                ENetPacket* packet;
+                ENetPacket* packet = nullptr;
                 ENetPacketFlag internalFlag;
                 mugg::net::PacketFlag flag;
-                std::size_t size;
+                std::size_t size = 0;
             public:
                 void SetFlag(mugg::net::PacketFlag flag) {
                     this->flag = flag;

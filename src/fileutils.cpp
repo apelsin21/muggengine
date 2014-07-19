@@ -5,7 +5,7 @@ bool mugg::io::LoadTextFromFile(const char* filepath, std::string &outString) {
     std::ifstream textStream(filepath, std::ios::in);
 
     if(textStream.is_open()) {
-        std::string line = "";
+        std::string line;
 
         while(std::getline(textStream, line)) {
             data += "\n" + line;

@@ -7,6 +7,7 @@ mugg::graphics::Shader::Shader() {
     this->data = "";
     this->loaded = false;
     this->compiledSuccessfully = false;
+    this->hasGeneratedID = false;
 }
 mugg::graphics::Shader::Shader(mugg::graphics::ShaderType type, const char* filepath) {
     this->type = type;

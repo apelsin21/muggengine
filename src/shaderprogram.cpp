@@ -3,6 +3,7 @@
 mugg::graphics::ShaderProgram::ShaderProgram() {
     this->linked = false;
     this->compiledSuccessfully = false;
+    this->hasGeneratedID = false;
 }
 
 mugg::graphics::ShaderProgram::~ShaderProgram() {
