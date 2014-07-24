@@ -1,26 +1,20 @@
 #include "renderer.hpp"
 
 mugg::graphics::Renderer::Renderer() {
-    this->backgroundColor.a = 1.0f;
 }
 mugg::graphics::Renderer::~Renderer() {
-    for(int i = 0; i < this->programVector.size(); i++) {
-        if(this->programVector[i].HasGeneratedID()) {
-            this->programVector[i].DeleteID();
-        }
-    }
 }
 
-void mugg::graphics::Renderer::SetBackgroundColor(mugg::graphics::Color color) {
-    this->backgroundColor.Set(color);
+void mugg::graphics::Renderer::SetBackgroundColor(const mugg::graphics::Color& color) {
+    this->backgroundColor = color;
     glClearColor(this->backgroundColor.r, this->backgroundColor.g, this->backgroundColor.b, this->backgroundColor.a);
 }
 mugg::graphics::Color mugg::graphics::Renderer::GetBackgroundColor() {
     return this->backgroundColor;
 }
 
-bool mugg::graphics::Renderer::AddShaderProgram(mugg::graphics::ShaderProgram shaderProgram) {
-    if(shaderProgram.GetCompiledSuccessfully()) {
+bool mugg::graphics::Renderer::AddShaderProgram(std::shared_ptr<mugg::graphics::ShaderProgram>& shaderProgram) {
+    if(shaderProgram->GetCompiledSuccessfully()) {
         this->programVector.push_back(shaderProgram);
         return true;
     }
@@ -29,12 +23,12 @@ bool mugg::graphics::Renderer::AddShaderProgram(mugg::graphics::ShaderProgram sh
     
     return false;
 }
-mugg::graphics::ShaderProgram mugg::graphics::Renderer::GetShaderProgramByIndex(int index) {
+std::shared_ptr<mugg::graphics::ShaderProgram> mugg::graphics::Renderer::GetShaderProgramByIndex(int index) {
     if(this->programVector.size() != 0) {
         return this->programVector[index];
     }
 }
-std::vector<mugg::graphics::ShaderProgram> mugg::graphics::Renderer::GetShaderProgramVector() {
+std::vector<std::shared_ptr<mugg::graphics::ShaderProgram>> mugg::graphics::Renderer::GetShaderProgramVector() {
     return this->programVector;
 }
 
@@ -46,7 +40,7 @@ void mugg::graphics::Renderer::Draw() {
 
     if(this->programVector.size() != 0) {
         for(int i = 0; i < this->programVector.size(); i++) {
-            glUseProgram(this->programVector[i].GetID());
+            glUseProgram(this->programVector[i]->GetID());
         }
     }
 }

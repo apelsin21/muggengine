@@ -1,6 +1,7 @@
 #include "shaderprogram.hpp"
 
 mugg::graphics::ShaderProgram::ShaderProgram() {
+    std::cout << "ShaderProgram constructor\n";
     this->linked = false;
     this->compiledSuccessfully = false;
     this->hasGeneratedID = false;
@@ -10,8 +11,12 @@ mugg::graphics::ShaderProgram::~ShaderProgram() {
 }
 
 void mugg::graphics::ShaderProgram::DeleteID() {
-    if(this->hasGeneratedID)
+    if(this->hasGeneratedID && glIsProgram(this->ID) == GL_TRUE)
         glDeleteProgram(this->ID);
+
+    for(unsigned int i = 0; i <= this->shaders.size(); i++) {
+        this->shaders[i]->DeleteID();
+    }
 
     this->hasGeneratedID = false;
 }
@@ -19,39 +24,13 @@ bool mugg::graphics::ShaderProgram::HasGeneratedID() {
     return this->hasGeneratedID;
 }
 
-bool mugg::graphics::ShaderProgram::AddShader(Shader shader) {
-    if(!shader.GetCompiledSuccessfully()) {
-        std::cout << "Tried to add a uncompiled shader to shaderprogram!\n";
-        return false;
+bool mugg::graphics::ShaderProgram::AddShader(std::shared_ptr<mugg::graphics::Shader>& shader) {
+    if(!glIsShader(shader->GetID())) {
+        std::cout << "Tried adding an unvalid shader " << shader->GetFilepath() << " to shaderprogram!\n";
     }
 
-    this->shaderVector.push_back(shader);
-
-    return true;
-}
-
-bool mugg::graphics::ShaderProgram::AddShader(mugg::graphics::ShaderType type, const char* filepath) {
-    mugg::graphics::Shader shader;
-
-    shader.SetType(type);
-    shader.GenID();
-    shader.SetFilepath(filepath);
-
-    std::string data;
+    this->shaders.push_back(shader);
     
-    if(!mugg::io::LoadTextFromFile(filepath, data)) {
-        std::cout << "Failed to load shader from path: " << filepath << std::endl;
-        return false;
-    }
-
-    shader.SetData(data);
-
-    if(!shader.Compile()) {
-        return false;
-    }
-
-    this->shaderVector.push_back(shader);
-
     return true;
 }
 
@@ -63,21 +42,17 @@ bool mugg::graphics::ShaderProgram::Link() {
     this->ID = glCreateProgram();
     this->hasGeneratedID = true;
 
-    if(this->shaderVector.size() != 0) {
-        for(int i = 0; i < this->shaderVector.size(); i++) {
-            glAttachShader(this->ID, shaderVector[i].GetID());
+    if(this->shaders.size() != 0) {
+        for(unsigned int i = 0; i < this->shaders.size(); i++) {
+            glAttachShader(this->ID, this->shaders[i]->GetID());
         }
     } else {
         std::cout << "Tried to link shaderless shaderprogram!\n";
         this->compiledSuccessfully = false;
         return false;
     }
-
+    
     glLinkProgram(this->ID);
-    
-    for(int i = 0; i < this->shaderVector.size(); i++)
-        this->shaderVector[i].DeleteID();
-    
     this->CheckForErrors();
 
     if(!this->compiledSuccessfully) {
@@ -86,6 +61,9 @@ bool mugg::graphics::ShaderProgram::Link() {
         return false;
     }
 
+    for(unsigned int i = 0; i < this->shaders.size(); i++)
+        this->shaders[i]->DeleteID();
+    
     this->compiledSuccessfully = true;
     this->linked = true;
 
@@ -113,7 +91,7 @@ const char* mugg::graphics::ShaderProgram::GetLog() {
 
     std::string returnval;
 
-    for(int i = 0; i <= logLength; i++) {
+    for(unsigned int i = 0; i <= logLength; i++) {
         returnval += buffer[i];
     }
 

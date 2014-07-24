@@ -10,7 +10,7 @@ namespace mugg {
                 GLuint ID;
             public:
                 void SetID(GLuint newID) {
-                    this->ID = newID;
+                    this->ID = newID;   
                 }
                 GLuint GetID() {
                     return this->ID;

@@ -28,28 +28,21 @@ lua_State* mugg::ScriptSystem::GetState() {
     return this->state;
 }
 
-void mugg::ScriptSystem::RegisterMetatable(luaL_Reg* functions, const char* privateName, const char* globalName) {
-    luaL_newmetatable(this->state, privateName);
+void mugg::ScriptSystem::RegisterMetatable(luaL_Reg* functions, const char* name) {
+    luaL_newmetatable(this->state, name);
     luaL_setfuncs(this->state, functions, 0);
     lua_pushvalue(this->state, -1);
     lua_setfield(this->state, -2, "__index");
 
-    lua_setglobal(this->state, globalName);
+    lua_setglobal(this->state, name);
 
-    this->registredMetatablesPrivateNames.push_back(privateName);
-    this->registredMetatablesGlobalNames.push_back(globalName);
+    this->registredMetatableNames.push_back(name);
 }
-std::vector<const char*> mugg::ScriptSystem::GetRegistredMetatablesPrivateNames() {
-    return this->registredMetatablesPrivateNames;
+std::vector<const char*> mugg::ScriptSystem::GetRegistredMetatableNames() {
+    return this->registredMetatableNames;
 }
-std::vector<const char*> mugg::ScriptSystem::GetRegistredMetatablesGlobalNames() {
-    return this->registredMetatablesGlobalNames;
-}
-const char* mugg::ScriptSystem::GetRegistredMetatablesPrivateNamesByIndex(int index) {
-    return this->registredMetatablesPrivateNames[index];
-}
-const char* mugg::ScriptSystem::GetRegistredMetatablesGlobalNamesByIndex(int index) {
-    return this->registredMetatablesGlobalNames[index];
+const char* mugg::ScriptSystem::GetRegistredMetatableNamesByIndex(int index) {
+    return this->registredMetatableNames[index];
 }
 
 void mugg::ScriptSystem::PrintStack() {

@@ -8,7 +8,7 @@ mugg::net::NetManager::~NetManager() {
     this->Break();
 }
 
-bool mugg::net::NetManager::AddClient(mugg::net::Client client) {
+bool mugg::net::NetManager::AddClient(mugg::net::Client& client) {
     if(!client.IsConnected() || !client.IsInitialized()) {
         std::cout << "Tried to add unconnected or unintialized client to netmanager!\n";
         return false;
@@ -33,7 +33,7 @@ int mugg::net::NetManager::GetNumberOfClients() {
     return this->clients.size() + this->clientQueue.size();
 }
 
-bool mugg::net::NetManager::AddServer(mugg::net::Server server) {
+bool mugg::net::NetManager::AddServer(mugg::net::Server& server) {
     if(!server.IsInitialized()) {
         std::cout << "Tried to add uninitialized server to netmanager!\n";
         return false;

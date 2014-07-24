@@ -2,6 +2,7 @@
 #define SHADERPROGRAMBINDS_HPP
 
 #include <lua.hpp>
+#include <memory>
 
 #include "shaderbinds.hpp"
 
@@ -9,11 +10,10 @@
 
 namespace mugg {
     namespace binds {
-        static const char* ShaderProgramPrivateName = "mugg_ShaderProgram";
-        static const char* ShaderProgramPublicName = "ShaderProgram";
+        static const char* ShaderProgramName = "ShaderProgram";
 
         mugg::graphics::ShaderProgram* checkShaderProgram(lua_State* L, int n) {
-            return *(mugg::graphics::ShaderProgram**)luaL_checkudata(L, n, ShaderProgramPrivateName);
+            return *(mugg::graphics::ShaderProgram**)luaL_checkudata(L, n, ShaderProgramName);
         }
 
         int shaderProgramConstructor(lua_State* L) {
@@ -21,33 +21,11 @@ namespace mugg {
 
             *program = new mugg::graphics::ShaderProgram();
 
-            luaL_getmetatable(L, ShaderProgramPrivateName);
+            luaL_getmetatable(L, ShaderProgramName);
             lua_setmetatable(L, -2);
 
             return 1;
         }
-
-        int shaderProgramAddShader(lua_State* L) {
-            mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
-
-            mugg::graphics::Shader* shader = checkShader(L, 2);
-
-            program->AddShader(*shader);
-
-            return 0;
-        }
-
-        int shaderProgramAddShaderFromFile(lua_State* L) {
-            mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
-
-            mugg::graphics::ShaderType type = (mugg::graphics::ShaderType)luaL_checkoption(L, 2, NULL, mugg::graphics::ShaderTypeString);
-            const char* filepath = luaL_checkstring(L, 3);
-
-            program->AddShader(type, filepath);
-
-            return 0;
-        }
-
         int shaderProgramDestructor(lua_State* L) {
             mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
 
@@ -56,6 +34,16 @@ namespace mugg {
             return 0;
         }
 
+        int shaderProgramAddShader(lua_State* L) {
+            mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
+
+            std::shared_ptr<mugg::graphics::Shader> shader(checkShader(L, 2));
+
+            program->AddShader(shader);
+
+            return 0;
+        }
+        
         int shaderProgramGetNumberOfAttachedShaders(lua_State* L) {
             mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
 
@@ -75,8 +63,7 @@ namespace mugg {
         luaL_Reg shaderProgramFuncs[] = {
             {"new", shaderProgramConstructor},
 
-            {"load_shader", shaderProgramAddShaderFromFile},
-            {"add_shader", shaderProgramAddShader},
+            {"add", shaderProgramAddShader},
             {"link", shaderProgramLink},
             
             {"get_number_of_attached_shaders", shaderProgramGetNumberOfAttachedShaders},

@@ -9,11 +9,10 @@
 
 namespace mugg {
     namespace binds {
-        static const char* ShaderPrivateName = "mugg_Shader";
-        static const char* ShaderPublicName = "Shader";
+        static const char* ShaderName = "Shader";
 
         mugg::graphics::Shader* checkShader(lua_State* L, int n) {
-            return *(mugg::graphics::Shader**)luaL_checkudata(L, n, ShaderPrivateName);
+            return *(mugg::graphics::Shader**)luaL_checkudata(L, n, ShaderName);
         }
 
         int shaderConstructor(lua_State* L) {
@@ -21,24 +20,33 @@ namespace mugg {
             
             *shader = new mugg::graphics::Shader();
             
-            luaL_getmetatable(L, ShaderPrivateName);
+            luaL_getmetatable(L, ShaderName);
             lua_setmetatable(L, -2);
 
             return 1;
         }
-
         int shaderDeconstructor(lua_State* L) {
             mugg::graphics::Shader* shader = checkShader(L, 1);
-
-            std::cout << "Deleting shader with data: " << shader->GetData() << std::endl;
 
             delete shader;
 
             return 0;
         }
 
+        int shaderLoad(lua_State* L) {
+            mugg::graphics::Shader* shader = checkShader(L, 1);
+
+            const char* path = luaL_checkstring(L, 2);
+
+            shader->Load(path);
+
+            return 0;
+        }
+
         luaL_Reg shaderFuncs[] = {
             {"new", shaderConstructor},
+            
+            {"load", shaderLoad},
 
             {"__gc", shaderDeconstructor},
             {NULL, NULL}

@@ -11,21 +11,23 @@
 #include "shaderprogrambinds.hpp"
 
 #include <iostream> 
+#include <memory>
+#include <algorithm>
+#include <utility>
 
 namespace mugg {
     namespace binds {
-        static const char* RendererPrivateName = "mugg_Renderer";
-        static const char* RendererPublicName = "Renderer";
+        static const char* RendererName = "Renderer";
 
         mugg::graphics::Renderer* checkRenderer(lua_State* L, int n) {
-            return *(mugg::graphics::Renderer**)luaL_checkudata(L, n, RendererPrivateName);
+            return *(mugg::graphics::Renderer**)luaL_checkudata(L, n, RendererName);
         }
 
         int rendererConstructor(lua_State* L) {
             mugg::graphics::Renderer** renderer = (mugg::graphics::Renderer**)lua_newuserdata(L, sizeof(mugg::graphics::Renderer*));
             *renderer = new mugg::graphics::Renderer();
 
-            luaL_getmetatable(L, RendererPrivateName);
+            luaL_getmetatable(L, RendererName);
             lua_setmetatable(L, -2);
 
             return 1;
@@ -33,7 +35,7 @@ namespace mugg {
 
         int rendererDeconstructor(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
-
+        
             delete renderer;
 
             return 0;
@@ -42,7 +44,9 @@ namespace mugg {
         int rendererSetBackgroundColor(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
 
-            renderer->SetBackgroundColor(*checkColor(L, 2));
+            mugg::graphics::Color color = *checkColor(L, 2);
+
+            renderer->SetBackgroundColor(color);
 
             return 0;
         }
@@ -50,12 +54,8 @@ namespace mugg {
         int rendererGetBackgroundColor(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
 
-            mugg::graphics::Color** color = (mugg::graphics::Color**)lua_newuserdata(L, sizeof(mugg::graphics::Color*));
-            *color = new mugg::graphics::Color(renderer->GetBackgroundColor().r,
-                                              renderer->GetBackgroundColor().g,
-                                              renderer->GetBackgroundColor().b,
-                                              renderer->GetBackgroundColor().a);
-            luaL_getmetatable(L, ColorPrivateName);
+            mugg::graphics::Color* color = new mugg::graphics::Color(renderer->GetBackgroundColor());
+            luaL_getmetatable(L, ColorName);
             lua_setmetatable(L, -2);
 
             return 1;
@@ -64,9 +64,9 @@ namespace mugg {
         int rendererAddShaderProgram(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
 
-            mugg::graphics::ShaderProgram* shaderProgram = checkShaderProgram(L, 2);
+            std::shared_ptr<mugg::graphics::ShaderProgram> shaderProgram(checkShaderProgram(L, 2));
         
-            renderer->AddShaderProgram(*shaderProgram);
+            renderer->AddShaderProgram(shaderProgram);
 
             return 0;
         }
@@ -93,7 +93,7 @@ namespace mugg {
             {"set_background_color", rendererSetBackgroundColor},
             {"get_background_color", rendererGetBackgroundColor},
 
-            {"add_shader_program", rendererAddShaderProgram},
+            {"add_shaderprogram", rendererAddShaderProgram},
 
             {"initialize", rendererInitialize},
 

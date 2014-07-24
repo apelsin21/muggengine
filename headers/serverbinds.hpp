@@ -9,18 +9,17 @@
 
 namespace mugg {
     namespace binds {
-        static const char* ServerPrivateName = "mugg_Server";
-        static const char* ServerPublicName = "Server";
+        static const char* ServerName = "Server";
 
         mugg::net::Server* checkServer(lua_State* L, int n) {
-            return *(mugg::net::Server**)luaL_checkudata(L, n, ServerPrivateName);
+            return *(mugg::net::Server**)luaL_checkudata(L, n, ServerName);
         }
 
         int serverConstructor(lua_State* L) {
             mugg::net::Server** server = (mugg::net::Server**)lua_newuserdata(L, sizeof(mugg::net::Server*));
             *server = new mugg::net::Server();
 
-            luaL_getmetatable(L, ServerPrivateName);
+            luaL_getmetatable(L, ServerName);
             lua_setmetatable(L, -2);
 
             return 1;

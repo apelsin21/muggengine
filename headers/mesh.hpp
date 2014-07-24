@@ -16,15 +16,15 @@
 #include <assert.h>
 #include <iostream>
 #include <string>
+#include <memory>
 
 namespace mugg {
     namespace graphics {
         class Mesh : public Renderable {
             private:
-                std::vector<mugg::graphics::Texture2D> textures;
+                std::vector<std::shared_ptr<mugg::graphics::Texture2D>> textures;
 
                 std::vector<glm::vec3> vertices;
-                std::vector<unsigned int> indices;
                 std::vector<glm::vec2> uvs;
                 std::vector<glm::vec3> normals;
 
@@ -32,26 +32,27 @@ namespace mugg {
 
                 GLuint VBOID; //Vertex Buffer Object ID
                 GLuint IBID; //Index Buffer ID
+                
                 unsigned int numberOfIndices;
                 std::vector<unsigned int> materialIndices;
+                std::vector<unsigned int> indices;
 
                 bool loaded;
 
                 void ProcessAssimpScene(const aiScene*);
                 void ProcessAssimpMesh(unsigned int, const aiMesh*);
                 void ProcessAssimpMaterials(const aiScene*);
-                void FillBuffers();
                 
+                void FillBuffers();
                 void Clear();
                 void GenIDS();
             public:
                 Mesh();
-                Mesh(std::string);
                 ~Mesh();
 
-                std::vector<mugg::graphics::Texture2D> GetTextures();
-                bool GetTextureByIndex(int, mugg::graphics::Texture2D&);
-                void AddTexture(mugg::graphics::Texture2D);
+                std::vector<std::shared_ptr<mugg::graphics::Texture2D>> GetTextures();
+                bool GetTextureByIndex(int, std::shared_ptr<mugg::graphics::Texture2D>&);
+                void AddTexture(std::shared_ptr<mugg::graphics::Texture2D>&);
 
                 int GetNumberOfTextures();
                 int GetNumberOfVertices();
@@ -66,8 +67,6 @@ namespace mugg {
                 void SetIBID(GLuint IBID);
                 
                 std::string GetFilepath();
-
-                bool Load(std::string);
         };
     }
 }

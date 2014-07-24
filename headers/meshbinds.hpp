@@ -9,18 +9,17 @@
 
 namespace mugg {
     namespace binds {
-        static const char* MeshPrivateName = "mugg_Mesh";
-        static const char* MeshPublicName = "Mesh";
+        static const char* MeshName = "Mesh";
     
         mugg::graphics::Mesh* checkMesh(lua_State* L, int n) {
-            return *(mugg::graphics::Mesh**)luaL_checkudata(L, n, MeshPrivateName);
+            return *(mugg::graphics::Mesh**)luaL_checkudata(L, n, MeshName);
         }
 
         int meshConstructor(lua_State* L) {
             mugg::graphics::Mesh** mesh = (mugg::graphics::Mesh**)lua_newuserdata(L, sizeof(mugg::graphics::Mesh*));
             *mesh = new mugg::graphics::Mesh();
 
-            luaL_getmetatable(L, MeshPrivateName);
+            luaL_getmetatable(L, MeshName);
             lua_setmetatable(L, -2);
 
             return 1;
@@ -31,7 +30,7 @@ namespace mugg {
             mugg::graphics::Mesh** mesh = (mugg::graphics::Mesh**)lua_newuserdata(L, sizeof(mugg::graphics::Mesh*));
             *mesh = new mugg::graphics::Mesh(path);
 
-            luaL_getmetatable(L, MeshPrivateName);
+            luaL_getmetatable(L, MeshName);
             lua_setmetatable(L, -2);
 
             return 1;
@@ -40,16 +39,6 @@ namespace mugg {
             mugg::graphics::Mesh* mesh = checkMesh(L, 1);
 
             delete mesh;
-
-            return 0;
-        }
-
-        int meshLoad(lua_State* L) {
-            mugg::graphics::Mesh* mesh = checkMesh(L, 1);
-
-            const char* filepath = luaL_checkstring(L, 2);
-
-            mesh->Load(filepath);
 
             return 0;
         }
@@ -63,9 +52,9 @@ namespace mugg {
 
         int meshAddTexture(lua_State* L) {
             mugg::graphics::Mesh* mesh = checkMesh(L, 1);
-            mugg::graphics::Texture2D* texture = checkTexture2D(L, 2);
+            std::shared_ptr<mugg::graphics::Texture2D> texture(checkTexture2D(L, 2));
 
-            mesh->AddTexture(*texture);
+            mesh->AddTexture(texture);
             
             return 0;
         }
@@ -110,7 +99,6 @@ namespace mugg {
             {"new", meshConstructor},
             {"new", meshConstructorWithParams},
 
-            {"load", meshLoad},
             {"get_filepath", meshGetFilepath},
 
             {"get_number_of_textures", meshGetNumberOfTextures},

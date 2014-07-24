@@ -8,24 +8,14 @@ mugg::graphics::Mesh::Mesh() {
 
     this->GenIDS();
 }
-mugg::graphics::Mesh::Mesh(std::string filepath) {
-    this->loaded = false;
-    this->VBOID = 0;
-    this->IBID = 0;
-    this->numberOfIndices = 0;
-
-    this->GenIDS();
-
-    this->Load(filepath);
-}
 mugg::graphics::Mesh::~Mesh() {
     this->Clear();
 }
 
-std::vector<mugg::graphics::Texture2D> mugg::graphics::Mesh::GetTextures() {
+std::vector<std::shared_ptr<mugg::graphics::Texture2D>> mugg::graphics::Mesh::GetTextures() {
     return this->textures;
 }
-bool mugg::graphics::Mesh::GetTextureByIndex(int index, mugg::graphics::Texture2D &out_texture) {
+bool mugg::graphics::Mesh::GetTextureByIndex(int index, std::shared_ptr<mugg::graphics::Texture2D> &out_texture) {
     if(this->textures.size() != 0 && this->textures.size() <= index) {
         out_texture = this->textures[index];
         return true;
@@ -35,7 +25,7 @@ bool mugg::graphics::Mesh::GetTextureByIndex(int index, mugg::graphics::Texture2
 
     return false;
 }
-void mugg::graphics::Mesh::AddTexture(mugg::graphics::Texture2D texture) {
+void mugg::graphics::Mesh::AddTexture(std::shared_ptr<mugg::graphics::Texture2D>& texture) {
     this->textures.push_back(texture);
 }
 
@@ -57,7 +47,8 @@ std::string mugg::graphics::Mesh::GetFilepath() {
     return this->filepath;
 }
 
-bool mugg::graphics::Mesh::Load(std::string filepath) {
+/*
+bool Load(std::string filepath) {
     this->Clear();
     this->GenIDS();
     this->loaded = false;
@@ -78,7 +69,7 @@ bool mugg::graphics::Mesh::Load(std::string filepath) {
     this->loaded = true;
     return true;
 }
-
+*/
 void mugg::graphics::Mesh::GenIDS() {
     if(glIsBuffer(this->VBOID) == GL_FALSE) {
         glGenBuffers(1, &this->VBOID);
@@ -88,6 +79,7 @@ void mugg::graphics::Mesh::GenIDS() {
     }
 }
 
+/*
 void mugg::graphics::Mesh::ProcessAssimpScene(const aiScene* scene) {
     for(unsigned int i = 0; i < scene->mNumMeshes; i++) {
         const aiMesh* mesh = scene->mMeshes[i];
@@ -139,6 +131,8 @@ void mugg::graphics::Mesh::ProcessAssimpMesh(unsigned int index, const aiMesh* m
 
     this->FillBuffers();
 }
+*/
+
 void mugg::graphics::Mesh::FillBuffers() {
 }
 

@@ -5,13 +5,24 @@ namespace mugg {
     namespace graphics {
         class Color {
             public:
-                float r,g,b,a;
+                static const Color Black;
+                static const Color White;
+                static const Color Red;
+                static const Color Green;
+                static const Color Blue;
+                static const Color Yellow;
+                static const Color Magenta;
+                static const Color Cyan;
+                static const Color Transparent;
 
-                Color(float r, float g, float b, float a);
+                Color(float, float, float, float);
+                Color(float, float, float);
+                Color(const Color&);
                 Color();
                 
-                void Set(Color color);
-                void Set(float r, float g, float b, float a);
+                float r,g,b,a;
+                
+                void Set(float, float, float, float);
 
                 void Clamp();
         };

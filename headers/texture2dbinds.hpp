@@ -5,54 +5,25 @@
 #include <iostream>
 
 #include "texture2d.hpp"
+#include "contentmanager.hpp"
 
 namespace mugg {
     namespace binds {
-        static const char* Texture2DPrivateName = "mugg_Texture2D";
-        static const char* Texture2DPublicName = "Texture2D";
+        static const char* Texture2DName = "Texture2D";
 
         mugg::graphics::Texture2D* checkTexture2D(lua_State* L, int n) {
-            return *(mugg::graphics::Texture2D**)luaL_checkudata(L, n, Texture2DPrivateName);
-        }
-
-        int texture2DConstructor(lua_State* L) {
-            mugg::graphics::Texture2D** texture = (mugg::graphics::Texture2D**)lua_newuserdata(L, sizeof(mugg::graphics::Texture2D*));
-            *texture = new mugg::graphics::Texture2D();
-
-            luaL_getmetatable(L, Texture2DPrivateName);
-            lua_setmetatable(L, -2);
-
-            return 1;
+            return *(mugg::graphics::Texture2D**)luaL_checkudata(L, n, Texture2DName);
         }
 
         int texture2DDeconstructor(lua_State* L) {
             mugg::graphics::Texture2D* texture = checkTexture2D(L, 1);
 
-            delete texture;
+
+            mugg::core::ContentManager::GetInstance().DeleteTexture2D(texture->GetIndex(), texture->GetID());
 
             return 0;
         }
-
-        int texture2DLoad(lua_State* L) {
-            mugg::graphics::Texture2D* texture = checkTexture2D(L, 1);
-
-            const char* filepath = luaL_checkstring(L, 2);
-            mugg::graphics::TextureRepeatPattern pattern = (mugg::graphics::TextureRepeatPattern)luaL_checkoption(L, 3, NULL, mugg::graphics::TextureRepeatPatternString);
-            mugg::graphics::TextureFilter filter = (mugg::graphics::TextureFilter)luaL_checkoption(L, 4, NULL, mugg::graphics::TextureFilterString);
-            
-            bool mipMaps = false;
-
-            if(lua_isboolean(L, 5)) {
-                mipMaps = lua_toboolean(L, 5);
-            } else {
-                luaL_error(L, "Argument to load_from_file wasn't a boolean\n");
-            }
-
-            texture->Load(filepath, pattern, filter, mipMaps);
-
-            return 0;
-        }
-
+        
         int texture2DGetFilepath(lua_State* L) {
             mugg::graphics::Texture2D* texture = checkTexture2D(L, 1);
 
@@ -119,9 +90,6 @@ namespace mugg {
         }
     
         luaL_Reg texture2DFuncs[] = {
-            {"new", texture2DConstructor},
-
-            {"load", texture2DLoad},
             {"get_filepath", texture2DGetFilepath},
 
             {"get_width", texture2DGetWidth},

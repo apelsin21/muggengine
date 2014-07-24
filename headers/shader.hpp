@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include "graphicsdefs.hpp"
 #include "fileutils.hpp"
@@ -24,7 +25,6 @@ namespace mugg {
                 bool Validate();
             public:
                 Shader();
-                Shader(mugg::graphics::ShaderType type, const char* filepath);
                 ~Shader();
 
                 void GenID();
@@ -32,18 +32,19 @@ namespace mugg {
                 void DeleteID();
 
                 mugg::graphics::ShaderType GetType();
-                void SetType(mugg::graphics::ShaderType type);
+                void SetType(mugg::graphics::ShaderType);
 
                 std::string GetData();
-                void SetData(std::string data);
+                void SetData(const std::string& data = "");
 
                 const char* GetFilepath();
-                void SetFilepath(const char* filepath);
+                void SetFilepath(const char* filepath = "");
 
                 bool GetLoaded();
                 bool GetCompiledSuccessfully();
 
-                bool LoadFromFilepath(const char* filepath);
+                bool Load(const char* filepath);
+                bool Load(mugg::graphics::ShaderType, const char*);
 
                 bool Compile();
         };

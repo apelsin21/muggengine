@@ -16,7 +16,7 @@
 #include "clientbinds.hpp"
 #include "stringpacketbinds.hpp"
 #include "netmanagerbinds.hpp"
-#include "meshbinds.hpp"
+#include "contentmanagerbinds.hpp"
 
 void checkForError() {
     GLenum errorCode;    
@@ -75,17 +75,17 @@ int main(int argc, char* argv[]) {
     
     mugg::ScriptSystem system(true);
 
-    system.RegisterMetatable(mugg::binds::windowFuncs, mugg::binds::WindowPrivateName, mugg::binds::WindowPublicName);
-    system.RegisterMetatable(mugg::binds::colorFuncs, mugg::binds::ColorPrivateName, mugg::binds::ColorPublicName);
-    system.RegisterMetatable(mugg::binds::shaderProgramFuncs, mugg::binds::ShaderProgramPrivateName, mugg::binds::ShaderProgramPublicName);
-    system.RegisterMetatable(mugg::binds::rendererFuncs, mugg::binds::RendererPrivateName, mugg::binds::RendererPublicName);
-    system.RegisterMetatable(mugg::binds::shaderFuncs, mugg::binds::ShaderPrivateName, mugg::binds::ShaderPublicName);
-    system.RegisterMetatable(mugg::binds::texture2DFuncs, mugg::binds::Texture2DPrivateName, mugg::binds::Texture2DPublicName);
-    system.RegisterMetatable(mugg::binds::serverFuncs, mugg::binds::ServerPrivateName, mugg::binds::ServerPublicName);
-    system.RegisterMetatable(mugg::binds::clientFuncs, mugg::binds::ClientPrivateName, mugg::binds::ClientPublicName);
-    system.RegisterMetatable(mugg::binds::stringPacketFuncs, mugg::binds::StringPacketPrivateName, mugg::binds::StringPacketPublicName);
-    system.RegisterMetatable(mugg::binds::netManagerFuncs, mugg::binds::NetManagerPrivateName, mugg::binds::NetManagerPublicName);
-    system.RegisterMetatable(mugg::binds::meshFuncs, mugg::binds::MeshPrivateName, mugg::binds::MeshPublicName);
+    system.RegisterMetatable(mugg::binds::windowFuncs, mugg::binds::WindowName);
+    system.RegisterMetatable(mugg::binds::colorFuncs, mugg::binds::ColorName);
+    system.RegisterMetatable(mugg::binds::shaderProgramFuncs, mugg::binds::ShaderProgramName);
+    system.RegisterMetatable(mugg::binds::rendererFuncs, mugg::binds::RendererName);
+    system.RegisterMetatable(mugg::binds::shaderFuncs, mugg::binds::ShaderName);
+    system.RegisterMetatable(mugg::binds::texture2DFuncs, mugg::binds::Texture2DName);
+    system.RegisterMetatable(mugg::binds::serverFuncs, mugg::binds::ServerName);
+    system.RegisterMetatable(mugg::binds::clientFuncs, mugg::binds::ClientName);
+    system.RegisterMetatable(mugg::binds::stringPacketFuncs, mugg::binds::StringPacketName);
+    system.RegisterMetatable(mugg::binds::netManagerFuncs, mugg::binds::NetManagerName);
+    system.RegisterMetatable(mugg::binds::contentManagerFuncs, mugg::binds::ContentManagerName);
 
     system.DoFile("main.lua");
 

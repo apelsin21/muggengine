@@ -12,23 +12,24 @@
 
 #include <vector>
 #include <iostream>
+#include <memory>
 
 namespace mugg {
     namespace graphics {
         class Renderer {
             private:
-                std::vector<mugg::graphics::ShaderProgram> programVector;
+                std::vector<std::shared_ptr<mugg::graphics::ShaderProgram>> programVector;
                 mugg::graphics::Color backgroundColor;
             public:
                 Renderer();
                 ~Renderer();
 
-                void SetBackgroundColor(mugg::graphics::Color color);
+                void SetBackgroundColor(const mugg::graphics::Color&);
                 mugg::graphics::Color GetBackgroundColor();
 
-                bool AddShaderProgram(mugg::graphics::ShaderProgram program);
-                mugg::graphics::ShaderProgram GetShaderProgramByIndex(int index);
-                std::vector<mugg::graphics::ShaderProgram> GetShaderProgramVector();
+                bool AddShaderProgram(std::shared_ptr<mugg::graphics::ShaderProgram>&);
+                std::shared_ptr<mugg::graphics::ShaderProgram> GetShaderProgramByIndex(int);
+                std::vector<std::shared_ptr<mugg::graphics::ShaderProgram>> GetShaderProgramVector();
                 
                 bool Initialize();
                 

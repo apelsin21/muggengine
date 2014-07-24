@@ -8,18 +8,17 @@
 
 namespace mugg {
     namespace binds {
-        static const char* StringPacketPrivateName = "mugg_StringPacket";
-        static const char* StringPacketPublicName = "StringPacket";
+        static const char* StringPacketName = "StringPacket";
 
         mugg::net::StringPacket* checkStringPacket(lua_State* L, int n) {
-            return *(mugg::net::StringPacket**)luaL_checkudata(L, n, StringPacketPrivateName);
+            return *(mugg::net::StringPacket**)luaL_checkudata(L, n, StringPacketName);
         }
 
         int stringPacketConstructor(lua_State* L) {
             mugg::net::StringPacket** packet = (mugg::net::StringPacket**)lua_newuserdata(L, sizeof(mugg::net::StringPacket*));
             *packet = new mugg::net::StringPacket();
 
-            luaL_getmetatable(L, StringPacketPrivateName);
+            luaL_getmetatable(L, StringPacketName);
             lua_setmetatable(L, -2);
 
 

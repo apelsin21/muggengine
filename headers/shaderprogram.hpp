@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <GL/glew.h>
 
@@ -18,7 +19,7 @@ namespace mugg {
             private:
                 bool linked, hasGeneratedID, compiledSuccessfully;
 
-                std::vector<mugg::graphics::Shader> shaderVector;
+                std::vector<std::shared_ptr<mugg::graphics::Shader>> shaders;
             public:
                 ShaderProgram();
                 ~ShaderProgram();
@@ -31,8 +32,7 @@ namespace mugg {
                 const char* GetLog();
                 bool Link();
                 
-                bool AddShader(mugg::graphics::Shader shader);
-                bool AddShader(mugg::graphics::ShaderType type, const char* filepath);
+                bool AddShader(std::shared_ptr<mugg::graphics::Shader>&);
 
                 bool GetCompiledSuccessfully();
 

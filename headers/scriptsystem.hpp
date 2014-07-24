@@ -12,11 +12,9 @@ namespace mugg {
         private:
             lua_State* state;
 
-            std::vector<const char*> registredMetatablesPrivateNames;
-            std::vector<const char*> registredMetatablesGlobalNames;
+            std::vector<const char*> registredMetatableNames;
             
-            std::vector<const char*> registredFunctionsPrivateNames;
-            std::vector<const char*> registredFunctionsGlobalNames;
+            std::vector<const char*> registredFunctionNames;
 
             bool usesStandardLibrary;
         public:
@@ -30,11 +28,9 @@ namespace mugg {
             void SetState(lua_State* state);
             lua_State* GetState();
 
-            void RegisterMetatable(luaL_Reg* functions, const char* privateName, const char* globalName);
-            std::vector<const char*> GetRegistredMetatablesPrivateNames();
-            std::vector<const char*> GetRegistredMetatablesGlobalNames();
-            const char* GetRegistredMetatablesPrivateNamesByIndex(int index);
-            const char* GetRegistredMetatablesGlobalNamesByIndex(int index);
+            void RegisterMetatable(luaL_Reg* functions, const char* name);
+            std::vector<const char*> GetRegistredMetatableNames();
+            const char* GetRegistredMetatableNamesByIndex(int index);
 
             void PrintStack();
 

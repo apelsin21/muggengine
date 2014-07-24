@@ -29,12 +29,12 @@ namespace mugg {
                 NetManager();
                 ~NetManager();
 
-                bool AddClient(mugg::net::Client);
+                bool AddClient(mugg::net::Client&);
                 bool GetClientByIndex(int, mugg::net::Client&);
                 std::vector<mugg::net::Client> GetCurrentClients();
                 int GetNumberOfClients();
 
-                bool AddServer(mugg::net::Server);
+                bool AddServer(mugg::net::Server&);
                 bool GetServerByIndex(int, mugg::net::Server&);
                 std::vector<mugg::net::Server> GetCurrentServers();
                 int GetNumberOfServers();

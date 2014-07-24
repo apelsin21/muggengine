@@ -12,18 +12,17 @@
 
 namespace mugg {
     namespace binds {
-        static const char* NetManagerPrivateName = "mugg_NetManager";
-        static const char* NetManagerPublicName = "NetManager";
+        static const char* NetManagerName = "NetManager";
     
         mugg::net::NetManager* checkNetManager(lua_State* L, int n) {
-            return *(mugg::net::NetManager**)luaL_checkudata(L, n, NetManagerPrivateName);
+            return *(mugg::net::NetManager**)luaL_checkudata(L, n, NetManagerName);
         }
 
         int netManagerConstructor(lua_State* L) {
             mugg::net::NetManager** netMgr = (mugg::net::NetManager**)lua_newuserdata(L, sizeof(mugg::net::NetManager*));
             *netMgr = new mugg::net::NetManager();
 
-            luaL_getmetatable(L, NetManagerPrivateName);
+            luaL_getmetatable(L, NetManagerName);
             lua_setmetatable(L, -2);
            
             return 1;

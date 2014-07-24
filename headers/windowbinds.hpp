@@ -7,18 +7,17 @@
 
 namespace mugg {
     namespace binds {
-        static const char* WindowPrivateName = "mugg_Window";
-        static const char* WindowPublicName = "Window";
+        static const char* WindowName = "Window";
 
         mugg::Window* checkWindow(lua_State* L, int n) {
-            return *(mugg::Window**)luaL_checkudata(L, n, WindowPrivateName);
+            return *(mugg::Window**)luaL_checkudata(L, n, WindowName);
         }
 
         int windowConstructor(lua_State* L) {
             mugg::Window** window = (Window**)lua_newuserdata(L, sizeof(mugg::Window*));
             *window = new mugg::Window();
 
-            luaL_getmetatable(L, WindowPrivateName);
+            luaL_getmetatable(L, WindowName);
             lua_setmetatable(L, -2);
 
             return 1;
@@ -32,7 +31,7 @@ namespace mugg {
             mugg::Window** window = (mugg::Window**)lua_newuserdata(L, sizeof(mugg::Window*));
             *window = new mugg::Window(width, height, title);
 
-            luaL_getmetatable(L, WindowPrivateName);
+            luaL_getmetatable(L, WindowName);
             lua_setmetatable(L, -2);
 
             return 1;
