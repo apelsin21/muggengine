@@ -59,10 +59,14 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::LoadTexture2D(const std::
     texture->Bind();
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap), 0, GL_BGRA, GL_UNSIGNED_BYTE, (GLvoid*)FreeImage_GetBits(bitmap));
 
-    texture->SetFormat(format);
-    texture->SetBitmap(bitmap);
+    texture->SetWidth(FreeImage_GetWidth(bitmap));
+    texture->SetHeight(FreeImage_GetHeight(bitmap));
+    texture->SetColorsUsed(FreeImage_GetColorsUsed(bitmap));
+    texture->SetBPP(FreeImage_GetBPP(bitmap));
     texture->SetFilepath(filepath);
     texture->SetLoaded(true);
+
+    FreeImage_Unload(bitmap);
     
     this->textures.push_back(id);
     texture->SetIndex(this->textures.size());

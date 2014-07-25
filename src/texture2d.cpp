@@ -1,6 +1,7 @@
 #include "texture2d.hpp"
 
 mugg::graphics::Texture2D::Texture2D(GLuint id) {
+    //Numbers
     this->width = 0;
     this->height = 0;
     this->bpp = 0;
@@ -8,35 +9,16 @@ mugg::graphics::Texture2D::Texture2D(GLuint id) {
     this->colorsUsed = 0;
     this->index = 0;
 
-    this->bitmap = nullptr;
-    this->format = FIF_UNKNOWN;
-
+    //Booleans
     this->loaded = false;
     this->mipMaps = false;
     this->hasGeneratedID = false;
-}
-mugg::graphics::Texture2D::~Texture2D() {
-}
 
-FREE_IMAGE_FORMAT mugg::graphics::Texture2D::GetFormat() {
-    return this->format;
-}
-void mugg::graphics::Texture2D::SetFormat(const FREE_IMAGE_FORMAT& format) {
-    this->format = format;
-}
-
-FIBITMAP* mugg::graphics::Texture2D::GetBitmap() {
-    return this->bitmap;
-}
-void mugg::graphics::Texture2D::SetBitmap(FIBITMAP* bitmap) {
-    this->bitmap = bitmap;
-    
-    this->width = FreeImage_GetWidth(this->bitmap);
-    this->height = FreeImage_GetHeight(this->bitmap);
-    this->bpp = FreeImage_GetBPP(this->bitmap);
-    this->colorsUsed = FreeImage_GetColorsUsed(this->bitmap);
-
-    FreeImage_Unload(this->bitmap);
+    //Enums
+    this->minFilter = mugg::graphics::TextureFilter::Nearest;
+    this->magFilter = mugg::graphics::TextureFilter::Nearest;
+    this->uWrap = mugg::graphics::TextureWrap::Repeat;
+    this->vWrap = mugg::graphics::TextureWrap::Repeat;
 }
 
 void mugg::graphics::Texture2D::SetWidth(int width) {

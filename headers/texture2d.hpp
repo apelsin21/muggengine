@@ -6,7 +6,6 @@
 #include <memory>
 
 #include <GL/glew.h>
-#include <FreeImage.h>
 
 #include "graphicsdefs.hpp"
 #include "globject.hpp"
@@ -15,9 +14,6 @@ namespace mugg {
     namespace graphics {
         class Texture2D : public GLObject {
             private:
-                FREE_IMAGE_FORMAT format;
-                FIBITMAP* bitmap;
-                
                 mugg::graphics::TextureFilter minFilter;
                 mugg::graphics::TextureFilter magFilter;
 
@@ -29,7 +25,6 @@ namespace mugg {
                 bool loaded, hasGeneratedID, mipMaps;
             public:
                 Texture2D(GLuint id);
-                ~Texture2D();
 
                 void SetFilepath(std::string);
                 std::string GetFilepath();
@@ -52,12 +47,6 @@ namespace mugg {
                 bool HasGeneratedID();
                 bool UsesMipMaps();
                
-                FREE_IMAGE_FORMAT GetFormat();
-                void SetFormat(const FREE_IMAGE_FORMAT&);
-
-                FIBITMAP* GetBitmap();
-                void SetBitmap(FIBITMAP*);
-
                 mugg::graphics::TextureWrap GetUWrap();
                 mugg::graphics::TextureWrap GetVWrap();
 

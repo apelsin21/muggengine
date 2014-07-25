@@ -5,6 +5,7 @@ renderer = Renderer.new()
 renderer:set_background_color(Color.new(0, 1, 1, 1))
 
 texture = ContentManager.load_texture2d("data/textures/error.png")
+texture2 = ContentManager.load_texture2d("data/textures/error.png")
 
 vertex_shader = ContentManager.load_shader("VertexShader", "data/shaders/vertex.glsl")
 fragment_shader = ContentManager.load_shader("FragmentShader", "data/shaders/fragment.glsl")
