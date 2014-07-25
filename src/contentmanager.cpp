@@ -48,10 +48,12 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::LoadTexture2D(const std::
         return texture;
     }
 
-    bitmap = FreeImage_ConvertTo32Bits(bitmap);
+    FIBITMAP* temp = bitmap;
+    temp = FreeImage_ConvertTo32Bits(bitmap);
+    FreeImage_Unload(temp);
 
     if(!bitmap) {
-        std::cout << "FreeImage failed to convert texture " << filepath << " to 32 bits!\n";
+        std::cout << "FreeImage failed to convert texture " << filepath << " to 32 bit colour!\n";
         texture->SetLoaded(false);
         return texture;
     }
