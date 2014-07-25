@@ -7,30 +7,10 @@ static void mugg::closeCallback(GLFWwindow* window) {
     glfwSetWindowShouldClose(window, true);
 }
 
-mugg::Window::Window(int width, int height, const char* title) {
+mugg::Window::Window() {
+    //Pointers
     this->window = nullptr;
     
-    //Numeric values
-    this->width = 0;
-    this->height = 0;
-    this->posX = 0;
-    this->posY = 0;
-    this->swapInterval = 0;
-
-    //Strings
-    this->title = "";
-
-    //Boolean values
-    this->fullscreen = false;
-    this->changed = false;
-    this->open = false;
-    this->focused = false;
-    this->iconified = false;
-    this->visible = false;
-    
-    this->Open(width, height, title);
-}
-mugg::Window::Window() {
     //Numeric values
     this->width = 0;
     this->height = 0;
@@ -52,8 +32,9 @@ mugg::Window::Window() {
 mugg::Window::~Window() {
     this->Close();
 
-    if(this->window != nullptr)
-        glfwTerminate();
+    glfwDestroyWindow(this->window);
+
+    glfwTerminate();
 }
 
 bool mugg::Window::Open(int width, int height, const char* title) {

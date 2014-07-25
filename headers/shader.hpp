@@ -9,14 +9,14 @@
 
 #include "graphicsdefs.hpp"
 #include "fileutils.hpp"
-#include "renderable.hpp"
+#include "globject.hpp"
 
 namespace mugg {
     namespace graphics {
-        class Shader : public Renderable {
+        class Shader : public GLObject {
             private:
                 mugg::graphics::ShaderType type;
-                const char* filepath;
+                std::string filepath;
                 std::string data;
                 bool loaded, hasGeneratedID, compiledSuccessfully;
                 
@@ -24,27 +24,20 @@ namespace mugg {
                 const char* GetLog();
                 bool Validate();
             public:
-                Shader();
+                Shader(GLuint);
                 ~Shader();
-
-                void GenID();
-
-                void DeleteID();
 
                 mugg::graphics::ShaderType GetType();
                 void SetType(mugg::graphics::ShaderType);
 
                 std::string GetData();
-                void SetData(const std::string& data = "");
+                void SetData(const std::string& data);
 
-                const char* GetFilepath();
-                void SetFilepath(const char* filepath = "");
+                std::string GetFilepath();
+                void SetFilepath(std::string filepath);
 
                 bool GetLoaded();
                 bool GetCompiledSuccessfully();
-
-                bool Load(const char* filepath);
-                bool Load(mugg::graphics::ShaderType, const char*);
 
                 bool Compile();
         };

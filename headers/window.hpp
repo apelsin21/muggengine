@@ -25,7 +25,6 @@ namespace mugg {
             const char* title;
             bool changed; //True if window needs to recreate, false if not
         public:
-            Window(int width, int height, const char* title);
             Window();
             ~Window();
 

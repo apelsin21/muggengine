@@ -1,7 +1,6 @@
 #ifndef MESH_HPP
 #define MESH_HPP
 
-#include "renderable.hpp"
 #include "texture2d.hpp"
 #include "color.hpp"
 
@@ -20,7 +19,7 @@
 
 namespace mugg {
     namespace graphics {
-        class Mesh : public Renderable {
+        class Mesh {
             private:
                 std::vector<std::shared_ptr<mugg::graphics::Texture2D>> textures;
 

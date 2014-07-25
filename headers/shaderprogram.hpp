@@ -11,11 +11,11 @@
 #include "fileutils.hpp"
 #include "graphicsdefs.hpp"
 #include "shader.hpp"
-#include "renderable.hpp"
+#include "globject.hpp"
 
 namespace mugg {
     namespace graphics {
-        class ShaderProgram : public Renderable {
+        class ShaderProgram : public GLObject {
             private:
                 bool linked, hasGeneratedID, compiledSuccessfully;
 

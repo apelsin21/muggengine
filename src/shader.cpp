@@ -1,8 +1,8 @@
 #include "shader.hpp"
 
-mugg::graphics::Shader::Shader() {
+mugg::graphics::Shader::Shader(GLuint id) {
     this->type = mugg::graphics::ShaderType::VertexShader;
-    this->ID = 0;
+    this->ID = id;
     this->filepath = "";
     this->data = "";
     this->loaded = false;
@@ -10,32 +10,6 @@ mugg::graphics::Shader::Shader() {
     this->hasGeneratedID = false;
 }
 mugg::graphics::Shader::~Shader() {
-    this->DeleteID();
-}
-
-void mugg::graphics::Shader::GenID() {
-    switch(this->type) {
-        case VertexShader:
-            this->ID = glCreateShader(GL_VERTEX_SHADER);
-            break;
-        case FragmentShader:
-            this->ID = glCreateShader(GL_FRAGMENT_SHADER);
-            break;
-        case GeometryShader:
-            this->ID = glCreateShader(GL_GEOMETRY_SHADER);
-            break;
-    }
-
-    this->hasGeneratedID = true;
-}
-void mugg::graphics::Shader::DeleteID() {
-    if(this->hasGeneratedID) {
-        if(glIsShader(this->ID)) {
-            std::cout << this->filepath << " deleteid()\n";
-            glDeleteShader(this->ID);
-        }
-        this->hasGeneratedID = false;
-    }
 }
 
 mugg::graphics::ShaderType mugg::graphics::Shader::GetType() {
@@ -45,10 +19,10 @@ void mugg::graphics::Shader::SetType(mugg::graphics::ShaderType type) {
     this->type = type;
 }
 
-const char* mugg::graphics::Shader::GetFilepath() {
+std::string mugg::graphics::Shader::GetFilepath() {
     return this->filepath;
 }
-void mugg::graphics::Shader::SetFilepath(const char* filepath) {
+void mugg::graphics::Shader::SetFilepath(std::string filepath) {
     this->filepath = filepath;
 }
 
@@ -66,38 +40,6 @@ std::string mugg::graphics::Shader::GetData() {
 void mugg::graphics::Shader::SetData(const std::string& data) {
     this->loaded = true;
     this->data = data;
-}
-
-bool mugg::graphics::Shader::Load(const char* filepath) {
-    if(filepath == "") {
-        std::cout << "Tried to load shader from empty string!\n";
-        this->loaded = false;
-        return false;
-    }
-
-    this->filepath = filepath;
-
-    if(!mugg::io::LoadTextFromFile(filepath, this->data)) {
-        std::cout << "Failed to load shader from filepath: " << filepath << std::endl;
-        this->loaded = false;
-        return false;
-    }
-
-    this->loaded = true;
-    return true;
-}
-bool mugg::graphics::Shader::Load(mugg::graphics::ShaderType type, const char* filepath) {
-    this->SetType(type);
-    this->GenID();
-
-    if(!this->Load(filepath)) {
-        return false;
-    }
-    else if(this->Compile()) {
-        return false;
-    }
-
-    return true;
 }
 
 bool mugg::graphics::Shader::Compile() {

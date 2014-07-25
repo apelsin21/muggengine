@@ -9,11 +9,11 @@
 #include <FreeImage.h>
 
 #include "graphicsdefs.hpp"
-#include "renderable.hpp"
+#include "globject.hpp"
 
 namespace mugg {
     namespace graphics {
-        class Texture2D : public Renderable {
+        class Texture2D : public GLObject {
             private:
                 FREE_IMAGE_FORMAT format;
                 FIBITMAP* bitmap;
@@ -24,8 +24,6 @@ namespace mugg {
                 mugg::graphics::TextureWrap uWrap;
                 mugg::graphics::TextureWrap vWrap;
 
-                unsigned int index;
-
                 int width, height, bpp, colorsUsed;
                 std::string filepath;
                 bool loaded, hasGeneratedID, mipMaps;
@@ -35,9 +33,6 @@ namespace mugg {
 
                 void SetFilepath(std::string);
                 std::string GetFilepath();
-
-                void SetIndex(unsigned int);
-                unsigned int GetIndex();
 
                 void SetWidth(int);
                 int GetWidth();

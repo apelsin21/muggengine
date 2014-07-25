@@ -22,21 +22,6 @@ namespace mugg {
 
             return 1;
         }
-
-        int windowConstructorParams(lua_State* L) {
-            int width = (int)luaL_checknumber(L, 1);
-            int height = (int)luaL_checknumber(L, 2);
-            const char* title = luaL_checkstring(L, 3);
-
-            mugg::Window** window = (mugg::Window**)lua_newuserdata(L, sizeof(mugg::Window*));
-            *window = new mugg::Window(width, height, title);
-
-            luaL_getmetatable(L, WindowName);
-            lua_setmetatable(L, -2);
-
-            return 1;
-        }
-
         int windowDeconstructor(lua_State* L) {
             mugg::Window* window = checkWindow(L, 1);
             
@@ -224,7 +209,6 @@ namespace mugg {
 
         luaL_Reg windowFuncs[] = {
             {"new", windowConstructor},
-            {"new", windowConstructorParams},
 
             {"open", windowOpen},
 

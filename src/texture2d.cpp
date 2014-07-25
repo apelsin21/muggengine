@@ -39,13 +39,6 @@ void mugg::graphics::Texture2D::SetBitmap(FIBITMAP* bitmap) {
     FreeImage_Unload(this->bitmap);
 }
 
-void mugg::graphics::Texture2D::SetIndex(unsigned int i) {
-    this->index = i;
-}
-unsigned int mugg::graphics::Texture2D::GetIndex() {
-    return this->index;
-}
-
 void mugg::graphics::Texture2D::SetWidth(int width) {
     this->width = width;
 }

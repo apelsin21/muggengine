@@ -16,31 +16,25 @@
 #include <assimp/postprocess.h>
 
 #include "texture2d.hpp"
+#include "shader.hpp"
+#include "graphicsdefs.hpp"
 
 namespace mugg {
     namespace core {
-        enum LoadableType {
-            Texture2D,
-            Mesh,
-            Shader
-        };
-        static const char* LoadableTypeString[] = {
-            "Texture2D",
-            "Mesh",
-            "Shader",
-            "NULL"
-        };
-
         class ContentManager {
             private:
-                std::ifstream in_stream;
-                std::ofstream out_stream;
+                std::ifstream inStream;
+                std::ofstream outStream;
            
                 std::vector<GLuint> textures;
+                std::vector<GLuint> shaders;
 
                 void ProcessAssimpScene(const aiScene*);
                 void ProcessAssimpMesh(unsigned int, const aiMesh*);
                 void ProcessAssimpMaterials(const aiScene*);
+
+                void DeleteShaderID(GLuint);
+                void DeleteTextureID(GLuint);
 
                 bool SearchForID(std::vector<GLuint>&, GLuint, int&);
 
@@ -56,6 +50,11 @@ namespace mugg {
 
                 mugg::graphics::Texture2D* LoadTexture2D(const std::string);
                 bool DeleteTexture2D(unsigned int, GLuint);
+        
+                bool LoadTextFile(const std::string, std::string&);
+                
+                mugg::graphics::Shader* LoadShader(mugg::graphics::ShaderType, const std::string);
+                bool DeleteShader(unsigned int, GLuint);
         };
     }
 }

@@ -10,16 +10,6 @@ mugg::graphics::ShaderProgram::ShaderProgram() {
 mugg::graphics::ShaderProgram::~ShaderProgram() {
 }
 
-void mugg::graphics::ShaderProgram::DeleteID() {
-    if(this->hasGeneratedID && glIsProgram(this->ID) == GL_TRUE)
-        glDeleteProgram(this->ID);
-
-    for(unsigned int i = 0; i <= this->shaders.size(); i++) {
-        this->shaders[i]->DeleteID();
-    }
-
-    this->hasGeneratedID = false;
-}
 bool mugg::graphics::ShaderProgram::HasGeneratedID() {
     return this->hasGeneratedID;
 }
@@ -61,9 +51,6 @@ bool mugg::graphics::ShaderProgram::Link() {
         return false;
     }
 
-    for(unsigned int i = 0; i < this->shaders.size(); i++)
-        this->shaders[i]->DeleteID();
-    
     this->compiledSuccessfully = true;
     this->linked = true;
 

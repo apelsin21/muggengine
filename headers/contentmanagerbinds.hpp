@@ -9,35 +9,41 @@
 #include <memory>
 
 #include "texture2dbinds.hpp"
+#include "shaderbinds.hpp"
 
 namespace mugg {
     namespace binds {
         static const char* ContentManagerName = "ContentManager";
         
-        int contentManagerLoad(lua_State* L) {
-            mugg::core::LoadableType type = (mugg::core::LoadableType)luaL_checkoption(L, 1, NULL, mugg::core::LoadableTypeString);
-            const char* path = lua_tostring(L, 2);
+        int contentManagerLoadTexture2D(lua_State* L) {
+            std::string path = lua_tostring(L, 1);
 
-            if(type ==mugg::core::LoadableType::Texture2D) {
-                    mugg::graphics::Texture2D** texture = (mugg::graphics::Texture2D**)lua_newuserdata(L, sizeof(mugg::graphics::Texture2D*));
-                    *texture = mugg::core::ContentManager::GetInstance().LoadTexture2D(path);
-                    
-                    luaL_getmetatable(L, Texture2DName);
-                    lua_setmetatable(L, -2);
-                    
-                    return 1;
-            }
-            else if(type == mugg::core::LoadableType::Mesh) {
-            }
-            else if(type == mugg::core::LoadableType::Shader) {
-            }
+            mugg::graphics::Texture2D** texture = (mugg::graphics::Texture2D**)lua_newuserdata(L, sizeof(mugg::graphics::Texture2D*));
+            *texture = mugg::core::ContentManager::GetInstance().LoadTexture2D(path);
+
+            luaL_getmetatable(L, Texture2DName);
+            lua_setmetatable(L, -2);
             
-            return 0;
+            return 1;
+        }
+
+        int contentManagerLoadShader(lua_State* L) {
+            mugg::graphics::ShaderType type = (mugg::graphics::ShaderType)luaL_checkoption(L, 1, NULL, mugg::graphics::ShaderTypeString);
+            std::string path = lua_tostring(L, 2);
+
+            mugg::graphics::Shader** shader = (mugg::graphics::Shader**)lua_newuserdata(L, sizeof(mugg::graphics::Shader*));
+            *shader = mugg::core::ContentManager::GetInstance().LoadShader(type, path);
+        
+            luaL_getmetatable(L, ShaderName);
+            lua_setmetatable(L, -2);
+
+            return 1;
         }
 
         luaL_Reg contentManagerFuncs[] = {
-            {"load", contentManagerLoad},
-            
+            {"load_texture2d", contentManagerLoadTexture2D},
+            {"load_shader", contentManagerLoadShader},
+
             {NULL, NULL},
         };
     }
