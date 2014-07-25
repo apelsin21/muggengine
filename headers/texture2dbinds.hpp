@@ -63,13 +63,6 @@ namespace mugg {
 
             return 1;
         }
-        int texture2DGetID(lua_State* L) {
-            mugg::graphics::Texture2D* texture = checkTexture2D(L, 1);
-
-            lua_pushnumber(L, texture->GetID());
-
-            return 1;
-        }
         int texture2DGetLoaded(lua_State* L) {
             mugg::graphics::Texture2D* texture = checkTexture2D(L, 1);
 
@@ -100,8 +93,6 @@ namespace mugg {
 
             {"get_bpp", texture2DGetBPP},
             {"get_colors_used", texture2DGetColorsUsed},
-
-            {"get_gl_id", texture2DGetID},
 
             {"is_loaded", texture2DGetLoaded},
             {"has_generated_id", texture2DGetHasGeneratedID},

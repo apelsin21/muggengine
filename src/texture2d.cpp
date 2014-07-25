@@ -12,7 +12,7 @@ mugg::graphics::Texture2D::Texture2D(GLuint id) {
     //Booleans
     this->loaded = false;
     this->mipMaps = false;
-    this->hasGeneratedID = false;
+    this->hasGeneratedID = true;
 
     //Enums
     this->minFilter = mugg::graphics::TextureFilter::Nearest;
