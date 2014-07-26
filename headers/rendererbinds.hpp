@@ -64,9 +64,9 @@ namespace mugg {
         int rendererAddShaderProgram(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
 
-            std::shared_ptr<mugg::graphics::ShaderProgram> shaderProgram(checkShaderProgram(L, 2));
+            mugg::graphics::ShaderProgram* shaderProgram = checkShaderProgram(L, 2);
         
-            renderer->AddShaderProgram(shaderProgram);
+            renderer->AddShaderProgram(shaderProgram->GetID());
 
             return 0;
         }

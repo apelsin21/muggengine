@@ -13,22 +13,22 @@ mugg::graphics::Color mugg::graphics::Renderer::GetBackgroundColor() {
     return this->backgroundColor;
 }
 
-bool mugg::graphics::Renderer::AddShaderProgram(std::shared_ptr<mugg::graphics::ShaderProgram>& shaderProgram) {
-    if(shaderProgram->GetCompiledSuccessfully()) {
+bool mugg::graphics::Renderer::AddShaderProgram(GLuint shaderProgram) {
+    if(glIsProgram(shaderProgram) == GL_TRUE) {
         this->programVector.push_back(shaderProgram);
         return true;
     }
-    
-    std::cout << "Tried to add a shaderprogram with errors!\n";
-    
+
+    std::cout << "Tried adding unlinked shaderprogram to renderer!\n";
+
     return false;
 }
-std::shared_ptr<mugg::graphics::ShaderProgram> mugg::graphics::Renderer::GetShaderProgramByIndex(int index) {
+GLuint mugg::graphics::Renderer::GetShaderProgramByIndex(int index) {
     if(this->programVector.size() != 0) {
         return this->programVector[index];
     }
 }
-std::vector<std::shared_ptr<mugg::graphics::ShaderProgram>> mugg::graphics::Renderer::GetShaderProgramVector() {
+std::vector<GLuint> mugg::graphics::Renderer::GetShaderProgramVector() {
     return this->programVector;
 }
 
@@ -40,7 +40,7 @@ void mugg::graphics::Renderer::Draw() {
 
     if(this->programVector.size() != 0) {
         for(int i = 0; i < this->programVector.size(); i++) {
-            glUseProgram(this->programVector[i]->GetID());
+            glUseProgram(this->programVector[i]);
         }
     }
 }

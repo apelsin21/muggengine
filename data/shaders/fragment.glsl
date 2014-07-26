@@ -3,8 +3,10 @@
 in vec2 out_uv;
 in vec3 out_normal;
 
-out vec4 out_color;
+out vec4 color;
+
+uniform sampler2D sampler;
 
 void main() {
-    out_color = vec4(0.0, 1.0, 1.0, 1.0);
+    color = texture(sampler, out_uv);
 }

@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "shaderbinds.hpp"
-
+#include "contentmanager.hpp"
 #include "shaderprogram.hpp"
 
 namespace mugg {
@@ -16,18 +16,10 @@ namespace mugg {
             return *(mugg::graphics::ShaderProgram**)luaL_checkudata(L, n, ShaderProgramName);
         }
 
-        int shaderProgramConstructor(lua_State* L) {
-            mugg::graphics::ShaderProgram** program = (mugg::graphics::ShaderProgram**)lua_newuserdata(L, sizeof(mugg::graphics::ShaderProgram*));
-
-            *program = new mugg::graphics::ShaderProgram();
-
-            luaL_getmetatable(L, ShaderProgramName);
-            lua_setmetatable(L, -2);
-
-            return 1;
-        }
-        int shaderProgramDestructor(lua_State* L) {
+        int shaderProgramDeconstructor(lua_State* L) {
             mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
+
+            mugg::core::ContentManager::GetInstance().DeleteShaderProgram(program->GetIndex(), program->GetID());
 
             delete program;
 
@@ -37,9 +29,9 @@ namespace mugg {
         int shaderProgramAddShader(lua_State* L) {
             mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
 
-            std::shared_ptr<mugg::graphics::Shader> shader(checkShader(L, 2));
+            mugg::graphics::Shader* shader = checkShader(L, 2);
 
-            program->AddShader(shader);
+            program->AddShader(shader->GetID());
 
             return 0;
         }
@@ -61,14 +53,12 @@ namespace mugg {
         }
 
         luaL_Reg shaderProgramFuncs[] = {
-            {"new", shaderProgramConstructor},
-
             {"add", shaderProgramAddShader},
             {"link", shaderProgramLink},
             
             {"get_number_of_attached_shaders", shaderProgramGetNumberOfAttachedShaders},
 
-            {"__gc", shaderProgramDestructor},
+            {"__gc", shaderProgramDeconstructor},
             {NULL, NULL}
         };
     }

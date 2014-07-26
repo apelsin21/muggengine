@@ -18,7 +18,7 @@ namespace mugg {
     namespace graphics {
         class Renderer {
             private:
-                std::vector<std::shared_ptr<mugg::graphics::ShaderProgram>> programVector;
+                std::vector<GLuint> programVector;
                 mugg::graphics::Color backgroundColor;
             public:
                 Renderer();
@@ -27,9 +27,9 @@ namespace mugg {
                 void SetBackgroundColor(const mugg::graphics::Color&);
                 mugg::graphics::Color GetBackgroundColor();
 
-                bool AddShaderProgram(std::shared_ptr<mugg::graphics::ShaderProgram>&);
-                std::shared_ptr<mugg::graphics::ShaderProgram> GetShaderProgramByIndex(int);
-                std::vector<std::shared_ptr<mugg::graphics::ShaderProgram>> GetShaderProgramVector();
+                bool AddShaderProgram(GLuint);
+                GLuint GetShaderProgramByIndex(int);
+                std::vector<GLuint> GetShaderProgramVector();
                 
                 bool Initialize();
                 

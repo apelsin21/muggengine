@@ -10,6 +10,7 @@
 
 #include "texture2dbinds.hpp"
 #include "shaderbinds.hpp"
+#include "shaderprogrambinds.hpp"
 
 namespace mugg {
     namespace binds {
@@ -40,9 +41,20 @@ namespace mugg {
             return 1;
         }
 
+        int contentManagerLoadShaderProgram(lua_State* L) {
+            mugg::graphics::ShaderProgram** program = (mugg::graphics::ShaderProgram**)lua_newuserdata(L, sizeof(mugg::graphics::ShaderProgram*));
+            *program = mugg::core::ContentManager::GetInstance().LoadShaderProgram();
+
+            luaL_getmetatable(L, ShaderProgramName);
+            lua_setmetatable(L, -2);
+
+            return 1;
+        }
+
         luaL_Reg contentManagerFuncs[] = {
             {"load_texture2d", contentManagerLoadTexture2D},
             {"load_shader", contentManagerLoadShader},
+            {"load_shaderprogram", contentManagerLoadShaderProgram},
 
             {NULL, NULL},
         };

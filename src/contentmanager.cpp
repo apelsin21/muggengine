@@ -1,19 +1,21 @@
 #include "contentmanager.hpp"
 
 mugg::core::ContentManager::~ContentManager() {
-    if(this->textures.size() != 0) {
-        for(unsigned int i = 0; i <= this->textures.size(); i++) {
-            if(glIsTexture(this->textures[i]) == GL_TRUE) {
-                glDeleteTextures(1, &this->textures[i]);
-            }
+    if(!this->textures.empty()) {
+        for(unsigned int i = 0; i < this->textures.size(); i++) {
+            this->DeleteTextureID(this->textures[i]);
         }
     }
 
-    if(this->shaders.size() != 0) {
-        for(unsigned int i= 0; i <= this->shaders.size(); i++) {
-            if(glIsShader(this->shaders[i]) == GL_TRUE) {
-                glDeleteShader(this->shaders[i]);
-            }
+    if(!this->shaders.empty()) {
+        for(unsigned int i= 0; i < this->shaders.size(); i++) {
+            this->DeleteShaderID(this->shaders[i]);
+        }
+    }
+
+    if(!this->shaderPrograms.empty()) {
+        for(unsigned int i = 0; i < this->shaders.size(); i++) {
+            this->DeleteShaderProgramID(this->shaderPrograms[i]);
         }
     }
 }
@@ -70,28 +72,29 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::LoadTexture2D(const std::
 
     FreeImage_Unload(bitmap);
     
-    this->textures.push_back(id);
     texture->SetIndex(this->textures.size());
+    this->textures.push_back(id);
 
     return texture;
 }
 bool mugg::core::ContentManager::DeleteTexture2D(unsigned int index, GLuint id) {
-    if(id == 0 || index == 0) {
+    if(id == 0 || this->textures.empty()) {
         return false;
     }
-    
+
     if(index < this->textures.size() && this->textures[index] == id) {
+        this->textures.erase(this->textures.begin() + index);
+        std::cout << "Deleted texture2D with id: " << id << " and index: " << index << " on the first try!\n";
         this->DeleteTextureID(id);
 
-        this->textures.erase(this->textures.begin() + index);
-     
         return true;
     } else {
         int index = 0;
     
         if(this->SearchForID(this->textures, id, index)) {
             this->textures.erase(this->textures.begin() + index);
-            
+            std::cout << "Deleted texture2D with id: " << id << " and index: " << index << " on the second try!\n";
+
             this->DeleteTextureID(id);
 
             return true;
@@ -102,6 +105,7 @@ bool mugg::core::ContentManager::DeleteTexture2D(unsigned int index, GLuint id) 
 }
 void mugg::core::ContentManager::DeleteTextureID(GLuint id) {
     if(glIsTexture(id) == GL_TRUE) {
+        std::cout << "Actually deleted texture " << id << std::endl;
         glDeleteTextures(1, &id);
     }
 } 
@@ -133,18 +137,19 @@ mugg::graphics::Shader* mugg::core::ContentManager::LoadShader(mugg::graphics::S
         return new mugg::graphics::Shader(0);
     }
 
-    this->shaders.push_back(id);
     shader->SetIndex(this->shaders.size());
+    this->shaders.push_back(id);
 
     return shader;
 }
 bool mugg::core::ContentManager::DeleteShader(unsigned int index, GLuint id) {
-    if(id == 0 || index == 0) {
+    if(id == 0) {
         return false;
     }
     
     if(index < this->shaders.size() && this->shaders[index] == id) {
         this->DeleteShaderID(id);
+        std::cout << "Deleting shader with id: " << id << " and index " << index << ", first try!\n";
         this->shaders.erase(this->shaders.begin() + index);
      
         return true;
@@ -153,6 +158,7 @@ bool mugg::core::ContentManager::DeleteShader(unsigned int index, GLuint id) {
     
         if(this->SearchForID(this->shaders, id, index)) {
             this->shaders.erase(this->shaders.begin() + index);
+            std::cout << "Deleting shader with id: " << id << " and index " << index << ", second try!\n";
            
             this->DeleteShaderID(id);
 
@@ -164,12 +170,13 @@ bool mugg::core::ContentManager::DeleteShader(unsigned int index, GLuint id) {
 }
 void mugg::core::ContentManager::DeleteShaderID(GLuint id) {
     if(glIsShader(id) == GL_TRUE) {
+        std::cout << "Actually deleted shader " << id << "\n";
         glDeleteShader(id);
     }
 }
 
 bool mugg::core::ContentManager::SearchForID(std::vector<GLuint>& idVector, GLuint id, int &out_index) {
-    if(idVector.size() == 0 || id == 0) {
+    if(idVector.empty() || id == 0) {
         return false;
     }
 
@@ -208,4 +215,49 @@ bool mugg::core::ContentManager::LoadTextFile(const std::string filepath, std::s
     out_data = data;
 
     return true;
+}
+
+mugg::graphics::ShaderProgram* mugg::core::ContentManager::LoadShaderProgram() {
+    GLuint id = glCreateProgram();
+
+    mugg::graphics::ShaderProgram* program = new mugg::graphics::ShaderProgram(id);
+
+    program->SetIndex(this->shaderPrograms.size());
+    this->shaderPrograms.push_back(id);
+
+    return program;
+}
+bool mugg::core::ContentManager::DeleteShaderProgram(unsigned int index, GLuint id) {
+    if(id == 0) {
+        return false;
+    }
+
+    if(index < this->shaderPrograms.size() && this->shaderPrograms[index] == id) {
+        this->DeleteShaderProgramID(id);
+        std::cout << "Deleting shaderprogram with id: " << id << " and index " << index << ", first try!\n";
+        this->shaderPrograms.erase(this->shaderPrograms.begin() + index);
+     
+        return true;
+    } else {
+        int index = 0;
+    
+        if(this->SearchForID(this->shaderPrograms, id, index)) {
+            this->shaderPrograms.erase(this->shaderPrograms.begin() + index);
+            std::cout << "Deleting shaderprogram with id: " << id << " and index " << index << ", first try!\n";
+           
+            this->DeleteShaderProgramID(id);
+
+            return true;
+        }
+    }
+
+    std::cout << "Failed to delete shaderprogram with id: " << id << " and index: " << index << std::endl;
+
+    return false;
+}
+void mugg::core::ContentManager::DeleteShaderProgramID(GLuint id) {
+    if(glIsProgram(id) == GL_TRUE) {
+        std::cout << "Actually deleted shaderprogram " << id << "\n";
+        glDeleteProgram(id);
+    }
 }

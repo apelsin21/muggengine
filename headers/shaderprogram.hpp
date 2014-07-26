@@ -19,9 +19,9 @@ namespace mugg {
             private:
                 bool linked, hasGeneratedID, compiledSuccessfully;
 
-                std::vector<std::shared_ptr<mugg::graphics::Shader>> shaders;
+                std::vector<GLuint> shaders;
             public:
-                ShaderProgram();
+                ShaderProgram(GLuint);
                 ~ShaderProgram();
                 
                 bool HasGeneratedID();
@@ -32,7 +32,7 @@ namespace mugg {
                 const char* GetLog();
                 bool Link();
                 
-                bool AddShader(std::shared_ptr<mugg::graphics::Shader>&);
+                bool AddShader(GLuint);
 
                 bool GetCompiledSuccessfully();
 

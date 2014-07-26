@@ -7,8 +7,8 @@ namespace mugg {
     namespace graphics {
         class GLObject {
             protected:
-                GLuint ID;
-                unsigned int index;
+                GLuint ID = 0;
+                unsigned int index = 0;
             public:
                 void SetID(GLuint newID) {
                     this->ID = newID;   
