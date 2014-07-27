@@ -70,13 +70,6 @@ namespace mugg {
 
             return 1;
         }
-        int texture2DGetHasGeneratedID(lua_State* L) {
-            mugg::graphics::Texture2D* texture = checkTexture2D(L, 1);
-
-            lua_pushboolean(L, texture->HasGeneratedID());
-
-            return 1;
-        }
         int texture2DGetUsesMipMaps(lua_State* L) {
             mugg::graphics::Texture2D* texture = checkTexture2D(L, 1);
 
@@ -161,7 +154,6 @@ namespace mugg {
             {"get_v_wrap", texture2DGetVWrap},
 
             {"is_loaded", texture2DGetLoaded},
-            {"has_generated_id", texture2DGetHasGeneratedID},
             {"uses_mipmaps", texture2DGetUsesMipMaps},
 
             {"__gc", texture2DDeconstructor},

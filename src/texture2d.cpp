@@ -63,8 +63,8 @@ bool mugg::graphics::Texture2D::IsLoaded() {
     return this->loaded;
 }
 
-bool mugg::graphics::Texture2D::HasGeneratedID() {
-    return this->hasGeneratedID;
+void mugg::graphics::Texture2D::SetUsesMipMaps(bool mipmaps) {
+    this->mipMaps = mipmaps;
 }
 bool mugg::graphics::Texture2D::UsesMipMaps() {
     return this->mipMaps;

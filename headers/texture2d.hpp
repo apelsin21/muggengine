@@ -45,7 +45,7 @@ namespace mugg {
                 void SetLoaded(bool);
                 bool IsLoaded();
                 
-                bool HasGeneratedID();
+                void SetUsesMipMaps(bool);
                 bool UsesMipMaps();
                
                 mugg::graphics::TextureWrap GetUWrap();

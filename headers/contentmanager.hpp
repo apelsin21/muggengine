@@ -56,7 +56,7 @@ namespace mugg {
                 }
                 ~ContentManager();
 
-                mugg::graphics::Texture2D* LoadTexture2D(const std::string);
+                mugg::graphics::Texture2D* LoadTexture2D(const std::string&, bool);
                 bool DeleteTexture2D(unsigned int, GLuint);
         
                 bool LoadTextFile(const std::string, std::string&);

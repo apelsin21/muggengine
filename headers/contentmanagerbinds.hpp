@@ -18,9 +18,17 @@ namespace mugg {
         
         int contentManagerLoadTexture2D(lua_State* L) {
             std::string path = lua_tostring(L, 1);
+            
+            bool mipmaps = false;
+
+            if(lua_isboolean(L, 2))
+                mipmaps = lua_toboolean(L, 2);
+            else {
+                luaL_error(L, "Second argument to ContentManager.load_texture2d() wasn't a boolean.\n");
+            }
 
             mugg::graphics::Texture2D** texture = (mugg::graphics::Texture2D**)lua_newuserdata(L, sizeof(mugg::graphics::Texture2D*));
-            *texture = mugg::core::ContentManager::GetInstance().LoadTexture2D(path);
+            *texture = mugg::core::ContentManager::GetInstance().LoadTexture2D(path, mipmaps);
 
             luaL_getmetatable(L, Texture2DName);
             lua_setmetatable(L, -2);
