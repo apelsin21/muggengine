@@ -1,32 +1,23 @@
-window = Window.new()
-title = "Mesh Viewer 2000"
-window:open(800, 600, title)
+device = Device.new()
 
-renderer = Renderer.new()
-renderer:initialize()
-renderer:set_background_color(Color.new(0, 1, 1, 1))
+window = device:get_window()
+window:open(800, 600, "bajs")
 
-texture = ContentManager.load_texture2d("data/textures/error.png", true)
+renderer = device:get_renderer()
+gui_mgr = device:get_gui_manager()
+content_mgr = device:get_content_manager()
 
-vertex_shader = ContentManager.load_shader("VertexShader", "data/shaders/gui_v.glsl")
-fragment_shader = ContentManager.load_shader("FragmentShader", "data/shaders/gui_f.glsl")
-
-shader_program = ContentManager.load_shaderprogram()
-shader_program:add(vertex_shader)
-shader_program:add(fragment_shader)
-shader_program:link()
-
-renderer:add_shaderprogram(shader_program)
 
 last_time = os.time()
 frames = 0
-
 frametime = 0
 
-mgr = GUIManager.new()
-mgr:add_texture(texture)
+renderer:initialize()
 
-texture:set_wrap("Repeat", "Repeat")
+texture = content_mgr:get_texture2d("data/textures/error.png", false)
+
+img = gui_mgr:get_image()
+img:set_texture(texture)
 
 while window:is_open() do
     if window:is_key_down("escape") then
@@ -41,12 +32,12 @@ while window:is_open() do
 
     if os.difftime(os.time(), last_time) >= 1 then
         frametime = 1000/frames
-        window:set_title(title .. " || ms/frame: " .. frametime)
+        window:set_title("ms/frame: " .. frametime)
         frames = 0
         last_time = os.time()
     end
 
     renderer:draw()
-    mgr:render()
+    gui_mgr:render()
     window:swap_buffers()
 end

@@ -15,6 +15,10 @@
 #include <memory>
 
 namespace mugg {
+    namespace core {
+        class Device;
+    }
+
     namespace graphics {
         class Renderer {
             private:
@@ -22,8 +26,10 @@ namespace mugg {
                 mugg::graphics::Color backgroundColor;
 
                 bool wireframe;
+                
+                mugg::core::Device* creator;
             public:
-                Renderer();
+                Renderer(mugg::core::Device*);
                 ~Renderer();
 
                 void SetBackgroundColor(const mugg::graphics::Color&);

@@ -11,8 +11,12 @@
 #include "globject.hpp"
 
 namespace mugg {
+    namespace core {
+        class ContentManager;
+    }
+    
     namespace graphics {
-        class Texture2D : public GLObject {
+    class Texture2D : public GLObject {
             private:
                 mugg::graphics::TextureFilter minFilter;
                 mugg::graphics::TextureFilter magFilter;
@@ -23,9 +27,11 @@ namespace mugg {
                 int width, height, bpp, colorsUsed;
                 std::string filepath;
                 bool loaded, hasGeneratedID, mipMaps;
+
+                mugg::core::ContentManager* creator;
             public:
-                Texture2D() {};
-                Texture2D(GLuint id);
+                Texture2D(mugg::core::ContentManager*);
+                ~Texture2D();
 
                 void SetFilepath(std::string);
                 std::string GetFilepath();

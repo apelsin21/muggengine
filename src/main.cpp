@@ -18,6 +18,8 @@
 #include "netmanagerbinds.hpp"
 #include "contentmanagerbinds.hpp"
 #include "guimanagerbinds.hpp"
+#include "imagebinds.hpp"
+#include "devicebinds.hpp"
 
 int main(int argc, char* argv[]) {
     mugg::ScriptSystem system(true);
@@ -34,6 +36,8 @@ int main(int argc, char* argv[]) {
     system.RegisterMetatable(mugg::binds::netManagerFuncs, mugg::binds::NetManagerName);
     system.RegisterMetatable(mugg::binds::contentManagerFuncs, mugg::binds::ContentManagerName);
     system.RegisterMetatable(mugg::binds::guiManagerFuncs, mugg::binds::GUIManagerName);
+    system.RegisterMetatable(mugg::binds::imageFuncs, mugg::binds::ImageName);
+    system.RegisterMetatable(mugg::binds::deviceFuncs, mugg::binds::DeviceName);
 
     if(argc > 2) {
         std::cout << "Got too many arguments. (Expected one)\n";

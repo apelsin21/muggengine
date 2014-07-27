@@ -1,6 +1,7 @@
 #include "renderer.hpp"
 
-mugg::graphics::Renderer::Renderer() {
+mugg::graphics::Renderer::Renderer(mugg::core::Device* creator) {
+    this->creator = creator;
     this->wireframe = false;
 }
 mugg::graphics::Renderer::~Renderer() {
@@ -34,6 +35,7 @@ std::vector<GLuint> mugg::graphics::Renderer::GetShaderProgramVector() {
 }
 
 bool mugg::graphics::Renderer::Initialize() {
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }

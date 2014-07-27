@@ -23,20 +23,9 @@ namespace mugg {
             return *(mugg::graphics::Renderer**)luaL_checkudata(L, n, RendererName);
         }
 
-        int rendererConstructor(lua_State* L) {
-            mugg::graphics::Renderer** renderer = (mugg::graphics::Renderer**)lua_newuserdata(L, sizeof(mugg::graphics::Renderer*));
-            *renderer = new mugg::graphics::Renderer();
-
-            luaL_getmetatable(L, RendererName);
-            lua_setmetatable(L, -2);
-
-            return 1;
-        }
-
         int rendererDeconstructor(lua_State* L) {
-            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
-        
-            delete renderer;
+
+            std::cout << "rendererDeconstructor\n";
 
             return 0;
         }
@@ -106,8 +95,6 @@ namespace mugg {
         }
 
         luaL_Reg rendererFuncs[] = {
-            {"new", rendererConstructor},
-
             {"set_background_color", rendererSetBackgroundColor},
             {"get_background_color", rendererGetBackgroundColor},
 

@@ -17,11 +17,7 @@ namespace mugg {
         }
 
         int shaderDeconstructor(lua_State* L) {
-            mugg::graphics::Shader* shader = checkShader(L, 1);
-
-            mugg::core::ContentManager::GetInstance().DeleteShader(shader->GetIndex(), shader->GetID());
-
-            delete shader;
+            std::cout << "shaderDeconstructor\n";
 
             return 0;
         }

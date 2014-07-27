@@ -16,13 +16,8 @@ namespace mugg {
         }
 
         int texture2DDeconstructor(lua_State* L) {
-            mugg::graphics::Texture2D* texture = checkTexture2D(L, 1);
 
-            mugg::core::ContentManager::GetInstance().DeleteTexture2D(texture->GetIndex(), texture->GetID());
-
-            if(texture != nullptr) {
-                delete texture;
-            }
+            std::cout << "texture2DDeconstructor\n";
 
             return 0;
         }

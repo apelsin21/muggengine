@@ -9,21 +9,12 @@ namespace mugg {
     namespace binds {
         static const char* WindowName = "Window";
 
-        mugg::Window* checkWindow(lua_State* L, int n) {
-            return *(mugg::Window**)luaL_checkudata(L, n, WindowName);
+        mugg::core::Window* checkWindow(lua_State* L, int n) {
+            return *(mugg::core::Window**)luaL_checkudata(L, n, WindowName);
         }
 
-        int windowConstructor(lua_State* L) {
-            mugg::Window** window = (Window**)lua_newuserdata(L, sizeof(mugg::Window*));
-            *window = new mugg::Window();
-
-            luaL_getmetatable(L, WindowName);
-            lua_setmetatable(L, -2);
-
-            return 1;
-        }
         int windowDeconstructor(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
             
             delete window;
 
@@ -31,7 +22,7 @@ namespace mugg {
         }
 
         int windowOpen(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
             
             int width = luaL_checknumber(L, 2);
             int height = luaL_checknumber(L, 3);
@@ -43,7 +34,7 @@ namespace mugg {
         }
 
         int windowSetPosition(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             int x = (int)luaL_checknumber(L, 2);
             int y = (int)luaL_checknumber(L, 3);
@@ -53,20 +44,20 @@ namespace mugg {
             return 0;
         }
         int windowGetPositionX(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
             
             lua_pushnumber(L, window->GetPositionX());
             return 1;
         }
         int windowGetPositionY(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             lua_pushnumber(L, window->GetPositionY());
             return 1;
         }
 
         int windowSetResolution(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             int width = (int)luaL_checknumber(L, 2);
             int height = (int)luaL_checknumber(L, 3);
@@ -76,20 +67,20 @@ namespace mugg {
             return 0;
         }
         int windowGetWidth(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             lua_pushnumber(L, window->GetWidth());
             return 1;
         }
         int windowGetHeight(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             lua_pushnumber(L, window->GetHeight());
             return 1;
         }
 
         int windowSetFullscreen(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
             
             bool arg;
 
@@ -103,35 +94,35 @@ namespace mugg {
             return 0;
         }
         int windowGetFullscreen(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             lua_pushboolean(L, window->GetFullscreen());
             return 1;
         }
 
         int windowIsOpen(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             lua_pushboolean(L, window->IsOpen());
             return 1;
         }
        
         int windowClose(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             window->Close();
             return 0;
         }
 
         int windowSetSwapInterval(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             window->SetSwapInterval((int)luaL_checknumber(L, 2));
             
             return 0;
         }
         int windowGetSwapInterval(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             lua_pushnumber(L, window->GetSwapInterval());
 
@@ -139,23 +130,23 @@ namespace mugg {
         }
 
         int windowSetTitle(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
-            const char* arg = luaL_checkstring(L, 2);
+            std::string arg = luaL_checkstring(L, 2);
 
             window->SetTitle(arg);
 
             return 0;
         }
         int windowGetTitle(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
             
-            lua_pushstring(L, window->GetTitle());
+            lua_pushstring(L, window->GetTitle().c_str());
             return 1;
         }
 
         int windowIsKeyDown(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             const char* keystring = luaL_checkstring(L, 2);
 
@@ -166,18 +157,8 @@ namespace mugg {
             return 1;
         }
 
-        int windowGetLastPressedKey(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
-
-            const char* lastPressed = mugg::input::KeyString[(int)mugg::input::lastPressedKey];
-
-            lua_pushstring(L, lastPressed);
-
-            return 1;
-        }
-
         int windowSetClipboard(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             const char* arg = luaL_checkstring(L, 2);
 
@@ -186,34 +167,31 @@ namespace mugg {
             return 0;
         }
         int windowGetClipboard(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
-            lua_pushstring(L, window->GetClipboard());
+            lua_pushstring(L, window->GetClipboard().c_str());
 
             return 1;
         }
 
         int windowIsFocused(lua_State *L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
 
             lua_pushboolean(L, window->IsFocused());
             return 1;
         }
 
         int windowSwapBuffers(lua_State* L) {
-            mugg::Window* window = checkWindow(L, 1);
+            mugg::core::Window* window = checkWindow(L, 1);
             
             window->SwapBuffers();
             return 0;
         }
 
         luaL_Reg windowFuncs[] = {
-            {"new", windowConstructor},
-
             {"open", windowOpen},
 
             {"is_key_down", windowIsKeyDown},
-            {"get_last_pressed_key", windowGetLastPressedKey},
 
             {"set_position", windowSetPosition},
             {"get_position_x", windowGetPositionX},

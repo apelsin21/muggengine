@@ -1,18 +1,18 @@
 #include "texture2d.hpp"
 
-mugg::graphics::Texture2D::Texture2D(GLuint id) {
+mugg::graphics::Texture2D::Texture2D(mugg::core::ContentManager* creator) : GLObject(creator) {
     //Numbers
     this->width = 0;
     this->height = 0;
     this->bpp = 0;
-    this->ID = id;
+    this->ID = 0;
     this->colorsUsed = 0;
     this->index = 0;
 
     //Booleans
     this->loaded = false;
     this->mipMaps = false;
-    this->hasGeneratedID = true;
+    this->hasGeneratedID = false;
 
     //Enums
     this->minFilter = mugg::graphics::TextureFilter::Nearest;

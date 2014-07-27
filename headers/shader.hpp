@@ -12,6 +12,10 @@
 #include "globject.hpp"
 
 namespace mugg {
+    namespace core {
+        class ContentManager;
+    }
+
     namespace graphics {
         class Shader : public GLObject {
             private:
@@ -23,8 +27,11 @@ namespace mugg {
                 void CheckForErrors();
                 const char* GetLog();
                 bool Validate();
+
+                mugg::core::ContentManager* creator;
             public:
-                Shader(GLuint);
+                Shader();
+                Shader(mugg::core::ContentManager*);
                 ~Shader();
 
                 mugg::graphics::ShaderType GetType();

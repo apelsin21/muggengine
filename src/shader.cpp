@@ -1,8 +1,17 @@
 #include "shader.hpp"
 
-mugg::graphics::Shader::Shader(GLuint id) {
+mugg::graphics::Shader::Shader() : GLObject(nullptr) {
     this->type = mugg::graphics::ShaderType::VertexShader;
-    this->ID = id;
+    this->ID = 0;
+    this->filepath = "";
+    this->data = "";
+    this->loaded = false;
+    this->compiledSuccessfully = false;
+    this->hasGeneratedID = false;
+}
+mugg::graphics::Shader::Shader(mugg::core::ContentManager* creator) : GLObject(creator){
+    this->type = mugg::graphics::ShaderType::VertexShader;
+    this->ID = 0;
     this->filepath = "";
     this->data = "";
     this->loaded = false;

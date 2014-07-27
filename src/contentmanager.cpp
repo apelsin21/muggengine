@@ -1,26 +1,38 @@
 #include "contentmanager.hpp"
 
+mugg::core::ContentManager::ContentManager(mugg::core::Device* creator) {
+    this->creator = creator;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &this->maxTextureSize);
+}
 mugg::core::ContentManager::~ContentManager() {
     if(!this->textures.empty()) {
         for(unsigned int i = 0; i < this->textures.size(); i++) {
-            this->DeleteTextureID(this->textures[i]);
+            this->DeleteTextureID(this->textures[i]->GetID());
         }
     }
 
     if(!this->shaders.empty()) {
         for(unsigned int i= 0; i < this->shaders.size(); i++) {
-            this->DeleteShaderID(this->shaders[i]);
+            this->DeleteShaderID(this->shaders[i]->GetID());
         }
     }
 
     if(!this->shaderPrograms.empty()) {
         for(unsigned int i = 0; i < this->shaders.size(); i++) {
-            this->DeleteShaderProgramID(this->shaderPrograms[i]);
+            this->DeleteShaderProgramID(this->shaderPrograms[i]->GetID());
         }
     }
+
+    this->textures.clear();
+    this->shaders.clear();
+    this->shaderPrograms.clear();
 }
 
-mugg::graphics::Texture2D* mugg::core::ContentManager::LoadTexture2D(const std::string &filepath, bool mipmaps) {
+int mugg::core::ContentManager::GetMaxTextureSize() {
+    return this->maxTextureSize;
+}
+
+mugg::graphics::Texture2D* mugg::core::ContentManager::GetTexture2D(const std::string &filepath, bool mipmaps) {
     if(filepath == "") {
         std::cout << "Tried to load texture from empty string!\n";
         return nullptr;
@@ -32,7 +44,8 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::LoadTexture2D(const std::
     FREE_IMAGE_FORMAT format;
     FIBITMAP* bitmap = nullptr;
 
-    mugg::graphics::Texture2D* texture = new mugg::graphics::Texture2D(id);
+    mugg::graphics::Texture2D* texture = new mugg::graphics::Texture2D(this);
+    texture->SetID(id);
     
     format = FreeImage_GetFileType(filepath.c_str(), 0);
 
@@ -58,6 +71,10 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::LoadTexture2D(const std::
         std::cout << "Failed to load texture " << filepath << ", corrupt or invalid bitmap.\n";
         texture->SetLoaded(false);
         return texture;
+    }
+
+    if(FreeImage_GetWidth(bitmap) > this->maxTextureSize || FreeImage_GetHeight(bitmap) > this->maxTextureSize) {
+        std::cout << "Failed to load texture " << filepath << ", too big! Max resolution: " << this->maxTextureSize << "x" << this->maxTextureSize << "\n";
     }
 
     FIBITMAP* temp = bitmap;
@@ -92,33 +109,9 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::LoadTexture2D(const std::
 
     FreeImage_Unload(bitmap);
     
-    texture->SetIndex(this->textures.size());
-    this->textures.push_back(id);
+    this->textures.push_back(texture);
 
     return texture;
-}
-bool mugg::core::ContentManager::DeleteTexture2D(unsigned int index, GLuint id) {
-    if(id == 0 || this->textures.empty()) {
-        return false;
-    }
-
-    if(index < this->textures.size() && this->textures[index] == id) {
-        this->textures.erase(this->textures.begin() + index);
-        this->DeleteTextureID(id);
-
-        return true;
-    } else {
-        int index = 0;
-    
-        if(this->SearchForID(this->textures, id, index)) {
-            this->textures.erase(this->textures.begin() + index);
-            this->DeleteTextureID(id);
-
-            return true;
-        }
-    }
-
-    return false;
 }
 void mugg::core::ContentManager::DeleteTextureID(GLuint id) {
     if(glIsTexture(id) == GL_TRUE) {
@@ -126,7 +119,7 @@ void mugg::core::ContentManager::DeleteTextureID(GLuint id) {
     }
 } 
 
-mugg::graphics::Shader* mugg::core::ContentManager::LoadShader(mugg::graphics::ShaderType type, const std::string filepath) {
+mugg::graphics::Shader* mugg::core::ContentManager::GetShader(mugg::graphics::ShaderType type, const std::string& filepath) {
     if(filepath == "") {
         std::cout << "Tried loading shader from empty path!\n";
         return new mugg::graphics::Shader(0);
@@ -134,14 +127,15 @@ mugg::graphics::Shader* mugg::core::ContentManager::LoadShader(mugg::graphics::S
 
     GLuint id = glCreateShader(mugg::graphics::ShaderTypeToGLEnum(type));
     
-    mugg::graphics::Shader* shader = new mugg::graphics::Shader(id);
+    mugg::graphics::Shader* shader = new mugg::graphics::Shader(this);
+    shader->SetID(id);
 
     shader->SetType(type);
     shader->SetFilepath(filepath);
 
     std::string data;
 
-    if(!this->LoadTextFile(filepath, data)) {
+    if(!this->GetTextFile(filepath, data)) {
         std::cout << "Failed to load shader data from " << filepath << std::endl;
         return new mugg::graphics::Shader(0);
     }
@@ -153,34 +147,9 @@ mugg::graphics::Shader* mugg::core::ContentManager::LoadShader(mugg::graphics::S
         return new mugg::graphics::Shader(0);
     }
 
-    shader->SetIndex(this->shaders.size());
-    this->shaders.push_back(id);
+    this->shaders.push_back(shader);
 
     return shader;
-}
-bool mugg::core::ContentManager::DeleteShader(unsigned int index, GLuint id) {
-    if(id == 0) {
-        return false;
-    }
-    
-    if(index < this->shaders.size() && this->shaders[index] == id) {
-        this->DeleteShaderID(id);
-        this->shaders.erase(this->shaders.begin() + index);
-     
-        return true;
-    } else {
-        int index = 0;
-    
-        if(this->SearchForID(this->shaders, id, index)) {
-            this->shaders.erase(this->shaders.begin() + index);
-           
-            this->DeleteShaderID(id);
-
-            return true;
-        }
-    }
-
-    return false;
 }
 void mugg::core::ContentManager::DeleteShaderID(GLuint id) {
     if(glIsShader(id) == GL_TRUE) {
@@ -188,21 +157,7 @@ void mugg::core::ContentManager::DeleteShaderID(GLuint id) {
     }
 }
 
-bool mugg::core::ContentManager::SearchForID(std::vector<GLuint>& idVector, GLuint id, int &out_index) {
-    if(idVector.empty() || id == 0) {
-        return false;
-    }
-
-    std::sort(idVector.begin(), idVector.end());
-    
-    if(std::binary_search(idVector.begin(), idVector.end(), id)) {
-        out_index = std::lower_bound(idVector.begin(), idVector.end(), id) - idVector.begin();
-        return true;
-    } else {
-        return false;
-    }
-}
-bool mugg::core::ContentManager::LoadTextFile(const std::string filepath, std::string &out_data) {
+bool mugg::core::ContentManager::GetTextFile(const std::string filepath, std::string &out_data) {
     std::string data;
     
     if(filepath == "") {
@@ -230,38 +185,15 @@ bool mugg::core::ContentManager::LoadTextFile(const std::string filepath, std::s
     return true;
 }
 
-mugg::graphics::ShaderProgram* mugg::core::ContentManager::LoadShaderProgram() {
+mugg::graphics::ShaderProgram* mugg::core::ContentManager::GetShaderProgram() {
     GLuint id = glCreateProgram();
 
-    mugg::graphics::ShaderProgram* program = new mugg::graphics::ShaderProgram(id);
+    mugg::graphics::ShaderProgram* program = new mugg::graphics::ShaderProgram(this);
+    program->SetID(id);
 
-    program->SetIndex(this->shaderPrograms.size());
-    this->shaderPrograms.push_back(id);
+    this->shaderPrograms.push_back(program);
 
     return program;
-}
-bool mugg::core::ContentManager::DeleteShaderProgram(unsigned int index, GLuint id) {
-    if(id == 0) {
-        return false;
-    }
-
-    if(index < this->shaderPrograms.size() && this->shaderPrograms[index] == id) {
-        this->DeleteShaderProgramID(id);
-        this->shaderPrograms.erase(this->shaderPrograms.begin() + index);
-     
-        return true;
-    } else {
-        int index = 0;
-    
-        if(this->SearchForID(this->shaderPrograms, id, index)) {
-            this->shaderPrograms.erase(this->shaderPrograms.begin() + index);
-            this->DeleteShaderProgramID(id);
-
-            return true;
-        }
-    }
-
-    return false;
 }
 void mugg::core::ContentManager::DeleteShaderProgramID(GLuint id) {
     if(glIsProgram(id) == GL_TRUE) {

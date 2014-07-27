@@ -27,14 +27,16 @@
 
 namespace mugg {
     namespace core {
+        class Device;
+        
         class ContentManager {
             private:
                 std::ifstream inStream;
                 std::ofstream outStream;
            
-                std::vector<GLuint> textures;
-                std::vector<GLuint> shaders;
-                std::vector<GLuint> shaderPrograms;
+                std::vector<graphics::Texture2D*> textures;
+                std::vector<graphics::Shader*> shaders;
+                std::vector<graphics::ShaderProgram*> shaderPrograms;
 
                 void ProcessAssimpScene(const aiScene*);
                 void ProcessAssimpMesh(unsigned int, const aiMesh*);
@@ -45,27 +47,22 @@ namespace mugg {
                 void DeleteShaderProgramID(GLuint);
 
                 bool SearchForID(std::vector<GLuint>&, GLuint, int&);
-
-                ContentManager() {};
-                ContentManager(ContentManager const&);
-                void operator=(ContentManager const&);
+                GLint maxTextureSize;
+            
+                mugg::core::Device* creator;
             public:
-                static ContentManager& GetInstance() {
-                    static ContentManager instance;
-                    return instance;
-                }
+                ContentManager(mugg::core::Device* device);
                 ~ContentManager();
 
-                mugg::graphics::Texture2D* LoadTexture2D(const std::string&, bool);
-                bool DeleteTexture2D(unsigned int, GLuint);
-        
-                bool LoadTextFile(const std::string, std::string&);
-                
-                mugg::graphics::ShaderProgram* LoadShaderProgram();
-                bool DeleteShaderProgram(unsigned int, GLuint);
+                virtual int GetMaxTextureSize();
 
-                mugg::graphics::Shader* LoadShader(mugg::graphics::ShaderType, const std::string);
-                bool DeleteShader(unsigned int, GLuint);
+                virtual mugg::graphics::Texture2D* GetTexture2D(const std::string&, bool);
+                
+                virtual bool GetTextFile(const std::string, std::string&);
+                
+                virtual mugg::graphics::ShaderProgram* GetShaderProgram();
+
+                virtual mugg::graphics::Shader* GetShader(mugg::graphics::ShaderType, const std::string&);
         };
     }
 }

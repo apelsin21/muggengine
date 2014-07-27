@@ -3,7 +3,7 @@
 
 #include <lua.hpp>
 
-#include "texture2dbinds.hpp"
+#include "imagebinds.hpp"
 #include "guimanager.hpp"
 
 namespace mugg {
@@ -14,47 +14,30 @@ namespace mugg {
             return *(mugg::gui::GUIManager**)luaL_checkudata(L, n, GUIManagerName);
         }
 
-        int guiManagerConstructor(lua_State* L) {
-            mugg::gui::GUIManager** guiMgr = (mugg::gui::GUIManager**)lua_newuserdata(L, sizeof(mugg::gui::GUIManager*));
-            *guiMgr = new mugg::gui::GUIManager();
+        int guiManagerGetImage(lua_State* L) {
+            mugg::gui::GUIManager* mgr = checkGUIManager(L, 1);
+            
+            mugg::gui::Image** img = (mugg::gui::Image**)lua_newuserdata(L, sizeof(mugg::gui::Image*));
+            *img = mgr->GetImage();
 
-            luaL_getmetatable(L, GUIManagerName);
+            luaL_getmetatable(L, ImageName);
             lua_setmetatable(L, -2);
 
             return 1;
         }
-        int guiManagerDeconstructor(lua_State* L) {
-            mugg::gui::GUIManager* guiMgr = checkGUIManager(L, 1);
-
-            delete guiMgr;
-
-            return 0;
-        }
-
-        int guiManagerAddTexture(lua_State* L) {
-            mugg::gui::GUIManager* guiMgr = checkGUIManager(L, 1);
-            mugg::graphics::Texture2D* texture = checkTexture2D(L, 2);
-
-            guiMgr->AddTexture2D(texture->GetID());
-
-            return 0;
-        }
 
         int guiManagerRender(lua_State* L) {
-            mugg::gui::GUIManager* guiMgr = checkGUIManager(L, 1);
+            mugg::gui::GUIManager* mgr = checkGUIManager(L, 1);
 
-            guiMgr->Render();
+            mgr->Render();
 
             return 0;
         }
 
         luaL_Reg guiManagerFuncs[] = {
-            {"new", guiManagerConstructor},
-
-            {"add_texture", guiManagerAddTexture},
+            {"get_image", guiManagerGetImage},
             {"render", guiManagerRender},
 
-            {"__gc", guiManagerDeconstructor},
             {NULL, NULL}
         };
     }

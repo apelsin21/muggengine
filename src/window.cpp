@@ -1,15 +1,17 @@
 #include "window.hpp"
 
-static void mugg::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
+static void mugg::core::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
-static void mugg::closeCallback(GLFWwindow* window) {
+static void mugg::core::closeCallback(GLFWwindow* window) {
     glfwSetWindowShouldClose(window, true);
 }
 
-mugg::Window::Window() {
+mugg::core::Window::Window(mugg::core::Device* creator) {
+
     //Pointers
     this->window = nullptr;
+    this->creator = creator;
     
     //Numeric values
     this->width = 0;
@@ -17,9 +19,6 @@ mugg::Window::Window() {
     this->posX = 0;
     this->posY = 0;
     this->swapInterval = 0;
-    
-    //Strings
-    this->title = "";
 
     //Boolean values
     this->fullscreen = false;
@@ -29,7 +28,7 @@ mugg::Window::Window() {
     this->iconified = false;
     this->visible = false;
 }
-mugg::Window::~Window() {
+mugg::core::Window::~Window() {
     this->Close();
 
     glfwDestroyWindow(this->window);
@@ -37,7 +36,7 @@ mugg::Window::~Window() {
     glfwTerminate();
 }
 
-bool mugg::Window::Open(int width, int height, const char* title) {
+bool mugg::core::Window::Open(int width, int height, std::string title) {
     glfwSetErrorCallback(mugg::error::glfwErrorCallback);
 
     if(!glfwInit()) {
@@ -45,7 +44,7 @@ bool mugg::Window::Open(int width, int height, const char* title) {
         return false;
     }
     
-    this->window = glfwCreateWindow(width, height, title, NULL, NULL);
+    this->window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 
     if(!window) {
         std::cerr << "Failed to create a GLFW window!\n";
@@ -54,8 +53,8 @@ bool mugg::Window::Open(int width, int height, const char* title) {
     }
 
     glfwSetKeyCallback(this->window, mugg::input::glfwKeyCallback);
-    glfwSetFramebufferSizeCallback(this->window, mugg::framebufferSizeCallback);
-    glfwSetWindowCloseCallback(this->window, mugg::closeCallback);
+    glfwSetFramebufferSizeCallback(this->window, mugg::core::framebufferSizeCallback);
+    glfwSetWindowCloseCallback(this->window, mugg::core::closeCallback);
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -80,31 +79,31 @@ bool mugg::Window::Open(int width, int height, const char* title) {
 
     return true;
 }
-void mugg::Window::Close() {
+void mugg::core::Window::Close() {
     this->open = false;
     glfwSetWindowShouldClose(this->window, true);
 }
-bool mugg::Window::IsOpen() {
+bool mugg::core::Window::IsOpen() {
     return this->open;
 }
 
-void mugg::Window::SetPosition(int x, int y) {
+void mugg::core::Window::SetPosition(int x, int y) {
     this->posX = x;
     this->posY = y;
     
     glfwSetWindowPos(this->window, x, y);
 }
-int mugg::Window::GetPositionX() {
+int mugg::core::Window::GetPositionX() {
     return this->posX;
 }
-int mugg::Window::GetPositionY() {
+int mugg::core::Window::GetPositionY() {
     return this->posY;
 }
 
-void mugg::Window::SetSize(int width, int height) {
+void mugg::core::Window::SetSize(int width, int height) {
     glfwSetWindowSize(this->window, width, height);
 }
-void mugg::Window::GetSize(int &out_width, int &out_height) {
+void mugg::core::Window::GetSize(int &out_width, int &out_height) {
     int temp_width, temp_height;
 
     glfwGetWindowSize(this->window, &temp_width, &temp_height);
@@ -113,26 +112,26 @@ void mugg::Window::GetSize(int &out_width, int &out_height) {
     out_height = temp_height;
 }
 
-void mugg::Window::SetIconified(bool iconified) {
+void mugg::core::Window::SetIconified(bool iconified) {
     this->iconified = true;
 }
-bool mugg::Window::IsIconified() {
+bool mugg::core::Window::IsIconified() {
     return this->iconified;
 }
 
-void mugg::Window::SetResolution(int width, int height) {
+void mugg::core::Window::SetResolution(int width, int height) {
     this->width = width;
     this->height = height;
     this->changed = true;
 }
-int mugg::Window::GetWidth() {
+int mugg::core::Window::GetWidth() {
     return this->width;
 }
-int mugg::Window::GetHeight() {
+int mugg::core::Window::GetHeight() {
     return this->height;
 }
 
-void mugg::Window::GetFramebufferSize(int &out_width, int &out_height) {
+void mugg::core::Window::GetFramebufferSize(int &out_width, int &out_height) {
     if(!this->open) {
         std::cerr << "Tried to get framebuffer size of an unopened window!\n";
         out_width = 0;
@@ -146,54 +145,52 @@ void mugg::Window::GetFramebufferSize(int &out_width, int &out_height) {
     out_height = temp_height;
 }
 
-void mugg::Window::SetFullscreen(bool fullscreen) {
+void mugg::core::Window::SetFullscreen(bool fullscreen) {
     if(fullscreen) {
-        this->window = glfwCreateWindow(this->width, this->height, this->title, glfwGetPrimaryMonitor(), NULL);
+        this->window = glfwCreateWindow(this->width, this->height, this->title.c_str(), glfwGetPrimaryMonitor(), NULL);
         this->changed = true;
         this->fullscreen = fullscreen;
     } else {
-        this->window = glfwCreateWindow(this->width, this->height, this->title, NULL, NULL);
+        this->window = glfwCreateWindow(this->width, this->height, this->title.c_str(), NULL, NULL);
         this->fullscreen = fullscreen;
     }
 }
-bool mugg::Window::GetFullscreen() {
+bool mugg::core::Window::GetFullscreen() {
     return this->fullscreen;
 }
 
-void mugg::Window::SetSwapInterval(int interval) {
+void mugg::core::Window::SetSwapInterval(int interval) {
     this->swapInterval = interval;
 }
-int mugg::Window::GetSwapInterval() {
+int mugg::core::Window::GetSwapInterval() {
     return this->swapInterval;
 }
 
-void mugg::Window::SetTitle(const char* title) {
+void mugg::core::Window::SetTitle(std::string title) {
     this->title = title;
-    glfwSetWindowTitle(this->window, title);
+    glfwSetWindowTitle(this->window, title.c_str());
 }
-const char* mugg::Window::GetTitle() {
+std::string mugg::core::Window::GetTitle() {
     return this->title;
 }
 
-bool mugg::Window::Recreate() {
+bool mugg::core::Window::Recreate() {
     return true;
 }
 
-bool mugg::Window::IsFocused() {
+bool mugg::core::Window::IsFocused() {
     return this->focused;
 }
 
-bool mugg::Window::IsKeyDown(mugg::input::Key key) {
+bool mugg::core::Window::IsKeyDown(mugg::input::Key key) {
     if(glfwGetKey(this->window, (int)key) == GLFW_PRESS)
         return true;
     else
         return false;
 }
-bool mugg::Window::IsKeyStringDown(const char* cstring) {
+bool mugg::core::Window::IsKeyStringDown(std::string string) {
     int key = GLFW_KEY_UNKNOWN;
    
-    std::string string = cstring;
-
     if(string == "space")
     	key = GLFW_KEY_SPACE;
     else if(string == "apostrophe")
@@ -451,7 +448,7 @@ mugg::input::Key GetLastPressedKey() {
     return mugg::input::lastPressedKey;
 }
 
-void mugg::Window::PollEvents() {
+void mugg::core::Window::PollEvents() {
     if(glfwGetWindowAttrib(this->window, GLFW_FOCUSED))
         this->focused = true;
     else
@@ -468,22 +465,22 @@ void mugg::Window::PollEvents() {
         this->visible = false;
 }
 
-void mugg::Window::ReactToEvents() {
+void mugg::core::Window::ReactToEvents() {
     if(glfwWindowShouldClose(this->window))
         this->Close();
 }
 
-const char* mugg::Window::GetClipboard() {
+std::string mugg::core::Window::GetClipboard() {
     if(glfwGetClipboardString(this->window) == NULL)
-        return "";
+        return std::string("");
     else
-        return glfwGetClipboardString(this->window);
+        return std::string(glfwGetClipboardString(this->window));
 }
-void mugg::Window::SetClipboard(const char* string) {
-    glfwSetClipboardString(this->window, string);
+void mugg::core::Window::SetClipboard(std::string string) {
+    glfwSetClipboardString(this->window, string.c_str());
 }
 
-void mugg::Window::SwapBuffers() {
+void mugg::core::Window::SwapBuffers() {
     if(this->open) {
         this->PollEvents();
         this->ReactToEvents();

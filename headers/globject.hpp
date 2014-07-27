@@ -4,23 +4,36 @@
 #include <GL/glew.h>
 
 namespace mugg {
+    namespace core {
+        class ContentManager;
+    }
+    
     namespace graphics {
         class GLObject {
             protected:
                 GLuint ID = 0;
                 unsigned int index = 0;
+                mugg::core::ContentManager* creator;
             public:
-                void SetID(GLuint newID) {
+                GLObject(mugg::core::ContentManager* creator) {
+                    this->creator = creator;
+                }
+                
+                virtual mugg::core::ContentManager* GetCreator() {
+                    return this->creator;
+                }
+
+                virtual void SetID(GLuint newID) {
                     this->ID = newID;   
                 }
-                GLuint GetID() {
+                virtual GLuint GetID() {
                     return this->ID;
                 }
 
-                void SetIndex(unsigned int index) {
+                virtual void SetIndex(unsigned int index) {
                     this->index = index;
                 }
-                unsigned int GetIndex() {
+                virtual unsigned int GetIndex() {
                     return this->index;
                 }
         };

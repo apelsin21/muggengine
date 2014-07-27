@@ -1,6 +1,38 @@
 #include "guimanager.hpp"
 
-mugg::gui::GUIManager::GUIManager() {
+mugg::gui::GUIManager::GUIManager(mugg::core::Device* creator) {
+    this->creator = creator;
+
+    this->vsID = glCreateShader(GL_VERTEX_SHADER);
+    this->fsID = glCreateShader(GL_FRAGMENT_SHADER);
+    this->programID = glCreateProgram();
+
+    mugg::graphics::Shader* vertexShader = new mugg::graphics::Shader();
+    mugg::graphics::Shader* fragmentShader = new mugg::graphics::Shader();
+    mugg::graphics::ShaderProgram* shaderProgram = new mugg::graphics::ShaderProgram();
+
+    vertexShader->SetID(this->vsID);
+    fragmentShader->SetID(this->fsID);
+    shaderProgram->SetID(this->programID);
+
+    vertexShader->SetData(this->vsData);
+    fragmentShader->SetData(this->fsData);
+
+    vertexShader->Compile();
+    fragmentShader->Compile();
+
+    shaderProgram->AddShader(this->vsID);
+    shaderProgram->AddShader(this->fsID);
+    shaderProgram->Link();
+
+    delete vertexShader;
+    delete fragmentShader;
+    delete shaderProgram;
+
+    this->posLocation = glGetAttribLocation(this->programID, "v_pos");
+    this->uvLocation = glGetAttribLocation(this->programID, "v_uv");
+    this->modelLocation = glGetAttribLocation(this->programID, "v_model");
+
     glGenVertexArrays(1, &this->vaoID);
     glGenBuffers(1, &this->vboID);
 
@@ -18,51 +50,59 @@ mugg::gui::GUIManager::GUIManager() {
     glBindBuffer(GL_ARRAY_BUFFER, this->vboID);
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(this->posLocation);
+    glEnableVertexAttribArray(this->uvLocation);
     
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
     
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(this->posLocation);
+    glDisableVertexAttribArray(this->uvLocation);
+
+    /*
+    for(unsigned int i = 0; i < 4; i++) {
+        glEnableVertexAttribArray(this->modelLocation + i);
+        
+        glVertexAttribPointer(this->modelLocation + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4) * i));
+        glVertexAttribDivisor(this->modelLocation + i, 1);
+        
+        glDisableVertexAttribArray(this->modelLocation + i);
+    }
+    */
 }
 mugg::gui::GUIManager::~GUIManager() {
     glDeleteBuffers(1, &this->vboID);
     glDeleteVertexArrays(1, &this->vaoID);
-}
 
-void mugg::gui::GUIManager::AddTexture2D(GLuint id) {
-    this->textures.push_back(id);
-}
-GLuint mugg::gui::GUIManager::GetTexture2D(unsigned int index) {
-    if(this->textures.empty() || index >= this->textures.size()) {
-        std::cout << "Tried to get texture from GUIManager with out of bounds arg\n";
-        return 0;
+    if(glIsShader(this->vsID)) {
+        glDeleteShader(this->vsID);
+    }
+    if(glIsShader(this->fsID)) {
+        glDeleteShader(this->fsID);
+    }
+    if(glIsProgram(this->programID)) {
+        glDeleteProgram(this->programID);
     }
 
-    return this->textures[index];
+    this->images.clear();
 }
-void mugg::gui::GUIManager::RemoveTexture2D(unsigned int index) {
-    if(this->textures.empty() || index >= this->textures.size()) {
-        std::cout << "Tried to delete texture from GUIManager with out of bounds arg\n";
-    } else {
-        this->textures.erase(this->textures.begin() + index);
-    }
+
+mugg::gui::Image* mugg::gui::GUIManager::GetImage() {
+    return new mugg::gui::Image(this);
 }
 
 void mugg::gui::GUIManager::Render() {
-    for(unsigned int i = 0; i < this->textures.size(); i++) {
-        if(glIsTexture(this->textures[i])) {
-            glEnableVertexAttribArray(0);
-            glEnableVertexAttribArray(1);
-            
-            glBindTexture(GL_TEXTURE_2D, this->textures[i]);
-            glBindVertexArray(this->vaoID);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-            
-            glDisableVertexAttribArray(0);
-            glDisableVertexAttribArray(1);
-        }
-    }
+    glEnableVertexAttribArray(this->posLocation);
+    glEnableVertexAttribArray(this->uvLocation);
+    
+    glUseProgram(this->programID);
+    
+    for(unsigned int i = 0; i < this->images.size(); i++)
+        glBindTexture(GL_TEXTURE_2D, this->images[i]->GetTexture());
+
+    glBindVertexArray(this->vaoID);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, this->images.size());
+    
+    glDisableVertexAttribArray(this->posLocation);
+    glDisableVertexAttribArray(this->uvLocation);
 }
