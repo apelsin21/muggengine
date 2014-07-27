@@ -23,13 +23,6 @@ namespace mugg {
             return *(mugg::graphics::Renderer**)luaL_checkudata(L, n, RendererName);
         }
 
-        int rendererDeconstructor(lua_State* L) {
-
-            std::cout << "rendererDeconstructor\n";
-
-            return 0;
-        }
-
         int rendererSetBackgroundColor(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
 
@@ -107,7 +100,6 @@ namespace mugg {
 
             {"draw", rendererDraw},
 
-            {"__gc", rendererDeconstructor},
             {NULL, NULL}
         };
     }

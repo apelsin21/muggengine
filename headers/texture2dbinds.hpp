@@ -15,13 +15,6 @@ namespace mugg {
             return *(mugg::graphics::Texture2D**)luaL_checkudata(L, n, Texture2DName);
         }
 
-        int texture2DDeconstructor(lua_State* L) {
-
-            std::cout << "texture2DDeconstructor\n";
-
-            return 0;
-        }
-        
         int texture2DGetFilepath(lua_State* L) {
             mugg::graphics::Texture2D* texture = checkTexture2D(L, 1);
 
@@ -151,7 +144,6 @@ namespace mugg {
             {"is_loaded", texture2DGetLoaded},
             {"uses_mipmaps", texture2DGetUsesMipMaps},
 
-            {"__gc", texture2DDeconstructor},
             {NULL, NULL}
         };
     }

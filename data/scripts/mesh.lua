@@ -7,7 +7,6 @@ renderer = device:get_renderer()
 gui_mgr = device:get_gui_manager()
 content_mgr = device:get_content_manager()
 
-
 last_time = os.time()
 frames = 0
 frametime = 0

@@ -16,12 +16,6 @@ namespace mugg {
             return *(mugg::graphics::Shader**)luaL_checkudata(L, n, ShaderName);
         }
 
-        int shaderDeconstructor(lua_State* L) {
-            std::cout << "shaderDeconstructor\n";
-
-            return 0;
-        }
-
         int shaderGetData(lua_State* L) {
             mugg::graphics::Shader* shader = checkShader(L, 1);
 
@@ -33,7 +27,6 @@ namespace mugg {
         luaL_Reg shaderFuncs[] = {
             {"get_data", shaderGetData},
             
-            {"__gc", shaderDeconstructor},
             {NULL, NULL}
         };
     }

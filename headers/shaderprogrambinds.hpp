@@ -16,13 +16,6 @@ namespace mugg {
             return *(mugg::graphics::ShaderProgram**)luaL_checkudata(L, n, ShaderProgramName);
         }
 
-        int shaderProgramDeconstructor(lua_State* L) {
-
-            std::cout << "shaderProgramDeconstructor\n";
-
-            return 0;
-        }
-
         int shaderProgramAddShader(lua_State* L) {
             mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 1);
 
@@ -55,7 +48,6 @@ namespace mugg {
             
             {"get_number_of_attached_shaders", shaderProgramGetNumberOfAttachedShaders},
 
-            {"__gc", shaderProgramDeconstructor},
             {NULL, NULL}
         };
     }

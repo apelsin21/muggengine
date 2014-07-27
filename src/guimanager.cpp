@@ -31,7 +31,6 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Device* creator) {
 
     this->posLocation = glGetAttribLocation(this->programID, "v_pos");
     this->uvLocation = glGetAttribLocation(this->programID, "v_uv");
-    this->modelLocation = glGetAttribLocation(this->programID, "v_model");
 
     glGenVertexArrays(1, &this->vaoID);
     glGenBuffers(1, &this->vboID);
@@ -58,17 +57,6 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Device* creator) {
     
     glDisableVertexAttribArray(this->posLocation);
     glDisableVertexAttribArray(this->uvLocation);
-
-    /*
-    for(unsigned int i = 0; i < 4; i++) {
-        glEnableVertexAttribArray(this->modelLocation + i);
-        
-        glVertexAttribPointer(this->modelLocation + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4) * i));
-        glVertexAttribDivisor(this->modelLocation + i, 1);
-        
-        glDisableVertexAttribArray(this->modelLocation + i);
-    }
-    */
 }
 mugg::gui::GUIManager::~GUIManager() {
     glDeleteBuffers(1, &this->vboID);
@@ -88,7 +76,11 @@ mugg::gui::GUIManager::~GUIManager() {
 }
 
 mugg::gui::Image* mugg::gui::GUIManager::GetImage() {
-    return new mugg::gui::Image(this);
+    Image* img = new Image(this);
+
+    this->images.push_back(img);
+    
+    return img;
 }
 
 void mugg::gui::GUIManager::Render() {
@@ -101,7 +93,7 @@ void mugg::gui::GUIManager::Render() {
         glBindTexture(GL_TEXTURE_2D, this->images[i]->GetTexture());
 
     glBindVertexArray(this->vaoID);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, this->images.size());
+    glDrawArrays(GL_TRIANGLES, 0, 6);
     
     glDisableVertexAttribArray(this->posLocation);
     glDisableVertexAttribArray(this->uvLocation);
