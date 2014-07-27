@@ -1,8 +1,8 @@
 #ifndef DEVICE_HPP
 #define DEVICE_HPP
 
-namespace core {
-    namespace mugg {
+namespace mugg {
+    namespace core {
         class Device {
             private:
             public:

@@ -36,13 +36,23 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::LoadTexture2D(const std::
     
     format = FreeImage_GetFileType(filepath.c_str(), 0);
 
-    if(!format || format == FIF_UNKNOWN) {
-        std::cout << "Failed to load texture " << filepath << ", couldn't read the format. Corrupt or invalid bitmap.\n";
+    if(format == FIF_UNKNOWN) {
+        format = FreeImage_GetFIFFromFilename(filepath.c_str());
+    }
+
+    if(format == FIF_UNKNOWN) {
+        std::cout << "Failed to read format of texture " << filepath << ", invalid image!\n";
         texture->SetLoaded(false);
         return texture;
     }
 
-    bitmap = FreeImage_Load(format, filepath.c_str());
+    if(FreeImage_FIFSupportsReading(format)) {
+        bitmap = FreeImage_Load(format, filepath.c_str());
+    } else {
+        std::cout << "Texture " << filepath << " has a format unsupported by FreeImage!\n";
+        texture->SetLoaded(false);
+        return texture;
+    }
 
     if(!bitmap) {
         std::cout << "Failed to load texture " << filepath << ", corrupt or invalid bitmap.\n";
@@ -61,6 +71,11 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::LoadTexture2D(const std::
     }
 
     texture->Bind();
+
+    texture->SetWrap(texture->GetUWrap(), texture->GetVWrap());
+
+    texture->SetFilter(texture->GetMinFilter(), texture->GetMagFilter());
+
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap), 0, GL_BGRA, GL_UNSIGNED_BYTE, (GLvoid*)FreeImage_GetBits(bitmap));
 
     texture->SetWidth(FreeImage_GetWidth(bitmap));

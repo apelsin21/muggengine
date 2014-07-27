@@ -27,19 +27,27 @@ namespace mugg {
 
         enum TextureWrap {
             Repeat,
-            ClampToEdge
+            MirroredRepeat,
+            ClampToEdge,
+            ClampToBorder,
         };
         static const char* TextureWrapString[] = {
             "Repeat",
+            "MirroredRepeat",
             "ClampToEdge",
+            "ClampToBorder",
             NULL
         };
         static GLenum TextureWrapToGLEnum(TextureWrap wrap) {
             switch(wrap) {
                 case Repeat:
                     return GL_REPEAT;
+                case MirroredRepeat:
+                    return GL_MIRRORED_REPEAT;
                 case ClampToEdge:
                     return GL_CLAMP_TO_EDGE;
+                case ClampToBorder:
+                    return GL_CLAMP_TO_BORDER;
                 default:
                     return 0;
             }

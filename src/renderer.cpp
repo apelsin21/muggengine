@@ -1,6 +1,7 @@
 #include "renderer.hpp"
 
 mugg::graphics::Renderer::Renderer() {
+    this->wireframe = false;
 }
 mugg::graphics::Renderer::~Renderer() {
 }
@@ -33,6 +34,21 @@ std::vector<GLuint> mugg::graphics::Renderer::GetShaderProgramVector() {
 }
 
 bool mugg::graphics::Renderer::Initialize() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void mugg::graphics::Renderer::SetWireframe(bool wireframe) {
+    this->wireframe = wireframe;
+
+    if(this->wireframe) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    } else {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+}
+bool mugg::graphics::Renderer::GetWireframe() {
+    return this->wireframe;
 }
 
 void mugg::graphics::Renderer::Draw() {

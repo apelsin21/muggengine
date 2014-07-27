@@ -50,7 +50,6 @@ namespace mugg {
 
             return 0;
         }
-
         int rendererGetBackgroundColor(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
 
@@ -58,6 +57,25 @@ namespace mugg {
             luaL_getmetatable(L, ColorName);
             lua_setmetatable(L, -2);
 
+            return 1;
+        }
+
+        int rendererSetWireframe(lua_State* L) {
+            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
+
+            if(lua_isboolean(L, 2)) {
+                renderer->SetWireframe(lua_toboolean(L, 2));
+            } else {
+                luaL_error(L, "Renderer:set_wireframe expected boolean");
+            }
+
+            return 0;
+        }
+        int rendererGetWireframe(lua_State* L) {
+            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
+
+            lua_pushboolean(L, renderer->GetWireframe());
+            
             return 1;
         }
 
@@ -92,6 +110,9 @@ namespace mugg {
 
             {"set_background_color", rendererSetBackgroundColor},
             {"get_background_color", rendererGetBackgroundColor},
+
+            {"set_wireframe", rendererSetWireframe},
+            {"get_wireframe", rendererGetWireframe},
 
             {"add_shaderprogram", rendererAddShaderProgram},
 

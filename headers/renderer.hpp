@@ -20,6 +20,8 @@ namespace mugg {
             private:
                 std::vector<GLuint> programVector;
                 mugg::graphics::Color backgroundColor;
+
+                bool wireframe;
             public:
                 Renderer();
                 ~Renderer();
@@ -31,6 +33,9 @@ namespace mugg {
                 GLuint GetShaderProgramByIndex(int);
                 std::vector<GLuint> GetShaderProgramVector();
                 
+                void SetWireframe(bool);
+                bool GetWireframe();
+
                 bool Initialize();
                 
                 void Draw();

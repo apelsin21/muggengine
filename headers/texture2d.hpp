@@ -24,6 +24,7 @@ namespace mugg {
                 std::string filepath;
                 bool loaded, hasGeneratedID, mipMaps;
             public:
+                Texture2D() {};
                 Texture2D(GLuint id);
 
                 void SetFilepath(std::string);
@@ -54,7 +55,7 @@ namespace mugg {
                 mugg::graphics::TextureFilter GetMagFilter();
                 
                 void SetWrap(mugg::graphics::TextureWrap, mugg::graphics::TextureWrap);
-                void SetTextureFilter(mugg::graphics::TextureFilter, mugg::graphics::TextureFilter);
+                void SetFilter(mugg::graphics::TextureFilter, mugg::graphics::TextureFilter);
 
                 void Bind();
                 void UnBind();

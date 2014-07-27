@@ -9,15 +9,20 @@
 #include <algorithm>
 
 #include <GL/glew.h>
+
 #include <FreeImage.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "graphicsdefs.hpp"
+
 #include "texture2d.hpp"
 #include "shader.hpp"
-#include "graphicsdefs.hpp"
 #include "shaderprogram.hpp"
 
 namespace mugg {

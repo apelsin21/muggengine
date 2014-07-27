@@ -90,7 +90,7 @@ mugg::graphics::TextureFilter mugg::graphics::Texture2D::GetMinFilter() {
 mugg::graphics::TextureFilter mugg::graphics::Texture2D::GetMagFilter() {
     return this->magFilter;
 }
-void mugg::graphics::Texture2D::SetTextureFilter(TextureFilter minFilter, TextureFilter magFilter) {
+void mugg::graphics::Texture2D::SetFilter(TextureFilter minFilter, TextureFilter magFilter) {
     this->minFilter = minFilter;
     this->magFilter = magFilter;
     this->Bind();
