@@ -4,11 +4,19 @@ mugg::core::Device::Device() {
     glfwInit();
 }
 mugg::core::Device::~Device() {
-    this->guiManagers.clear();
-    this->renderers.clear();
-    this->contentManagers.clear();
-    this->windows.clear();
-
+    for(unsigned int i = 0; i < this->guiManagers.size(); i++) {
+        delete this->guiManagers[i];
+    }
+    for(unsigned int i = 0; i < this->renderers.size(); i++) {
+        delete this->renderers[i];
+    }
+    for(unsigned int i = 0; i < this->contentManagers.size(); i++) {
+        delete this->contentManagers[i];
+    }
+    for(unsigned int i = 0; i < this->windows.size(); i++) {
+        delete this->windows[i];
+    }
+    
     glfwTerminate();
 }
 

@@ -14,7 +14,7 @@ namespace mugg {
         class Image : public GUIObject {
             private:
             public:
-                Image(mugg::gui::GUIManager*);
+                Image(mugg::gui::GUIManager*, unsigned int);
                 ~Image();
         };
     }

@@ -10,7 +10,6 @@
 
 #include "shaderprogram.hpp"
 #include "shader.hpp"
-#include "image.hpp"
 
 namespace mugg {
     namespace core {
@@ -18,6 +17,8 @@ namespace mugg {
     }
     
     namespace gui {
+        class Image;
+        
         class GUIManager {
             private:
                 #define GLSL(src) "#version 130\n" #src
@@ -47,7 +48,10 @@ namespace mugg {
                 );
 
                 std::vector<mugg::gui::Image*> images;
-                
+
+                std::vector<GLuint> textures;
+                std::vector<glm::vec2> positions;
+
                 GLuint vboID, vaoID;
                 GLuint vsID, fsID, programID;
 
@@ -57,6 +61,12 @@ namespace mugg {
             public:
                 GUIManager(mugg::core::Device*);
                 ~GUIManager();
+
+                virtual void SetObjectPosition(unsigned int, glm::vec2);
+                virtual glm::vec2 GetObjectPosition(unsigned int);
+
+                virtual void SetObjectTexture(unsigned int texture, GLuint);
+                virtual GLuint GetObjectTexture(unsigned int);
 
                 virtual mugg::gui::Image* GetImage();
 

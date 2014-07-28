@@ -1,4 +1,5 @@
 #include "guimanager.hpp"
+#include "image.hpp"
 
 mugg::gui::GUIManager::GUIManager(mugg::core::Device* creator) {
     this->creator = creator;
@@ -72,13 +73,38 @@ mugg::gui::GUIManager::~GUIManager() {
         glDeleteProgram(this->programID);
     }
 
-    this->images.clear();
+    for(unsigned int i = 0; i < this->images.size(); i++) {
+        delete this->images[i];
+    }
+    for(unsigned int i = 0; i < this->textures.size(); i++) {
+        if(glIsTexture(this->textures[i])) {
+            glDeleteShader(this->textures[i]);
+        }
+    }
+}
+
+void mugg::gui::GUIManager::SetObjectPosition(unsigned int index, glm::vec2 position) {
+    this->positions[index] = position;
+}
+glm::vec2 mugg::gui::GUIManager::GetObjectPosition(unsigned int index) {
+    return this->positions[index];
+}
+
+void mugg::gui::GUIManager::SetObjectTexture(unsigned int index, GLuint texture) {
+    this->textures[index] = texture;
+}
+GLuint mugg::gui::GUIManager::GetObjectTexture(unsigned int index) {
+    return this->textures[index];
 }
 
 mugg::gui::Image* mugg::gui::GUIManager::GetImage() {
-    Image* img = new Image(this);
-
+    Image* img = new Image(this, this->images.size());
+    
     this->images.push_back(img);
+
+    //Needed so that their indices map correctly
+    this->textures.push_back(0);
+    this->positions.push_back(glm::vec2(0, 0));
     
     return img;
 }

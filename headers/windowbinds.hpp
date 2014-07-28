@@ -13,14 +13,6 @@ namespace mugg {
             return *(mugg::core::Window**)luaL_checkudata(L, n, WindowName);
         }
 
-        int windowDeconstructor(lua_State* L) {
-            mugg::core::Window* window = checkWindow(L, 1);
-            
-            delete window;
-
-            return 0;
-        }
-
         int windowOpen(lua_State* L) {
             mugg::core::Window* window = checkWindow(L, 1);
             
@@ -220,7 +212,6 @@ namespace mugg {
 
             {"swap_buffers", windowSwapBuffers},
 
-            {"__gc", windowDeconstructor},
             {NULL, NULL}
         };
     }

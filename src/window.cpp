@@ -32,18 +32,11 @@ mugg::core::Window::~Window() {
     this->Close();
 
     glfwDestroyWindow(this->window);
-
-    glfwTerminate();
 }
 
 bool mugg::core::Window::Open(int width, int height, std::string title) {
     glfwSetErrorCallback(mugg::error::glfwErrorCallback);
 
-    if(!glfwInit()) {
-        std::cerr << "GLFW failed to initialize!\n";
-        return false;
-    }
-    
     this->window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 
     if(!window) {

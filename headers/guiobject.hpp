@@ -4,38 +4,26 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include "guimanager.hpp"
 
 namespace mugg {
     namespace gui {
-        class GUIManager;
-        
         class GUIObject {
             protected:
-                GLuint texture = 0;
-                glm::vec2 position;
+                unsigned int index;
                 mugg::gui::GUIManager* creator;
             public:
-                GUIObject(mugg::gui::GUIManager* creator) {
-                    this->creator = creator;
-                }
+                GUIObject(mugg::gui::GUIManager*, unsigned int);
 
-                virtual mugg::gui::GUIManager* GetCreator() {
-                    return this->creator;
-                }
+                virtual mugg::gui::GUIManager* GetCreator();
 
-                virtual void SetPosition(glm::vec2 position) {
-                    this->position = position;
-                }
-                virtual glm::vec2 GetPosition() {
-                    return this->position;
-                }
+                virtual void SetPosition(glm::vec2);
+                virtual glm::vec2 GetPosition();
 
-                virtual void SetTexture(GLuint texture) {
-                    this->texture = texture;
-                }
-                virtual GLuint GetTexture() {
-                    return this->texture;
-                }
+                virtual void SetTexture(GLuint);
+                virtual GLuint GetTexture();
+                
+                virtual unsigned int GetIndex();
         };
     }
 }

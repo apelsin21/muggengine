@@ -20,6 +20,7 @@
 #include "guimanagerbinds.hpp"
 #include "imagebinds.hpp"
 #include "devicebinds.hpp"
+#include "vec2binds.hpp"
 
 int main(int argc, char* argv[]) {
     mugg::ScriptSystem system(true);
@@ -38,6 +39,7 @@ int main(int argc, char* argv[]) {
     system.RegisterMetatable(mugg::binds::guiManagerFuncs, mugg::binds::GUIManagerName);
     system.RegisterMetatable(mugg::binds::imageFuncs, mugg::binds::ImageName);
     system.RegisterMetatable(mugg::binds::deviceFuncs, mugg::binds::DeviceName);
+    system.RegisterMetatable(mugg::binds::vec2Funcs, mugg::binds::Vec2Name);
 
     if(argc > 2) {
         std::cout << "Got too many arguments. (Expected one)\n";
