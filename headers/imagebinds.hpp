@@ -32,6 +32,13 @@ namespace mugg {
 
             return 0;
         }
+        int imageSetPositionAlt(lua_State* L) {
+            mugg::gui::Image* img = checkImage(L, 1);
+
+            img->SetPosition(glm::vec2(luaL_checknumber(L, 2), luaL_checknumber(L, 3)));
+            
+            return 0;
+        }
         int imageGetPosition(lua_State* L) {
             mugg::gui::Image* img = checkImage(L, 1);
 
@@ -48,6 +55,7 @@ namespace mugg {
             {"set_texture", imageSetTexture},
             
             {"set_position", imageSetPosition},
+            {"set_position", imageSetPositionAlt},
             {"get_position", imageGetPosition},
 
             {NULL, NULL},

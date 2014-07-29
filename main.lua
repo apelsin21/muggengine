@@ -4,8 +4,8 @@ window = device:get_window()
 window:open(800, 600, "bajs")
 
 renderer = device:get_renderer()
-gui_mgr = device:get_gui_manager()
 content_mgr = device:get_content_manager()
+gui_mgr = device:get_gui_manager()
 
 last_time = os.time()
 frames = 0
@@ -13,13 +13,13 @@ frametime = 0
 
 renderer:initialize()
 
-texture = content_mgr:get_texture2d("data/textures/error.png", false)
+
+false_val = false
+true_val = true
 
 img = gui_mgr:get_image()
-img:set_texture(texture)
-img:set_position(Vec2.new(123, 321))
-
-print("Image position: " .. img:get_position():get_x() .. "x" .. img:get_position():get_y())
+img:set_texture(content_mgr:get_texture2d("data/textures/error.png", false))
+img:set_position(123, 321)
 
 while window:is_open() do
     if window:is_key_down("escape") then

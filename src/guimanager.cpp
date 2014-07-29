@@ -8,27 +8,23 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Device* creator) {
     this->fsID = glCreateShader(GL_FRAGMENT_SHADER);
     this->programID = glCreateProgram();
 
-    mugg::graphics::Shader* vertexShader = new mugg::graphics::Shader();
-    mugg::graphics::Shader* fragmentShader = new mugg::graphics::Shader();
-    mugg::graphics::ShaderProgram* shaderProgram = new mugg::graphics::ShaderProgram();
+    mugg::graphics::Shader vertexShader;
+    mugg::graphics::Shader fragmentShader;
+    mugg::graphics::ShaderProgram shaderProgram;
 
-    vertexShader->SetID(this->vsID);
-    fragmentShader->SetID(this->fsID);
-    shaderProgram->SetID(this->programID);
+    vertexShader.SetID(this->vsID);
+    fragmentShader.SetID(this->fsID);
+    shaderProgram.SetID(this->programID);
 
-    vertexShader->SetData(this->vsData);
-    fragmentShader->SetData(this->fsData);
+    vertexShader.SetData(this->vsData);
+    fragmentShader.SetData(this->fsData);
 
-    vertexShader->Compile();
-    fragmentShader->Compile();
+    vertexShader.Compile();
+    fragmentShader.Compile();
 
-    shaderProgram->AddShader(this->vsID);
-    shaderProgram->AddShader(this->fsID);
-    shaderProgram->Link();
-
-    delete vertexShader;
-    delete fragmentShader;
-    delete shaderProgram;
+    shaderProgram.AddShader(this->vsID);
+    shaderProgram.AddShader(this->fsID);
+    shaderProgram.Link();
 
     this->posLocation = glGetAttribLocation(this->programID, "v_pos");
     this->uvLocation = glGetAttribLocation(this->programID, "v_uv");
@@ -115,8 +111,7 @@ void mugg::gui::GUIManager::Render() {
     
     glUseProgram(this->programID);
     
-    for(unsigned int i = 0; i < this->images.size(); i++)
-        glBindTexture(GL_TEXTURE_2D, this->images[i]->GetTexture());
+    glBindTexture(GL_TEXTURE_2D, 1);
 
     glBindVertexArray(this->vaoID);
     glDrawArrays(GL_TRIANGLES, 0, 6);

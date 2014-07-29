@@ -8,24 +8,24 @@ mugg::core::ContentManager::~ContentManager() {
     if(!this->textures.empty()) {
         for(unsigned int i = 0; i < this->textures.size(); i++) {
             this->DeleteTextureID(this->textures[i]->GetID());
+            delete this->textures[i];
         }
     }
 
     if(!this->shaders.empty()) {
         for(unsigned int i= 0; i < this->shaders.size(); i++) {
             this->DeleteShaderID(this->shaders[i]->GetID());
+        
+            delete this->shaders[i];
         }
     }
 
     if(!this->shaderPrograms.empty()) {
         for(unsigned int i = 0; i < this->shaders.size(); i++) {
             this->DeleteShaderProgramID(this->shaderPrograms[i]->GetID());
+            delete this->shaderPrograms[i];
         }
     }
-
-    this->textures.clear();
-    this->shaders.clear();
-    this->shaderPrograms.clear();
 }
 
 int mugg::core::ContentManager::GetMaxTextureSize() {

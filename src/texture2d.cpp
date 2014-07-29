@@ -20,6 +20,8 @@ mugg::graphics::Texture2D::Texture2D(mugg::core::ContentManager* creator) : GLOb
     this->uWrap = mugg::graphics::TextureWrap::Repeat;
     this->vWrap = mugg::graphics::TextureWrap::Repeat;
 }
+mugg::graphics::Texture2D::~Texture2D() {
+}
 
 void mugg::graphics::Texture2D::SetWidth(int width) {
     this->width = width;
