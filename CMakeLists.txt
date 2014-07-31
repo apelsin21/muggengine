@@ -4,10 +4,11 @@ project(muggengine)
 set(LIBRARIES
     lua
     glfw
+    GLEW
     enet
     freeimage
     assimp
-    GLEW
+    SDL2
     GL
     GLU
 )

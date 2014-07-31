@@ -13,23 +13,10 @@ frametime = 0
 
 renderer:initialize()
 
-
-false_val = false
-true_val = true
-
 img = gui_mgr:get_image()
 img:set_texture(content_mgr:get_texture2d("data/textures/error.png", false))
-img:set_position(123, 321)
 
 while window:is_open() do
-    if window:is_key_down("escape") then
-        window:close()
-    elseif window:is_key_down("space") then
-        renderer:set_background_color(Color.new(math.random(0, 1), math.random(0, 1), math.random(0, 1), math.random(0, 1))) 
-    elseif window:is_key_down("f3") then
-        renderer:set_wireframe(not renderer:get_wireframe())
-    end
-
     frames = frames + 1
 
     if os.difftime(os.time(), last_time) >= 1 then

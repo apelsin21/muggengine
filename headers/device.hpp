@@ -10,8 +10,6 @@
 #include "contentmanager.hpp"
 #include "renderer.hpp"
 
-#include <GL/glew.h>
-
 namespace mugg {
     namespace core {
         class Device {
@@ -20,7 +18,6 @@ namespace mugg {
                 std::vector<mugg::core::ContentManager*> contentManagers;
                 std::vector<mugg::core::Window*> windows;
                 std::vector<mugg::graphics::Renderer*> renderers;
-
             public:
                 Device();
                 ~Device();

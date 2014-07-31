@@ -1,7 +1,6 @@
 #include "device.hpp"
 
 mugg::core::Device::Device() {
-    glfwInit();
 }
 mugg::core::Device::~Device() {
     for(unsigned int i = 0; i < this->guiManagers.size(); i++) {
@@ -17,7 +16,6 @@ mugg::core::Device::~Device() {
         delete this->windows[i];
     }
     
-    glfwTerminate();
 }
 
 mugg::gui::GUIManager* mugg::core::Device::GetGUIManager() {

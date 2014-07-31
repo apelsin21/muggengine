@@ -1,121 +1,168 @@
 #include "window.hpp"
 
-static void mugg::core::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
-static void mugg::core::closeCallback(GLFWwindow* window) {
-    glfwSetWindowShouldClose(window, true);
-}
+mugg::core::Window::Window(mugg::core::Device* p) {
+    this->parent = p;
 
-mugg::core::Window::Window(mugg::core::Device* creator) {
+    this->open = false;
+    this->fullscreen = false;
+    this->maximized = false;
+    this->hidden = false;
 
-    //Pointers
-    this->window = nullptr;
-    this->creator = creator;
-    
-    //Numeric values
     this->width = 0;
     this->height = 0;
-    this->posX = 0;
-    this->posY = 0;
-    this->swapInterval = 0;
+}
+mugg::core::Window::Window(mugg::core::Device* p, int w, int h, const std::string& t) {
+    this->parent = p;
 
-    //Boolean values
-    this->fullscreen = false;
-    this->changed = false;
     this->open = false;
-    this->focused = false;
-    this->iconified = false;
-    this->visible = false;
+    this->fullscreen = false;
+    this->maximized = false;
+    this->hidden = false;
+
+    this->width = 0;
+    this->height = 0;
+
+    this->Open(w, h, t);
 }
 mugg::core::Window::~Window() {
     this->Close();
 
-    glfwDestroyWindow(this->window);
+    if(this->sdlWindow != nullptr) {
+        SDL_DestroyWindow(this->sdlWindow);
+    }
 }
 
-bool mugg::core::Window::Open(int width, int height, std::string title) {
-    glfwSetErrorCallback(mugg::error::glfwErrorCallback);
-
-    this->window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
-
-    if(!window) {
-        std::cerr << "Failed to create a GLFW window!\n";
-        glfwTerminate();
+bool mugg::core::Window::Open(int w, int h, const std::string& t) {
+    if(this->open) {
+        std::cout << "Reopening an already opened window!\n";
+        return false;
+    }
+    
+    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+        std::cout << "Failed to initialize SDL!\n";
+        this->CheckSDLError(__LINE__);
         return false;
     }
 
-    glfwSetKeyCallback(this->window, mugg::input::glfwKeyCallback);
-    glfwSetFramebufferSizeCallback(this->window, mugg::core::framebufferSizeCallback);
-    glfwSetWindowCloseCallback(this->window, mugg::core::closeCallback);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-    glfwMakeContextCurrent(window);
+    this->CheckSDLError(__LINE__);
+    
+    this->sdlWindow = SDL_CreateWindow(t.c_str(), SDL_WINDOWPOS_CENTERED,
+                SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+
+    if(!this->sdlWindow) {
+        std::cout << "Failed to create SDL Window!\n";
+        this->CheckSDLError(__LINE__);
+        return false;
+    }
+
+    this->CheckSDLError(__LINE__);
+
+    this->sdlContext = SDL_GL_CreateContext(this->sdlWindow);
+    this->CheckSDLError(__LINE__);
 
     glewExperimental = true;
-    GLenum error = glewInit();
-    if(error != GLEW_OK) {
-        std::cerr << "GLEW failed to initialize! Error:\n";
-        std::cerr << glewGetErrorString(error) << std::endl;
+    if(glewInit() != GLEW_OK) {
+        std::cout << "GLEW failed to initialize!\n";
         return false;
     }
 
-    this->iconified = false;
-    this->focused = true;
-    this->fullscreen = false;
-    this->title = title;
-    this->width = width;
-    this->height = height;
     this->open = true;
-
+    this->width = w;
+    this->height = h;
+    this->title = t;
+    
     return true;
-}
-void mugg::core::Window::Close() {
-    this->open = false;
-    glfwSetWindowShouldClose(this->window, true);
 }
 bool mugg::core::Window::IsOpen() {
     return this->open;
 }
+void mugg::core::Window::Close() {
+    std::cout << "Close\n";
+}
+
+void mugg::core::Window::Restore() {
+    SDL_RestoreWindow(this->sdlWindow);
+}
+void mugg::core::Window::Maximize() {
+    SDL_MaximizeWindow(this->sdlWindow);
+    this->maximized = true;
+}
+void mugg::core::Window::Minimize() {
+    SDL_MinimizeWindow(this->sdlWindow);
+    this->maximized = false;
+}
+bool mugg::core::Window::IsMaximized() {
+    return this->maximized;
+}
 
 void mugg::core::Window::SetPosition(int x, int y) {
-    this->posX = x;
-    this->posY = y;
-    
-    glfwSetWindowPos(this->window, x, y);
+    SDL_SetWindowPosition(this->sdlWindow, x, y);
+}
+void mugg::core::Window::SetPositionX(int x) {
+    SDL_SetWindowPosition(this->sdlWindow, x, this->GetPositionY());
+}
+void mugg::core::Window::SetPositionY(int y) {
+    SDL_SetWindowPosition(this->sdlWindow, this->GetPositionX(), y);
 }
 int mugg::core::Window::GetPositionX() {
-    return this->posX;
+    int x, y;
+
+    SDL_GetWindowPosition(this->sdlWindow, &x, &y);
+
+    return x;
 }
 int mugg::core::Window::GetPositionY() {
-    return this->posY;
+    int x, y;
+
+    SDL_GetWindowPosition(this->sdlWindow, &x, &y);
+
+    return y;
 }
 
-void mugg::core::Window::SetSize(int width, int height) {
-    glfwSetWindowSize(this->window, width, height);
-}
-void mugg::core::Window::GetSize(int &out_width, int &out_height) {
-    int temp_width, temp_height;
+void mugg::core::Window::CheckSDLError(int line = -1) {
+    const char* error = SDL_GetError();
 
-    glfwGetWindowSize(this->window, &temp_width, &temp_height);
+    if(*error != '\0') {
+        std::cout << "SDL Error: " << error << std::endl;
 
-    out_width = temp_width;
-    out_height = temp_height;
-}
+        if(line != -1) {
+            std::cout << " + line " << line << std::endl;
+        }
 
-void mugg::core::Window::SetIconified(bool iconified) {
-    this->iconified = true;
-}
-bool mugg::core::Window::IsIconified() {
-    return this->iconified;
+        SDL_ClearError();
+    }
 }
 
-void mugg::core::Window::SetResolution(int width, int height) {
-    this->width = width;
-    this->height = height;
-    this->changed = true;
+void mugg::core::Window::SetResolution(int w, int h) {
+    this->width = w;
+    this->height = h;
+
+    if(this->open) {
+        SDL_SetWindowSize(this->sdlWindow, w, h);
+        this->CheckSDLError(__LINE__);
+    }
+}
+void mugg::core::Window::SetWidth(int w) {
+    this->width = w;
+    
+    if(this->open) {
+        SDL_SetWindowSize(this->sdlWindow, w, this->height);
+        this->CheckSDLError(__LINE__);
+    }
+}
+void mugg::core::Window::SetHeight(int h) {
+    this->height = h;
+    
+    if(this->open) {
+        SDL_SetWindowSize(this->sdlWindow, this->width, h);
+        this->CheckSDLError(__LINE__);
+    }
 }
 int mugg::core::Window::GetWidth() {
     return this->width;
@@ -124,361 +171,90 @@ int mugg::core::Window::GetHeight() {
     return this->height;
 }
 
-void mugg::core::Window::GetFramebufferSize(int &out_width, int &out_height) {
-    if(!this->open) {
-        std::cerr << "Tried to get framebuffer size of an unopened window!\n";
-        out_width = 0;
-        out_height = 0;
-    }
-
-    int temp_width = 0, temp_height = 0;
-    glfwGetFramebufferSize(this->window, &temp_width, &temp_height);
-
-    out_width = temp_width;
-    out_height = temp_height;
-}
-
-void mugg::core::Window::SetFullscreen(bool fullscreen) {
-    if(fullscreen) {
-        this->window = glfwCreateWindow(this->width, this->height, this->title.c_str(), glfwGetPrimaryMonitor(), NULL);
-        this->changed = true;
-        this->fullscreen = fullscreen;
-    } else {
-        this->window = glfwCreateWindow(this->width, this->height, this->title.c_str(), NULL, NULL);
-        this->fullscreen = fullscreen;
+void mugg::core::Window::SetSwapInterval(int i) {
+    if(this->open) {
+        SDL_GL_SetSwapInterval(i);
+        this->CheckSDLError(__LINE__);
     }
 }
-bool mugg::core::Window::GetFullscreen() {
+int mugg::core::Window::GetSwapInterval() {
+    if(this->open)
+        return SDL_GL_GetSwapInterval();
+    else
+        return 0;
+}
+
+bool mugg::core::Window::SetClipboardText(const std::string& data) {
+    if(SDL_SetClipboardText(data.c_str()) == 0)
+        return true;
+    else {
+        this->CheckSDLError(__LINE__);
+        return false;
+    }
+}
+bool mugg::core::Window::HasClipboardText() {
+    if(SDL_HasClipboardText())
+        return true;
+    else
+        return false;
+}
+std::string mugg::core::Window::GetClipboardText() {
+    std::string text = SDL_GetClipboardText();
+    this->CheckSDLError(__LINE__);
+    return text;
+}
+
+bool mugg::core::Window::SetFullscreen() {
+    if(SDL_SetWindowFullscreen(this->sdlWindow, SDL_WINDOW_FULLSCREEN) == 0) {
+        this->fullscreen = true;
+        return true;
+    }
+
+    this->CheckSDLError(__LINE__);
+    return false;
+}
+bool mugg::core::Window::SetBorderlessFullscreen() {
+    if(SDL_SetWindowFullscreen(this->sdlWindow, SDL_WINDOW_FULLSCREEN_DESKTOP) == 0) {
+        this->fullscreen = true;
+        return true;
+    }
+
+    this->CheckSDLError(__LINE__);
+    return false;
+}
+bool mugg::core::Window::SetWindowed() {
+    if(SDL_SetWindowFullscreen(this->sdlWindow, 0) == 0) {
+        this->fullscreen = false;
+        return true;
+    }
+
+    this->CheckSDLError(__LINE__);
+    return false;
+}
+bool mugg::core::Window::IsFullscreen() {
     return this->fullscreen;
 }
 
-void mugg::core::Window::SetSwapInterval(int interval) {
-    this->swapInterval = interval;
+void mugg::core::Window::Show() {
+    this->hidden = false;
+    SDL_HideWindow(this->sdlWindow);
 }
-int mugg::core::Window::GetSwapInterval() {
-    return this->swapInterval;
+void mugg::core::Window::Hide() {
+    this->hidden = true;
+    SDL_ShowWindow(this->sdlWindow);
+}
+bool mugg::core::Window::IsHidden() {
+    return this->hidden;
 }
 
-void mugg::core::Window::SetTitle(std::string title) {
+void mugg::core::Window::SetTitle(const std::string& title) {
     this->title = title;
-    glfwSetWindowTitle(this->window, title.c_str());
+    SDL_SetWindowTitle(this->sdlWindow, title.c_str());
 }
 std::string mugg::core::Window::GetTitle() {
     return this->title;
 }
 
-bool mugg::core::Window::Recreate() {
-    return true;
-}
-
-bool mugg::core::Window::IsFocused() {
-    return this->focused;
-}
-
-bool mugg::core::Window::IsKeyDown(mugg::input::Key key) {
-    if(glfwGetKey(this->window, (int)key) == GLFW_PRESS)
-        return true;
-    else
-        return false;
-}
-bool mugg::core::Window::IsKeyStringDown(std::string string) {
-    int key = GLFW_KEY_UNKNOWN;
-   
-    if(string == "space")
-    	key = GLFW_KEY_SPACE;
-    else if(string == "apostrophe")
-    	key = GLFW_KEY_APOSTROPHE;
-    else if(string == "comma")
-    	key = GLFW_KEY_COMMA;
-    else if(string == "minus")
-    	key = GLFW_KEY_MINUS;
-    else if(string == "peroid")
-    	key = GLFW_KEY_PERIOD;
-    else if(string == "slash")
-    	key = GLFW_KEY_SLASH;
-    else if(string == "num_0")
-    	key = GLFW_KEY_0;
-    else if(string == "num_1")
-    	key = GLFW_KEY_1;
-    else if(string == "num_2")
-    	key = GLFW_KEY_2;
-    else if(string == "num_3")
-    	key = GLFW_KEY_3;
-    else if(string == "num_4")
-    	key = GLFW_KEY_4;              
-    else if(string == "num_5")
-    	key = GLFW_KEY_5;
-    else if(string == "num_6")
-    	key = GLFW_KEY_6;
-    else if(string == "num_7")
-    	key = GLFW_KEY_7;
-    else if(string == "num_8")
-    	key = GLFW_KEY_8;
-    else if(string == "num_9")
-    	key = GLFW_KEY_9;
-    else if(string == "semicolon")
-    	key = GLFW_KEY_SEMICOLON;
-    else if(string == "equal")
-    	key = GLFW_KEY_EQUAL;
-    else if(string == "a")
-    	key = GLFW_KEY_A;
-    else if(string == "b")
-    	key = GLFW_KEY_B;
-    else if(string == "c")
-    	key = GLFW_KEY_C;
-    else if(string == "d")
-    	key = GLFW_KEY_D;
-    else if(string == "e")
-    	key = GLFW_KEY_E;
-    else if(string == "f")
-    	key = GLFW_KEY_F;
-    else if(string == "g")
-    	key = GLFW_KEY_G;
-    else if(string == "h")
-    	key = GLFW_KEY_H;
-    else if(string == "i")
-    	key = GLFW_KEY_I;
-    else if(string == "j")
-    	key = GLFW_KEY_J;
-    else if(string == "k")
-    	key = GLFW_KEY_K;
-    else if(string == "l")
-    	key = GLFW_KEY_L;
-    else if(string == "m")
-    	key = GLFW_KEY_M;
-    else if(string == "n")
-    	key = GLFW_KEY_N;
-    else if(string == "o")
-    	key = GLFW_KEY_O;
-    else if(string == "p")
-    	key = GLFW_KEY_P;
-    else if(string == "q")
-    	key = GLFW_KEY_Q;
-    else if(string == "r")
-    	key = GLFW_KEY_R;
-    else if(string == "s")
-    	key = GLFW_KEY_S;
-    else if(string == "t")
-    	key = GLFW_KEY_T;
-    else if(string == "u")
-    	key = GLFW_KEY_U;
-    else if(string == "v")
-    	key = GLFW_KEY_V;
-    else if(string == "w")
-    	key = GLFW_KEY_W;
-    else if(string == "x")
-    	key = GLFW_KEY_X;
-    else if(string == "y")
-    	key = GLFW_KEY_Y;
-    else if(string == "z")
-    	key = GLFW_KEY_Z;
-    else if(string == "left_bracket")
-    	key = GLFW_KEY_LEFT_BRACKET;
-    else if(string == "backslash")
-    	key = GLFW_KEY_BACKSLASH;
-    else if(string == "right_bracket")
-    	key = GLFW_KEY_RIGHT_BRACKET;
-    else if(string == "grave_accent")
-    	key = GLFW_KEY_GRAVE_ACCENT;
-    else if(string == "world_1")
-    	key = GLFW_KEY_WORLD_1;
-    else if(string == "world_2")
-    	key = GLFW_KEY_WORLD_2;
-    else if(string == "escape")
-    	key = GLFW_KEY_ESCAPE;
-    else if(string == "enter")
-    	key = GLFW_KEY_ENTER;
-    else if(string == "tab")
-    	key = GLFW_KEY_TAB;
-    else if(string == "backspace")
-    	key = GLFW_KEY_BACKSPACE;
-    else if(string == "insert")
-    	key = GLFW_KEY_INSERT;
-    else if(string == "delete")
-    	key = GLFW_KEY_DELETE;
-    else if(string == "right")
-    	key = GLFW_KEY_RIGHT;
-    else if(string == "left")
-    	key = GLFW_KEY_LEFT;
-    else if(string == "down")
-    	key = GLFW_KEY_DOWN;
-    else if(string == "up")
-    	key = GLFW_KEY_UP;
-    else if(string == "page_up")
-    	key = GLFW_KEY_PAGE_UP;
-    else if(string == "page_down")
-    	key = GLFW_KEY_PAGE_DOWN;
-    else if(string == "home")
-    	key = GLFW_KEY_HOME;
-    else if(string == "end")
-    	key = GLFW_KEY_END;
-    else if(string == "caps_lock")
-    	key = GLFW_KEY_CAPS_LOCK;
-    else if(string == "scroll_lock")
-    	key = GLFW_KEY_SCROLL_LOCK;
-    else if(string == "num_lock")
-    	key = GLFW_KEY_NUM_LOCK;
-    else if(string == "print_screen")
-    	key = GLFW_KEY_PRINT_SCREEN;
-    else if(string == "pause")
-    	key = GLFW_KEY_PAUSE;
-    else if(string == "f1")
-    	key = GLFW_KEY_F1;
-    else if(string == "f2")
-    	key = GLFW_KEY_F2;
-    else if(string == "f3")
-    	key = GLFW_KEY_F3;
-    else if(string == "f4")
-    	key = GLFW_KEY_F4;
-    else if(string == "f5")
-    	key = GLFW_KEY_F5;
-    else if(string == "f6")
-    	key = GLFW_KEY_F6;
-    else if(string == "f7")
-    	key = GLFW_KEY_F7;
-    else if(string == "f8")
-    	key = GLFW_KEY_F8;
-    else if(string == "f9")
-    	key = GLFW_KEY_F9;
-    else if(string == "f10")
-    	key = GLFW_KEY_F10;
-    else if(string == "f11")
-    	key = GLFW_KEY_F11;
-    else if(string == "f12")
-    	key = GLFW_KEY_F12;
-    else if(string == "f13")
-    	key = GLFW_KEY_F13;
-    else if(string == "f14")
-    	key = GLFW_KEY_F14;
-    else if(string == "f15")
-    	key = GLFW_KEY_F15;
-    else if(string == "f16")
-    	key = GLFW_KEY_F16;
-    else if(string == "f17")
-    	key = GLFW_KEY_F17;
-    else if(string == "f18")
-    	key = GLFW_KEY_F18;
-    else if(string == "f19")
-    	key = GLFW_KEY_F19;
-    else if(string == "f20")
-    	key = GLFW_KEY_F20;
-    else if(string == "f21")
-    	key = GLFW_KEY_F21;
-    else if(string == "f22")
-    	key = GLFW_KEY_F22;
-    else if(string == "f23")
-    	key = GLFW_KEY_F23;
-    else if(string == "f24")
-    	key = GLFW_KEY_F24;
-    else if(string == "f25")
-    	key = GLFW_KEY_F25;
-    else if(string == "kp_0")
-    	key = GLFW_KEY_KP_0;
-    else if(string == "kp_1")
-    	key = GLFW_KEY_KP_1;
-    else if(string == "kp_2")
-    	key = GLFW_KEY_KP_2;
-    else if(string == "kp_3")
-    	key = GLFW_KEY_KP_3;
-    else if(string == "kp_4")
-    	key = GLFW_KEY_KP_4;
-    else if(string == "kp_5")
-    	key = GLFW_KEY_KP_5;
-    else if(string == "kp_6")
-    	key = GLFW_KEY_KP_6;
-    else if(string == "kp_7")
-    	key = GLFW_KEY_KP_7;
-    else if(string == "kp_8")
-    	key = GLFW_KEY_KP_8;
-    else if(string == "kp_9")
-    	key = GLFW_KEY_KP_9;
-    else if(string == "kp_decimal")
-    	key = GLFW_KEY_KP_DECIMAL;
-    else if(string == "kp_divide")
-    	key = GLFW_KEY_KP_DIVIDE;
-    else if(string == "kp_multiply")
-    	key = GLFW_KEY_KP_MULTIPLY;
-    else if(string == "kp_subtract")
-    	key = GLFW_KEY_KP_SUBTRACT;
-    else if(string == "kp_add")
-    	key = GLFW_KEY_KP_ADD;
-    else if(string == "kp_enter")
-    	key = GLFW_KEY_KP_ENTER;
-    else if(string == "kp_equal")
-    	key = GLFW_KEY_KP_EQUAL;
-    else if(string == "left_shift")
-    	key = GLFW_KEY_LEFT_SHIFT;
-    else if(string == "left_control")
-    	key = GLFW_KEY_LEFT_CONTROL;
-    else if(string == "left_alt")
-    	key = GLFW_KEY_LEFT_ALT;
-    else if(string == "left_super")
-    	key = GLFW_KEY_LEFT_SUPER;
-    else if(string == "right_shift")
-    	key = GLFW_KEY_RIGHT_SHIFT;
-    else if(string == "right_control")
-    	key = GLFW_KEY_RIGHT_CONTROL;
-    else if(string == "right_alt")
-    	key = GLFW_KEY_RIGHT_ALT;
-    else if(string == "right_super")
-    	key = GLFW_KEY_RIGHT_SUPER;
-    else if(string == "menu")
-    	key = GLFW_KEY_MENU;
-    else if(string == "last")
-        key = GLFW_KEY_LAST;
-    else {
-        std::cout << "Checked for keypress that doesn't exist!\n";
-        return false;
-    }
-
-    if(key != GLFW_KEY_UNKNOWN && glfwGetKey(this->window, key) == GLFW_PRESS) {
-        return true;
-    }
-
-    return false;
-}
-mugg::input::Key GetLastPressedKey() {
-    return mugg::input::lastPressedKey;
-}
-
-void mugg::core::Window::PollEvents() {
-    if(glfwGetWindowAttrib(this->window, GLFW_FOCUSED))
-        this->focused = true;
-    else
-        this->focused = false;
-
-    if(glfwGetWindowAttrib(this->window, GLFW_ICONIFIED))
-        this->iconified = true;
-    else
-        this->iconified = false;
-    
-    if(glfwGetWindowAttrib(this->window, GLFW_VISIBLE))
-        this->visible = true;
-    else
-        this->visible = false;
-}
-
-void mugg::core::Window::ReactToEvents() {
-    if(glfwWindowShouldClose(this->window))
-        this->Close();
-}
-
-std::string mugg::core::Window::GetClipboard() {
-    if(glfwGetClipboardString(this->window) == NULL)
-        return std::string("");
-    else
-        return std::string(glfwGetClipboardString(this->window));
-}
-void mugg::core::Window::SetClipboard(std::string string) {
-    glfwSetClipboardString(this->window, string.c_str());
-}
-
 void mugg::core::Window::SwapBuffers() {
-    if(this->open) {
-        this->PollEvents();
-        this->ReactToEvents();
-
-        glfwSwapBuffers(this->window);
-        glfwPollEvents();
-    }
+    SDL_GL_SwapWindow(this->sdlWindow);
 }

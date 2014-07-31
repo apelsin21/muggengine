@@ -4,8 +4,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include <SDL2/SDL.h>
 
 #include <iostream>
 #include <string>
@@ -16,66 +15,64 @@
 namespace mugg {
     namespace core {
         class Device;
-        
-        static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
-        static void closeCallback(GLFWwindow* window);
     
         class Window {
             private:
-                GLFWwindow* window;
-                int width, height, posX, posY;
-                bool fullscreen, open, focused, iconified, visible;
-                int swapInterval;
+                int width, height;
                 std::string title;
-                bool changed; //True if window needs to recreate, false if not
-   
-                mugg::core::Device* creator;
+                bool open, fullscreen, maximized, hidden;
+                
+                SDL_Window* sdlWindow;
+                SDL_GLContext sdlContext;
+                
+                mugg::core::Device* parent;
+
+                void CheckSDLError(int);
             public:
                 Window(mugg::core::Device*);
+                Window(mugg::core::Device*, int, int, const std::string&);
                 ~Window();
-    
-                virtual bool Open(int width, int height, std::string title);
+
+                virtual bool Open(int, int, const std::string&);
                 virtual bool IsOpen();
                 virtual void Close();
-                
-                virtual void SetPosition(int x, int y);
-                virtual int GetPositionX();
-                virtual int GetPositionY();
-    
-                virtual void SetSize(int width, int height);
-                virtual void GetSize(int &out_width, int &out_height);
-    
-                virtual void SetResolution(int width, int height);
+
+                virtual void Restore();
+                virtual void Maximize();
+                virtual void Minimize();
+                virtual bool IsMaximized();
+
+                virtual void SetResolution(int, int);
+                virtual void SetWidth(int);
+                virtual void SetHeight(int);
                 virtual int GetWidth();
                 virtual int GetHeight();
-                
-                virtual void GetFramebufferSize(int &out_width, int &out_height);
-    
-                virtual void SetFullscreen(bool fullscreen);
-                virtual bool GetFullscreen();
-    
-                virtual void SetIconified(bool iconified);
-                virtual bool IsIconified();
-    
-                virtual void SetSwapInterval(int interval);
+
+                virtual void SetPosition(int, int);
+                virtual void SetPositionX(int);
+                virtual void SetPositionY(int);
+                virtual int GetPositionX();
+                virtual int GetPositionY();
+
+                virtual void SetSwapInterval(int);
                 virtual int GetSwapInterval();
-    
-                virtual bool IsFocused();
-    
-                virtual void SetTitle(std::string);
+
+                virtual void Show();
+                virtual void Hide();
+                virtual bool IsHidden();
+
+                virtual bool SetClipboardText(const std::string&);
+                virtual bool HasClipboardText();
+                virtual std::string GetClipboardText();
+
+                virtual bool SetFullscreen();
+                virtual bool SetBorderlessFullscreen();
+                virtual bool SetWindowed();
+                virtual bool IsFullscreen();
+
+                virtual void SetTitle(const std::string&);
                 virtual std::string GetTitle();
-    
-                virtual bool Recreate();
-    
-                virtual void PollEvents();
-                virtual void ReactToEvents();            
-    
-                virtual std::string GetClipboard();
-                virtual void SetClipboard(std::string string);
-    
-                virtual bool IsKeyDown(mugg::input::Key key);
-                virtual bool IsKeyStringDown(std::string string);
-    
+
                 virtual void SwapBuffers();
         };
     }

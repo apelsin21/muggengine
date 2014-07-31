@@ -18,7 +18,7 @@ namespace mugg {
             
             int width = luaL_checknumber(L, 2);
             int height = luaL_checknumber(L, 3);
-            const char* title = luaL_checkstring(L, 4);
+            std::string title = luaL_checkstring(L, 4);
             
             window->Open(width, height, title);
 
@@ -28,8 +28,8 @@ namespace mugg {
         int windowSetPosition(lua_State* L) {
             mugg::core::Window* window = checkWindow(L, 1);
 
-            int x = (int)luaL_checknumber(L, 2);
-            int y = (int)luaL_checknumber(L, 3);
+            int x = luaL_checknumber(L, 2);
+            int y = luaL_checknumber(L, 3);
 
             window->SetPosition(x, y);
 
@@ -74,21 +74,27 @@ namespace mugg {
         int windowSetFullscreen(lua_State* L) {
             mugg::core::Window* window = checkWindow(L, 1);
             
-            bool arg;
-
-            if(lua_isboolean(L, 2)) {
-                arg = lua_toboolean(L, 2);
-            } else {
-                luaL_error(L, "Argument to set_fullscreen wasn't a boolean\n");
-            }
-
-            window->SetFullscreen(arg);
+            window->SetFullscreen();
             return 0;
         }
-        int windowGetFullscreen(lua_State* L) {
+        int windowSetBorderlessFullscreen(lua_State* L) {
+            mugg::core::Window* window = checkWindow(L, 1);
+            
+            window->SetBorderlessFullscreen();
+
+            return 0;
+        }
+        int windowSetWindowed(lua_State* L) {
             mugg::core::Window* window = checkWindow(L, 1);
 
-            lua_pushboolean(L, window->GetFullscreen());
+            window->SetWindowed();
+
+            return 0;
+        }
+        int windowIsFullscreen(lua_State* L) {
+            mugg::core::Window* window = checkWindow(L, 1);
+
+            lua_pushboolean(L, window->IsFullscreen());
             return 1;
         }
 
@@ -137,39 +143,27 @@ namespace mugg {
             return 1;
         }
 
-        int windowIsKeyDown(lua_State* L) {
+        int windowSetClipboardText(lua_State* L) {
             mugg::core::Window* window = checkWindow(L, 1);
 
-            const char* keystring = luaL_checkstring(L, 2);
+            std::string arg = luaL_checkstring(L, 2);
 
-            bool isPressed = window->IsKeyStringDown(keystring);
-
-            lua_pushboolean(L, isPressed);
-
-            return 1;
-        }
-
-        int windowSetClipboard(lua_State* L) {
-            mugg::core::Window* window = checkWindow(L, 1);
-
-            const char* arg = luaL_checkstring(L, 2);
-
-            window->SetClipboard(arg);
+            window->SetClipboardText(arg);
 
             return 0;
         }
-        int windowGetClipboard(lua_State* L) {
+        int windowGetClipboardText(lua_State* L) {
             mugg::core::Window* window = checkWindow(L, 1);
 
-            lua_pushstring(L, window->GetClipboard().c_str());
+            lua_pushstring(L, window->GetClipboardText().c_str());
 
             return 1;
         }
-
-        int windowIsFocused(lua_State *L) {
+        int windowHasClipboardText(lua_State* L) {
             mugg::core::Window* window = checkWindow(L, 1);
 
-            lua_pushboolean(L, window->IsFocused());
+            lua_pushboolean(L, window->HasClipboardText());
+
             return 1;
         }
 
@@ -183,8 +177,6 @@ namespace mugg {
         luaL_Reg windowFuncs[] = {
             {"open", windowOpen},
 
-            {"is_key_down", windowIsKeyDown},
-
             {"set_position", windowSetPosition},
             {"get_position_x", windowGetPositionX},
             {"get_position_y", windowGetPositionY},
@@ -194,7 +186,9 @@ namespace mugg {
             {"get_height", windowGetHeight},
 
             {"set_fullscreen", windowSetFullscreen},
-            {"get_fullscreen", windowGetFullscreen},
+            {"set_borderless_fullscreen", windowSetBorderlessFullscreen},
+            {"set_windowed", windowSetWindowed},
+            {"is_fullscreen", windowIsFullscreen},
 
             {"set_swap_interval", windowSetSwapInterval},
             {"get_swap_interval", windowGetSwapInterval},
@@ -205,10 +199,9 @@ namespace mugg {
             {"is_open", windowIsOpen},
             {"close", windowClose},
     
-            {"get_clipboard", windowGetClipboard},
-            {"set_clipboard", windowSetClipboard},
-
-            {"is_focused", windowIsFocused},
+            {"get_clipboard_text", windowGetClipboardText},
+            {"set_clipboard_text", windowSetClipboardText},
+            {"has_clipboard_text", windowHasClipboardText},
 
             {"swap_buffers", windowSwapBuffers},
 
