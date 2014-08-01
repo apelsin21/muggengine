@@ -79,6 +79,21 @@ namespace mugg {
             return 0;
         }
 
+        int rendererGetDeltatime(lua_State* L) {
+            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
+            
+            lua_pushnumber(L, renderer->GetDeltatime());
+
+            return 1;
+        }
+        int rendererGetFrametime(lua_State* L) {
+            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
+            
+            lua_pushnumber(L, renderer->GetFrametime());
+
+            return 1;
+        }
+
         int rendererDraw(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
 
@@ -97,6 +112,9 @@ namespace mugg {
             {"add_shaderprogram", rendererAddShaderProgram},
 
             {"initialize", rendererInitialize},
+
+            {"get_deltatime", rendererGetDeltatime},
+            {"get_frametime", rendererGetFrametime},
 
             {"draw", rendererDraw},
 

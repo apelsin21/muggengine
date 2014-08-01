@@ -3,6 +3,9 @@
 mugg::graphics::Renderer::Renderer(mugg::core::Device* creator) {
     this->creator = creator;
     this->wireframe = false;
+    this->deltatime = 0;
+    this->frametime = 0;
+    this->frames = 0;
 }
 mugg::graphics::Renderer::~Renderer() {
 }
@@ -35,6 +38,8 @@ std::vector<GLuint> mugg::graphics::Renderer::GetShaderProgramVector() {
 }
 
 bool mugg::graphics::Renderer::Initialize() {
+    this->lastTime = std::chrono::system_clock::now();
+    
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -53,7 +58,28 @@ bool mugg::graphics::Renderer::GetWireframe() {
     return this->wireframe;
 }
 
+double mugg::graphics::Renderer::GetDeltatime() {
+    return this->deltatime;
+}
+double mugg::graphics::Renderer::GetFrametime() {
+    return this->frametime;
+}
+
+void mugg::graphics::Renderer::UpdateTime() {
+    this->frames++;
+
+    this->deltatime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - this->lastTime).count();
+
+    if(this->deltatime >= 1000.0) {
+        this->frametime = 1000.0/this->frames;
+        this->frames = 0;
+        this->lastTime = std::chrono::system_clock::now();
+    }
+}
+
 void mugg::graphics::Renderer::Draw() {
+    this->UpdateTime();
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if(this->programVector.size() != 0) {

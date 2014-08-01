@@ -12,7 +12,7 @@
 
 #include <vector>
 #include <iostream>
-#include <memory>
+#include <chrono>
 
 namespace mugg {
     namespace core {
@@ -25,12 +25,23 @@ namespace mugg {
                 std::vector<GLuint> programVector;
                 mugg::graphics::Color backgroundColor;
 
+                int frames;
+                double frametime;
+                double deltatime;
+                std::chrono::system_clock::time_point lastTime;
+
                 bool wireframe;
                 
+                void UpdateTime();
                 mugg::core::Device* creator;
             public:
                 Renderer(mugg::core::Device*);
                 ~Renderer();
+
+                //Get time between frames
+                double GetDeltatime();
+                //Get milliseconds per frame, averaged over one second
+                double GetFrametime();
 
                 void SetBackgroundColor(const mugg::graphics::Color&);
                 mugg::graphics::Color GetBackgroundColor();
