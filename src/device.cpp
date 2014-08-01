@@ -18,7 +18,7 @@ mugg::core::Device::~Device() {
     
 }
 
-mugg::gui::GUIManager* mugg::core::Device::GetGUIManager() {
+mugg::gui::GUIManager* mugg::core::Device::CreateGUIManager() {
     gui::GUIManager* mgr = new gui::GUIManager(this);
     
     this->guiManagers.push_back(mgr);
@@ -26,7 +26,7 @@ mugg::gui::GUIManager* mugg::core::Device::GetGUIManager() {
     return mgr;
 }
 
-mugg::core::ContentManager* mugg::core::Device::GetContentManager() {
+mugg::core::ContentManager* mugg::core::Device::CreateContentManager() {
     core::ContentManager* mgr = new core::ContentManager(this);
 
     this->contentManagers.push_back(mgr);
@@ -34,7 +34,7 @@ mugg::core::ContentManager* mugg::core::Device::GetContentManager() {
     return mgr;
 }
 
-mugg::core::Window* mugg::core::Device::GetWindow() {
+mugg::core::Window* mugg::core::Device::CreateWindow() {
     core::Window* window = new core::Window(this);
 
     this->windows.push_back(window);
@@ -42,7 +42,7 @@ mugg::core::Window* mugg::core::Device::GetWindow() {
     return window;
 }
 
-mugg::graphics::Renderer* mugg::core::Device::GetRenderer() {
+mugg::graphics::Renderer* mugg::core::Device::CreateRenderer() {
     graphics::Renderer* renderer = new graphics::Renderer(this);
 
     this->renderers.push_back(renderer);

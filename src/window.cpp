@@ -3,18 +3,13 @@
 mugg::core::Window::Window(mugg::core::Device* p) {
     this->parent = p;
 
-    this->open = false;
-    this->fullscreen = false;
-    this->maximized = false;
-    this->hidden = false;
-    this->focus = false;
-
-    this->width = 0;
-    this->height = 0;
-    this->windowID = 0;
-}
-mugg::core::Window::Window(mugg::core::Device* p, int w, int h, const std::string& t) {
-    this->parent = p;
+    if(SDL_WasInit(SDL_INIT_VIDEO) != SDL_INIT_VIDEO) {
+        //If SDL_VIDEO wasn't initialized, try to initialize.
+        if(SDL_Init(SDL_INIT_VIDEO) != 0) {
+            std::cerr << "SDL failed to initialize! Error:\n";
+            this->CheckSDLError(__LINE__);
+        }
+    }
 
     this->open = false;
     this->fullscreen = false;
@@ -25,8 +20,6 @@ mugg::core::Window::Window(mugg::core::Device* p, int w, int h, const std::strin
     this->width = 0;
     this->height = 0;
     this->windowID = 0;
-
-    this->Open(w, h, t);
 }
 mugg::core::Window::~Window() {
     this->Close();
@@ -41,6 +34,10 @@ bool mugg::core::Window::HasFocus() {
 }
 
 bool mugg::core::Window::Open(int w, int h, const std::string& t) {
+    this->width = w;
+    this->height = h;
+    this->title = t;
+    
     if(this->open) {
         std::cout << "Reopening an already opened window!\n";
         return false;
@@ -54,8 +51,8 @@ bool mugg::core::Window::Open(int w, int h, const std::string& t) {
 
     this->CheckSDLError(__LINE__);
     
-    this->sdlWindow = SDL_CreateWindow(t.c_str(), SDL_WINDOWPOS_CENTERED,
-                SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    this->sdlWindow = SDL_CreateWindow(this->title.c_str(), SDL_WINDOWPOS_CENTERED,
+                SDL_WINDOWPOS_CENTERED, this->width, this->height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
     if(!this->sdlWindow) {
         std::cout << "Failed to create SDL Window!\n";
@@ -69,16 +66,15 @@ bool mugg::core::Window::Open(int w, int h, const std::string& t) {
     this->CheckSDLError(__LINE__);
 
     glewExperimental = true;
-    if(glewInit() != GLEW_OK) {
-        std::cout << "GLEW failed to initialize!\n";
+    GLenum error = glewInit();
+    if(error != GLEW_OK) {
+        std::cout << "GLEW failed to initialize! Error:\n";
+        std::cout << glewGetErrorString(error);
         return false;
     }
 
     this->windowID = SDL_GetWindowID(this->sdlWindow);
     this->open = true;
-    this->width = w;
-    this->height = h;
-    this->title = t;
     
     return true;
 }
@@ -88,8 +84,8 @@ bool mugg::core::Window::IsOpen() {
 void mugg::core::Window::Close() {
     this->open = false;
     
-    SDL_DestroyWindow(this->sdlWindow);
     SDL_GL_DeleteContext(this->sdlContext);
+    SDL_DestroyWindow(this->sdlWindow);
 }
 
 void mugg::core::Window::Restore() {
@@ -255,7 +251,7 @@ bool mugg::core::Window::IsHidden() {
 
 void mugg::core::Window::SetTitle(const std::string& title) {
     this->title = title;
-    SDL_SetWindowTitle(this->sdlWindow, title.c_str());
+    SDL_SetWindowTitle(this->sdlWindow, this->title.c_str());
 }
 std::string mugg::core::Window::GetTitle() {
     return this->title;

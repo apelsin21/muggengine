@@ -1,11 +1,11 @@
 device = Device.new()
 
-window = device:get_window()
+window = device:create_window()
 window:open(800, 600, "bajs")
 
-renderer = device:get_renderer()
-content_mgr = device:get_content_manager()
-gui_mgr = device:get_gui_manager()
+renderer = device:create_renderer()
+content_mgr = device:create_content_manager()
+gui_mgr = device:create_gui_manager()
 
 last_time = os.time()
 frames = 0

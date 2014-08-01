@@ -22,13 +22,13 @@ namespace mugg {
                 Device();
                 ~Device();
 
-                mugg::gui::GUIManager* GetGUIManager();
+                mugg::gui::GUIManager* CreateGUIManager();
 
-                mugg::core::ContentManager* GetContentManager();
+                mugg::core::ContentManager* CreateContentManager();
 
-                mugg::core::Window* GetWindow();
+                mugg::core::Window* CreateWindow();
 
-                mugg::graphics::Renderer* GetRenderer();
+                mugg::graphics::Renderer* CreateRenderer();
         };
     }
 }
