@@ -21,8 +21,15 @@
 #include "imagebinds.hpp"
 #include "devicebinds.hpp"
 #include "vec2binds.hpp"
+#include "keyboardbinds.hpp"
 
 int main(int argc, char* argv[]) {
+    if(SDL_Init(SDL_INIT_VIDEO) != 0) {
+        std::cerr << "Failed to initialize SDL:\n";
+        std::cerr << SDL_GetError();
+        return -1;
+    }
+    
     mugg::ScriptSystem system(true);
 
     system.RegisterMetatable(mugg::binds::windowFuncs, mugg::binds::WindowName);
@@ -40,6 +47,7 @@ int main(int argc, char* argv[]) {
     system.RegisterMetatable(mugg::binds::imageFuncs, mugg::binds::ImageName);
     system.RegisterMetatable(mugg::binds::deviceFuncs, mugg::binds::DeviceName);
     system.RegisterMetatable(mugg::binds::vec2Funcs, mugg::binds::Vec2Name);
+    system.RegisterMetatable(mugg::binds::keyboardFuncs, mugg::binds::KeyboardName);
 
     if(argc > 2) {
         std::cout << "Got too many arguments. (Expected one)\n";
@@ -53,6 +61,7 @@ int main(int argc, char* argv[]) {
     } else {
         system.DoFile("main.lua");
     }
-    
+
+    SDL_Quit();
     return 0;
 }

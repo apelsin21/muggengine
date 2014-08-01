@@ -20,18 +20,23 @@ namespace mugg {
             private:
                 int width, height;
                 std::string title;
-                bool open, fullscreen, maximized, hidden;
+                bool open, fullscreen, maximized, hidden, focus;
                 
+                SDL_Event event;
                 SDL_Window* sdlWindow;
                 SDL_GLContext sdlContext;
-                
+                Uint32 windowID;
+
                 mugg::core::Device* parent;
 
                 void CheckSDLError(int);
+                void CheckForEvents();
             public:
                 Window(mugg::core::Device*);
                 Window(mugg::core::Device*, int, int, const std::string&);
                 ~Window();
+
+                virtual bool HasFocus();
 
                 virtual bool Open(int, int, const std::string&);
                 virtual bool IsOpen();

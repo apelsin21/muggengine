@@ -167,6 +167,14 @@ namespace mugg {
             return 1;
         }
 
+        int windowHasFocus(lua_State* L) {
+            mugg::core::Window* window = checkWindow(L, 1);
+
+            lua_pushboolean(L, window->HasFocus());
+
+            return 1;
+        }
+
         int windowSwapBuffers(lua_State* L) {
             mugg::core::Window* window = checkWindow(L, 1);
             
@@ -176,6 +184,8 @@ namespace mugg {
 
         luaL_Reg windowFuncs[] = {
             {"open", windowOpen},
+            {"close", windowClose},
+            {"is_open", windowIsOpen},
 
             {"set_position", windowSetPosition},
             {"get_position_x", windowGetPositionX},
@@ -196,15 +206,13 @@ namespace mugg {
             {"set_title", windowSetTitle},
             {"get_title", windowGetTitle},
 
-            {"is_open", windowIsOpen},
-            {"close", windowClose},
-    
             {"get_clipboard_text", windowGetClipboardText},
             {"set_clipboard_text", windowSetClipboardText},
             {"has_clipboard_text", windowHasClipboardText},
 
             {"swap_buffers", windowSwapBuffers},
-
+            {"has_focus", windowHasFocus},
+            
             {NULL, NULL}
         };
     }

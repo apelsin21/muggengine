@@ -7,9 +7,11 @@ mugg::core::Window::Window(mugg::core::Device* p) {
     this->fullscreen = false;
     this->maximized = false;
     this->hidden = false;
+    this->focus = false;
 
     this->width = 0;
     this->height = 0;
+    this->windowID = 0;
 }
 mugg::core::Window::Window(mugg::core::Device* p, int w, int h, const std::string& t) {
     this->parent = p;
@@ -18,9 +20,11 @@ mugg::core::Window::Window(mugg::core::Device* p, int w, int h, const std::strin
     this->fullscreen = false;
     this->maximized = false;
     this->hidden = false;
+    this->focus = false;
 
     this->width = 0;
     this->height = 0;
+    this->windowID = 0;
 
     this->Open(w, h, t);
 }
@@ -28,8 +32,12 @@ mugg::core::Window::~Window() {
     this->Close();
 
     if(this->sdlWindow != nullptr) {
-        SDL_DestroyWindow(this->sdlWindow);
+        this->Close();
     }
+}
+
+bool mugg::core::Window::HasFocus() {
+    return this->focus;
 }
 
 bool mugg::core::Window::Open(int w, int h, const std::string& t) {
@@ -38,12 +46,6 @@ bool mugg::core::Window::Open(int w, int h, const std::string& t) {
         return false;
     }
     
-    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-        std::cout << "Failed to initialize SDL!\n";
-        this->CheckSDLError(__LINE__);
-        return false;
-    }
-
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
@@ -72,6 +74,7 @@ bool mugg::core::Window::Open(int w, int h, const std::string& t) {
         return false;
     }
 
+    this->windowID = SDL_GetWindowID(this->sdlWindow);
     this->open = true;
     this->width = w;
     this->height = h;
@@ -83,7 +86,10 @@ bool mugg::core::Window::IsOpen() {
     return this->open;
 }
 void mugg::core::Window::Close() {
-    std::cout << "Close\n";
+    this->open = false;
+    
+    SDL_DestroyWindow(this->sdlWindow);
+    SDL_GL_DeleteContext(this->sdlContext);
 }
 
 void mugg::core::Window::Restore() {
@@ -255,6 +261,46 @@ std::string mugg::core::Window::GetTitle() {
     return this->title;
 }
 
+void mugg::core::Window::CheckForEvents() {
+    while(SDL_PollEvent(&this->event)) {
+        if(this->event.window.windowID == this->windowID) {
+            switch(this->event.window.event) {
+                case SDL_WINDOWEVENT_SHOWN:
+                    this->hidden = false;
+                    break;
+                case SDL_WINDOWEVENT_HIDDEN:
+                    this->hidden = true;
+                    break;
+                case SDL_WINDOWEVENT_RESIZED:
+                    this->width = this->event.window.data1;
+                    this->height = this->event.window.data2;
+                    glViewport(0, 0, this->width, this->height);
+                    break;
+                case SDL_WINDOWEVENT_MINIMIZED:
+                    this->maximized = false;
+                    break;
+                case SDL_WINDOWEVENT_MAXIMIZED:
+                    this->maximized = true;
+                    break;
+                case SDL_WINDOWEVENT_FOCUS_GAINED:
+                    this->focus = true;
+                    break;
+                case SDL_WINDOWEVENT_FOCUS_LOST:
+                    this->focus = false;
+                    break;
+                case SDL_WINDOWEVENT_CLOSE:
+                    this->Close();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}
+
 void mugg::core::Window::SwapBuffers() {
-    SDL_GL_SwapWindow(this->sdlWindow);
+    if(this->open) {
+        this->CheckForEvents();
+        SDL_GL_SwapWindow(this->sdlWindow);
+    }
 }
