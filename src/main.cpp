@@ -60,41 +60,5 @@ int main(int argc, char* argv[]) {
 
     SDL_Quit();
 
-    /*
-    SDL_Window *mainwindow;
-    SDL_GLContext maincontext;
- 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-        std::cout << "Unable to initialize SDL\n";
- 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
- 
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
- 
-    mainwindow = SDL_CreateWindow("bajs", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        512, 512, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-    if (!mainwindow)
-        std::cout << "Unable to create window\n";
- 
- 
-    maincontext = SDL_GL_CreateContext(mainwindow);
-
-    glewExperimental = GL_TRUE;
-    glewInit(); 
- 
-    SDL_GL_SetSwapInterval(1);
- 
-    glClearColor ( 1.0, 0.0, 0.0, 1.0 );
-    glClear ( GL_COLOR_BUFFER_BIT );
-    SDL_GL_SwapWindow(mainwindow);
-    SDL_Delay(2000);
- 
-    SDL_GL_DeleteContext(maincontext);
-    SDL_DestroyWindow(mainwindow);
-    SDL_Quit();
-    */
-
     return 0;
 }
