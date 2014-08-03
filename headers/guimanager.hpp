@@ -52,7 +52,7 @@ namespace mugg {
                 std::vector<GLuint> textures;
                 std::vector<glm::vec2> positions;
 
-                GLuint vboID, vaoID;
+                GLuint vboID, vaoID, ibID;
                 GLuint vsID, fsID, programID;
 
                 int posLocation, uvLocation, modelLocation;
@@ -68,7 +68,7 @@ namespace mugg {
                 virtual void SetObjectTexture(unsigned int texture, GLuint);
                 virtual GLuint GetObjectTexture(unsigned int);
 
-                virtual mugg::gui::Image* GetImage();
+                virtual mugg::gui::Image* CreateImage();
 
                 virtual void Render();
         };

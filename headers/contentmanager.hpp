@@ -56,13 +56,13 @@ namespace mugg {
 
                 virtual int GetMaxTextureSize();
 
-                virtual mugg::graphics::Texture2D* GetTexture2D(const std::string&, bool);
+                virtual mugg::graphics::Texture2D* CreateTexture2D(const std::string&, bool);
                 
                 virtual bool GetTextFile(const std::string, std::string&);
                 
-                virtual mugg::graphics::ShaderProgram* GetShaderProgram();
+                virtual mugg::graphics::ShaderProgram* CreateShaderProgram();
 
-                virtual mugg::graphics::Shader* GetShader(mugg::graphics::ShaderType, const std::string&);
+                virtual mugg::graphics::Shader* CreateShader(mugg::graphics::ShaderType, const std::string&);
         };
     }
 }

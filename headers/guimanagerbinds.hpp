@@ -14,11 +14,11 @@ namespace mugg {
             return *(mugg::gui::GUIManager**)luaL_checkudata(L, n, GUIManagerName);
         }
 
-        int guiManagerGetImage(lua_State* L) {
+        int guiManagerCreateImage(lua_State* L) {
             mugg::gui::GUIManager* mgr = checkGUIManager(L, 1);
             
             mugg::gui::Image** img = (mugg::gui::Image**)lua_newuserdata(L, sizeof(mugg::gui::Image*));
-            *img = mgr->GetImage();
+            *img = mgr->CreateImage();
 
             luaL_getmetatable(L, ImageName);
             lua_setmetatable(L, -2);
@@ -35,7 +35,7 @@ namespace mugg {
         }
 
         luaL_Reg guiManagerFuncs[] = {
-            {"get_image", guiManagerGetImage},
+            {"create_image", guiManagerCreateImage},
             {"render", guiManagerRender},
 
             {NULL, NULL}

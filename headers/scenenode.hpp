@@ -6,16 +6,18 @@
 
 #include <glm/glm.hpp>
 
-#include "mesh.hpp"
-
 namespace mugg {
     namespace scene {
+        class SceneManager;
+
         class SceneNode {
             private:
-                std::vector<mugg::graphics::Mesh> meshVector;
-                const char* name;
                 glm::vec4 position;
+
+                mugg::scene::SceneManager* parent;
             public:
+                SceneNode(mugg::scene::SceneManager*);
+                ~SceneNode();
         };
     }
 }

@@ -57,3 +57,11 @@ mugg::graphics::Renderer* mugg::core::Device::CreateRenderer() {
 
     return renderer;
 }
+
+mugg::scene::SceneManager* mugg::core::Device::CreateSceneManager() {
+    scene::SceneManager* mgr = new scene::SceneManager(this);
+
+    this->sceneManagers.push_back(mgr);
+
+    return mgr;
+}

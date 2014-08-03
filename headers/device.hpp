@@ -9,6 +9,7 @@
 #include "window.hpp"
 #include "contentmanager.hpp"
 #include "renderer.hpp"
+#include "scenemanager.hpp"
 
 namespace mugg {
     namespace core {
@@ -16,19 +17,22 @@ namespace mugg {
             private:
                 std::vector<mugg::gui::GUIManager*> guiManagers;
                 std::vector<mugg::core::ContentManager*> contentManagers;
+                std::vector<mugg::scene::SceneManager*> sceneManagers;
                 std::vector<mugg::core::Window*> windows;
                 std::vector<mugg::graphics::Renderer*> renderers;
             public:
                 Device();
                 ~Device();
 
-                mugg::gui::GUIManager* CreateGUIManager();
+                virtual mugg::gui::GUIManager* CreateGUIManager();
 
-                mugg::core::ContentManager* CreateContentManager();
+                virtual mugg::core::ContentManager* CreateContentManager();
 
-                mugg::core::Window* CreateWindow();
+                virtual mugg::core::Window* CreateWindow();
 
-                mugg::graphics::Renderer* CreateRenderer();
+                virtual mugg::graphics::Renderer* CreateRenderer();
+            
+                virtual mugg::scene::SceneManager* CreateSceneManager();
         };
     }
 }

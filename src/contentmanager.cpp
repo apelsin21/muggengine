@@ -40,7 +40,7 @@ int mugg::core::ContentManager::GetMaxTextureSize() {
     return this->maxTextureSize;
 }
 
-mugg::graphics::Texture2D* mugg::core::ContentManager::GetTexture2D(const std::string &filepath, bool mipmaps) {
+mugg::graphics::Texture2D* mugg::core::ContentManager::CreateTexture2D(const std::string &filepath, bool mipmaps) {
     if(filepath == "") {
         std::cout << "Tried to load texture from empty string!\n";
         return nullptr;
@@ -90,17 +90,19 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::GetTexture2D(const std::s
         std::cout << "Failed to load texture " << filepath << ", too big! Max resolution: " << this->maxTextureSize << "x" << this->maxTextureSize << "\n";
     }
 
-    //Neccessary because FreeImage_ConvertTo32Bits() gives back a copy
-    FIBITMAP* temp = FreeImage_ConvertTo32Bits(bitmap);
+    if(FreeImage_GetBPP(bitmap) != 32) {
+        //Neccessary because FreeImage_ConvertTo32Bits() gives back a copy
+        FIBITMAP* temp = FreeImage_ConvertTo32Bits(bitmap);
 
-    if(!bitmap) {
-        std::cout << "FreeImage failed to convert texture " << filepath << " to 32 bit colour!\n";
-        texture->SetLoaded(false);
-        return texture;
+        if(!bitmap) {
+            std::cout << "FreeImage failed to convert texture " << filepath << " to 32 bit colour!\n";
+            texture->SetLoaded(false);
+            return texture;
+        }
+        
+        FreeImage_Unload(bitmap);
+        bitmap = temp;
     }
-    
-    FreeImage_Unload(bitmap);
-    bitmap = temp;
 
     texture->Bind();
 
@@ -133,7 +135,7 @@ void mugg::core::ContentManager::DeleteTextureID(GLuint id) {
     }
 } 
 
-mugg::graphics::Shader* mugg::core::ContentManager::GetShader(mugg::graphics::ShaderType type, const std::string& filepath) {
+mugg::graphics::Shader* mugg::core::ContentManager::CreateShader(mugg::graphics::ShaderType type, const std::string& filepath) {
     if(filepath == "") {
         std::cout << "Tried loading shader from empty path!\n";
         return new mugg::graphics::Shader(0);
@@ -199,7 +201,7 @@ bool mugg::core::ContentManager::GetTextFile(const std::string filepath, std::st
     return true;
 }
 
-mugg::graphics::ShaderProgram* mugg::core::ContentManager::GetShaderProgram() {
+mugg::graphics::ShaderProgram* mugg::core::ContentManager::CreateShaderProgram() {
     GLuint id = glCreateProgram();
 
     mugg::graphics::ShaderProgram* program = new mugg::graphics::ShaderProgram(this);

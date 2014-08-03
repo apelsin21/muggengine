@@ -11,8 +11,8 @@ renderer:initialize()
 
 keyboard = Keyboard.new()
 
-img = gui_mgr:get_image()
-img:set_texture(content_mgr:get_texture2d("data/textures/error.png", false))
+img = gui_mgr:create_image()
+img:set_texture(content_mgr:create_texture2d("data/textures/error.png", false))
 
 lastkey = ""
 

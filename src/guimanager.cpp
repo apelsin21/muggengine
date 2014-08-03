@@ -33,13 +33,13 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Device* creator) {
     glGenBuffers(1, &this->vboID);
 
     static const GLfloat g_vertex_buffer_data[] = {
-        -1.0f, -1.0f,
-        1.0f, 1.0f,
-        -1.0f, 1.0f,
+        -1.0f, -1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 0.0f, 1.0f,
 
-        -1.0f, -1.0f,
-        1.0f, 1.0f,
-        1.0f, -1.0f
+        -1.0f, -1.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 1.0f, 1.0f,
     };
 
     glBindVertexArray(this->vaoID);
@@ -49,8 +49,8 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Device* creator) {
     glEnableVertexAttribArray(this->posLocation);
     glEnableVertexAttribArray(this->uvLocation);
     
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(this->posLocation, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), 0);
+    glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)(2*sizeof(GLfloat)));
     
     glDisableVertexAttribArray(this->posLocation);
     glDisableVertexAttribArray(this->uvLocation);
@@ -95,7 +95,7 @@ GLuint mugg::gui::GUIManager::GetObjectTexture(unsigned int index) {
     return this->textures[index];
 }
 
-mugg::gui::Image* mugg::gui::GUIManager::GetImage() {
+mugg::gui::Image* mugg::gui::GUIManager::CreateImage() {
     Image* img = new Image(this, this->images.size());
     
     this->images.push_back(img);
@@ -113,7 +113,7 @@ void mugg::gui::GUIManager::Render() {
     
     glUseProgram(this->programID);
     
-    glBindTexture(GL_TEXTURE_2D, 1);
+    glBindTexture(GL_TEXTURE_2D, this->textures[this->textures.size() - 1]);
 
     glBindVertexArray(this->vaoID);
     glDrawArrays(GL_TRIANGLES, 0, 6);
