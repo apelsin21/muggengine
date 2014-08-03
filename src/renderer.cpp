@@ -64,6 +64,12 @@ double mugg::graphics::Renderer::GetDeltatime() {
 double mugg::graphics::Renderer::GetFrametime() {
     return this->frametime;
 }
+double mugg::graphics::Renderer::GetFPS() {
+    if(this->frametime != 0)
+        return 1000.0/this->frametime;
+    else
+        return 0;
+}
 
 void mugg::graphics::Renderer::UpdateTime() {
     this->frames++;
@@ -71,7 +77,8 @@ void mugg::graphics::Renderer::UpdateTime() {
     this->deltatime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - this->lastTime).count();
 
     if(this->deltatime >= 1000.0) {
-        this->frametime = 1000.0/this->frames;
+        if(this->frames != 0)
+            this->frametime = 1000.0/this->frames;
         this->frames = 0;
         this->lastTime = std::chrono::system_clock::now();
     }

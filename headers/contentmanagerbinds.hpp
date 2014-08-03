@@ -30,7 +30,7 @@ namespace mugg {
             if(lua_isboolean(L, 3))
                 mipmaps = lua_toboolean(L, 3);
             else {
-                luaL_error(L, "Second argument to ContentManager.load_texture2d() wasn't a boolean.\n");
+                luaL_error(L, "Second argument to metatable ContentManager:load_texture2d() wasn't a boolean.\n");
             }
 
             mugg::graphics::Texture2D** texture = (mugg::graphics::Texture2D**)lua_newuserdata(L, sizeof(mugg::graphics::Texture2D*));

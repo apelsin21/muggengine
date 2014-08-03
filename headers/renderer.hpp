@@ -42,6 +42,7 @@ namespace mugg {
                 double GetDeltatime();
                 //Get milliseconds per frame, averaged over one second
                 double GetFrametime();
+                double GetFPS();
 
                 void SetBackgroundColor(const mugg::graphics::Color&);
                 mugg::graphics::Color GetBackgroundColor();

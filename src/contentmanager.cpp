@@ -8,7 +8,10 @@ mugg::core::ContentManager::~ContentManager() {
     if(!this->textures.empty()) {
         for(unsigned int i = 0; i < this->textures.size(); i++) {
             this->DeleteTextureID(this->textures[i]->GetID());
-            delete this->textures[i];
+
+            if(this->textures[i] != nullptr) {
+                delete this->textures[i];
+            }
         }
     }
 
@@ -16,14 +19,19 @@ mugg::core::ContentManager::~ContentManager() {
         for(unsigned int i= 0; i < this->shaders.size(); i++) {
             this->DeleteShaderID(this->shaders[i]->GetID());
         
-            delete this->shaders[i];
+            if(this->shaders[i] != nullptr) {
+                delete this->shaders[i];
+            }
         }
     }
 
     if(!this->shaderPrograms.empty()) {
         for(unsigned int i = 0; i < this->shaders.size(); i++) {
             this->DeleteShaderProgramID(this->shaderPrograms[i]->GetID());
-            delete this->shaderPrograms[i];
+            
+            if(this->shaderPrograms[i] != nullptr) {
+                delete this->shaderPrograms[i];
+            }
         }
     }
 }
@@ -38,8 +46,13 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::GetTexture2D(const std::s
         return nullptr;
     }
 
-    GLuint id = 0;
+    GLuint id = -1;
     glGenTextures(1, &id);
+
+    if(id == -1) {
+        std::cout << "Failed to load texture " << filepath << ", because of invalid OpenGL texture handle!\n";
+        return nullptr;
+    }
 
     FREE_IMAGE_FORMAT format;
     FIBITMAP* bitmap = nullptr;
@@ -77,23 +90,24 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::GetTexture2D(const std::s
         std::cout << "Failed to load texture " << filepath << ", too big! Max resolution: " << this->maxTextureSize << "x" << this->maxTextureSize << "\n";
     }
 
-    FIBITMAP* temp = bitmap;
-    temp = FreeImage_ConvertTo32Bits(bitmap);
-    FreeImage_Unload(temp);
+    //Neccessary because FreeImage_ConvertTo32Bits() gives back a copy
+    FIBITMAP* temp = FreeImage_ConvertTo32Bits(bitmap);
 
     if(!bitmap) {
         std::cout << "FreeImage failed to convert texture " << filepath << " to 32 bit colour!\n";
         texture->SetLoaded(false);
         return texture;
     }
+    
+    FreeImage_Unload(bitmap);
+    bitmap = temp;
 
     texture->Bind();
 
     texture->SetWrap(texture->GetUWrap(), texture->GetVWrap());
-
     texture->SetFilter(texture->GetMinFilter(), texture->GetMagFilter());
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap), 0, GL_BGRA, GL_UNSIGNED_BYTE, (GLvoid*)FreeImage_GetBits(bitmap));
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap), 0, GL_BGRA, GL_UNSIGNED_BYTE, (GLvoid*)FreeImage_GetBits(bitmap));
 
     if(mipmaps) {
         glGenerateMipmap(GL_TEXTURE_2D);

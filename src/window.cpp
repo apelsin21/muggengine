@@ -22,11 +22,6 @@ mugg::core::Window::Window(mugg::core::Device* p) {
     this->windowID = 0;
 }
 mugg::core::Window::~Window() {
-    this->Close();
-
-    if(this->sdlWindow != nullptr) {
-        this->Close();
-    }
 }
 
 bool mugg::core::Window::HasFocus() {
@@ -85,7 +80,8 @@ void mugg::core::Window::Close() {
     this->open = false;
     
     SDL_GL_DeleteContext(this->sdlContext);
-    SDL_DestroyWindow(this->sdlWindow);
+    if(this->sdlWindow != nullptr)
+        SDL_DestroyWindow(this->sdlWindow);
 }
 
 void mugg::core::Window::Restore() {
@@ -182,8 +178,8 @@ void mugg::core::Window::SetSwapInterval(int i) {
 int mugg::core::Window::GetSwapInterval() {
     if(this->open)
         return SDL_GL_GetSwapInterval();
-    else
-        return 0;
+    
+    return 0;
 }
 
 bool mugg::core::Window::SetClipboardText(const std::string& data) {
@@ -255,6 +251,20 @@ void mugg::core::Window::SetTitle(const std::string& title) {
 }
 std::string mugg::core::Window::GetTitle() {
     return this->title;
+}
+
+void mugg::core::Window::ShowCursor() {
+    SDL_ShowCursor(1);
+}
+void mugg::core::Window::HideCursor() {
+    SDL_ShowCursor(0);
+}
+bool mugg::core::Window::IsCursorHidden() {
+    if(SDL_ShowCursor(-1) == 1) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 void mugg::core::Window::CheckForEvents() {

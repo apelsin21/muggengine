@@ -58,6 +58,15 @@ namespace mugg {
 
             return 0;
         }
+        int windowSetWidth(lua_State* L) {
+            mugg::core::Window* window = checkWindow(L, 1);
+
+            int width = (int)luaL_checknumber(L, 2);
+
+            window->SetWidth(width);
+
+            return 0;
+        }
         int windowGetWidth(lua_State* L) {
             mugg::core::Window* window = checkWindow(L, 1);
 
@@ -69,6 +78,15 @@ namespace mugg {
 
             lua_pushnumber(L, window->GetHeight());
             return 1;
+        }
+        int windowSetHeight(lua_State* L) {
+            mugg::core::Window* window = checkWindow(L, 1);
+
+            int height = (int)luaL_checknumber(L, 2);
+
+            window->SetHeight(height);
+
+            return 0;
         }
 
         int windowSetFullscreen(lua_State* L) {
@@ -182,18 +200,44 @@ namespace mugg {
             return 0;
         }
 
+        int windowShowCursor(lua_State* L) {
+            mugg::core::Window* window = checkWindow(L, 1);
+            
+            window->ShowCursor();
+            return 0;
+        }
+        int windowHideCursor(lua_State* L) {
+            mugg::core::Window* window = checkWindow(L, 1);
+            
+            window->HideCursor();
+            return 0;
+        }
+        int windowIsCursorHidden(lua_State* L) {
+            mugg::core::Window* window = checkWindow(L, 1);
+            
+            lua_pushboolean(L, window->IsCursorHidden());
+
+            return 1;
+        }
+
         luaL_Reg windowFuncs[] = {
             {"open", windowOpen},
             {"close", windowClose},
             {"is_open", windowIsOpen},
+
+            {"show_cursor", windowShowCursor},
+            {"hide_cursor", windowHideCursor},
+            {"is_cursor_hidden", windowIsCursorHidden},
 
             {"set_position", windowSetPosition},
             {"get_position_x", windowGetPositionX},
             {"get_position_y", windowGetPositionY},
 
             {"set_resolution", windowSetResolution},
+            {"set_width", windowSetWidth},
             {"get_width", windowGetWidth},
             {"get_height", windowGetHeight},
+            {"set_height", windowSetHeight},
 
             {"set_fullscreen", windowSetFullscreen},
             {"set_borderless_fullscreen", windowSetBorderlessFullscreen},

@@ -93,6 +93,13 @@ namespace mugg {
 
             return 1;
         }
+        int rendererGetFPS(lua_State* L) {
+            mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
+            
+            lua_pushnumber(L, renderer->GetFPS());
+
+            return 1;
+        }
 
         int rendererDraw(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
@@ -115,6 +122,7 @@ namespace mugg {
 
             {"get_deltatime", rendererGetDeltatime},
             {"get_frametime", rendererGetFrametime},
+            {"get_fps", rendererGetFPS},
 
             {"draw", rendererDraw},
 

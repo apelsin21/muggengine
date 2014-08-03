@@ -70,7 +70,9 @@ mugg::gui::GUIManager::~GUIManager() {
     }
 
     for(unsigned int i = 0; i < this->images.size(); i++) {
-        delete this->images[i];
+        if(this->images[i] != nullptr) {
+            delete this->images[i];
+        }
     }
     for(unsigned int i = 0; i < this->textures.size(); i++) {
         if(glIsTexture(this->textures[i])) {

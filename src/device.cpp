@@ -4,16 +4,24 @@ mugg::core::Device::Device() {
 }
 mugg::core::Device::~Device() {
     for(unsigned int i = 0; i < this->guiManagers.size(); i++) {
-        delete this->guiManagers[i];
+        if(this->guiManagers[i] != nullptr) {
+            delete this->guiManagers[i];
+        }
     }
     for(unsigned int i = 0; i < this->renderers.size(); i++) {
-        delete this->renderers[i];
+        if(this->renderers[i] != nullptr) {
+            delete this->renderers[i];
+        }
     }
     for(unsigned int i = 0; i < this->contentManagers.size(); i++) {
-        delete this->contentManagers[i];
+        if(this->contentManagers[i] != nullptr) {
+            delete this->contentManagers[i];
+        }
     }
     for(unsigned int i = 0; i < this->windows.size(); i++) {
-        delete this->windows[i];
+        if(this->windows[i] != nullptr) {
+            delete this->windows[i];
+        }
     }
     
 }

@@ -78,6 +78,10 @@ namespace mugg {
                 virtual void SetTitle(const std::string&);
                 virtual std::string GetTitle();
 
+                virtual void ShowCursor();
+                virtual void HideCursor();
+                virtual bool IsCursorHidden();
+
                 virtual void SwapBuffers();
         };
     }

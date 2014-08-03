@@ -34,9 +34,16 @@ namespace mugg {
         int keyboardIsKeyDown(lua_State* L) {
             mugg::core::Keyboard* keyboard = checkKeyboard(L, 1);
 
-            mugg::core::Key key = (mugg::core::Key)luaL_checkoption(L, 2, NULL, mugg::core::KeyString);
+            lua_pushboolean(L, keyboard->IsKeyDown(luaL_checkstring(L, 2)));
+            
+            return 1;
+        }
+        int keyboardIsKeyUp(lua_State* L) {
+            mugg::core::Keyboard* keyboard = checkKeyboard(L, 1);
 
-            lua_pushboolean(L, keyboard->IsKeyDown(key));
+            //mugg::core::Key key = (mugg::core::Key)luaL_checkoption(L, 2, NULL, mugg::core::KeyString);
+
+            lua_pushboolean(L, keyboard->IsKeyUp(luaL_checkstring(L, 2)));
             
             return 1;
         }
@@ -45,6 +52,7 @@ namespace mugg {
             {"new", keyboardConstructor},
 
             {"is_key_down", keyboardIsKeyDown},
+            {"is_key_up", keyboardIsKeyUp},
 
             {"__gc", keyboardDeconstructor},
             {NULL, NULL},

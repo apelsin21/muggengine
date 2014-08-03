@@ -2,6 +2,7 @@
 #define KEYBOARD_HPP
 
 #include <iostream>
+#include <vector>
 
 #include <SDL2/SDL.h>
 
@@ -14,14 +15,15 @@ namespace mugg {
                 const Uint8* keys;
                 int numberOfKeys;
 
+                std::vector<SDL_Scancode> repeatedKeys;
+
                 SDL_Event sdlEvent;
-                SDL_Scancode KeyToScancode(const mugg::core::Key);
             public:
                 Keyboard();
                 ~Keyboard();
-
-                virtual bool IsKeyDown(const mugg::core::Key);
-                virtual bool IsKeyUp(const mugg::core::Key);
+                
+                virtual bool IsKeyDown(const std::string&);
+                virtual bool IsKeyUp(const std::string&);
         };
     }
 }
