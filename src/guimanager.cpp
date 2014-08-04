@@ -106,6 +106,18 @@ mugg::gui::Image* mugg::gui::GUIManager::CreateImage() {
     
     return img;
 }
+std::size_t mugg::gui::GUIManager::GetNumberOfImages() {
+    return this->images.size();
+}
+bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_image) {
+    if(index < 0 || index >= this->images.size() || this->images.empty()) {
+        std::cout << "Tried to get image from GUIManager by out of binds index!\n";
+        return false;
+    }
+
+    out_image = this->images[index];
+    return true;
+}
 
 void mugg::gui::GUIManager::Render() {
     glEnableVertexAttribArray(this->posLocation);

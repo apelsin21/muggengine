@@ -69,6 +69,8 @@ namespace mugg {
                 virtual GLuint GetObjectTexture(unsigned int);
 
                 virtual mugg::gui::Image* CreateImage();
+                virtual std::size_t GetNumberOfImages();
+                virtual bool GetImageByIndex(int, mugg::gui::Image*&);
 
                 virtual void Render();
         };

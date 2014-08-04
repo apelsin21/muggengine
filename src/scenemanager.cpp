@@ -18,3 +18,15 @@ mugg::scene::SceneNode* mugg::scene::SceneManager::CreateSceneNode() {
 
     return node;
 }
+std::size_t mugg::scene::SceneManager::GetNumberOfSceneNodes() {
+    return this->sceneNodes.size();
+}
+bool mugg::scene::SceneManager::GetSceneNodeByIndex(int index, mugg::scene::SceneNode*& out_node) {
+    if(index < 0 || index >= this->sceneNodes.size() || this->sceneNodes.empty()) {
+        std::cout << "Tried to get scenenode from scenemanager, with out of bounds index!\n";
+        return false;
+    }
+
+    out_node = this->sceneNodes[index];
+    return true;
+}

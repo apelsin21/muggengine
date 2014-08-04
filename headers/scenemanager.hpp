@@ -21,6 +21,8 @@ namespace mugg {
                 ~SceneManager();
 
                 virtual mugg::scene::SceneNode* CreateSceneNode();
+                virtual std::size_t GetNumberOfSceneNodes();
+                virtual bool GetSceneNodeByIndex(int, mugg::scene::SceneNode*&);
         };
     }
 }
