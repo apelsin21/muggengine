@@ -45,6 +45,21 @@ bool mugg::core::Device::GetGUIManagerByIndex(int index, mugg::gui::GUIManager*&
     out_mgr = this->guiManagers[index];
     return true;
 }
+bool mugg::core::Device::GetGUIManagerByObject(const mugg::gui::GUIManager*& in_mgr, mugg::gui::GUIManager*& out_mgr) {
+    if(this->guiManagers.empty() || in_mgr == nullptr) {
+        return false;
+    }
+
+    //TODO: Do binary search if it's too large to search linearly
+    for(unsigned int i = 0; i < this->guiManagers.size(); i++) {
+        if(this->guiManagers[i] == in_mgr) {
+            out_mgr = this->guiManagers[i];
+            return true;
+        }
+    }
+
+    return false;
+}
 
 mugg::core::ContentManager* mugg::core::Device::CreateContentManager() {
     core::ContentManager* mgr = new core::ContentManager(this);
@@ -64,6 +79,21 @@ bool mugg::core::Device::GetContentManagerByIndex(int index, mugg::core::Content
 
     out_mgr = this->contentManagers[index];
     return true;
+}
+bool mugg::core::Device::GetContentManagerByObject(const mugg::core::ContentManager*& in_mgr, mugg::core::ContentManager*& out_mgr) {
+    if(this->contentManagers.empty() || in_mgr == nullptr) {
+        return false;
+    }
+
+    //TODO: Do binary search if it's too large to search linearly
+    for(unsigned int i = 0; i < this->contentManagers.size(); i++) {
+        if(this->contentManagers[i] == in_mgr) {
+            out_mgr = this->contentManagers[i];
+            return true;
+        }
+    }
+
+    return false;
 }
 
 mugg::core::Window* mugg::core::Device::CreateWindow() {
@@ -85,6 +115,21 @@ bool mugg::core::Device::GetWindowByIndex(int index, mugg::core::Window*& out_wi
     out_window = this->windows[index];
     return true;
 }
+bool mugg::core::Device::GetWindowByObject(const mugg::core::Window*& in_window, mugg::core::Window*& out_window) {
+    if(this->windows.empty() || in_window == nullptr) {
+        return false;
+    }
+
+    //TODO: Do binary search if it's too large to search linearly
+    for(unsigned int i = 0; i < this->windows.size(); i++) {
+        if(this->windows[i] == in_window) {
+            out_window = this->windows[i];
+            return true;
+        }
+    }
+
+    return false;
+}
 
 mugg::graphics::Renderer* mugg::core::Device::CreateRenderer() {
     graphics::Renderer* renderer = new graphics::Renderer(this);
@@ -105,6 +150,21 @@ bool mugg::core::Device::GetRendererByIndex(int index, mugg::graphics::Renderer*
     out_renderer = this->renderers[index];
     return true;
 }
+bool mugg::core::Device::GetRendererByObject(const mugg::graphics::Renderer*& in_renderer, mugg::graphics::Renderer*& out_renderer) {
+    if(this->renderers.empty() || in_renderer == nullptr) {
+        return false;
+    }
+
+    //TODO: Do binary search if it's too large to search linearly
+    for(unsigned int i = 0; i < this->renderers.size(); i++) {
+        if(this->renderers[i] == in_renderer) {
+            out_renderer = this->renderers[i];
+            return true;
+        }
+    }
+
+    return false;
+}
 
 mugg::scene::SceneManager* mugg::core::Device::CreateSceneManager() {
     scene::SceneManager* mgr = new scene::SceneManager(this);
@@ -124,4 +184,19 @@ bool mugg::core::Device::GetSceneManagerByIndex(int index, mugg::scene::SceneMan
 
     out_sceneManager = this->sceneManagers[index];
     return true;
+}
+bool mugg::core::Device::GetSceneManagerByObject(const mugg::scene::SceneManager*& in_mgr, mugg::scene::SceneManager*& out_mgr) {
+    if(this->sceneManagers.empty() || in_mgr == nullptr) {
+        return false;
+    }
+
+    //TODO: Do binary search if it's too large to search linearly
+    for(unsigned int i = 0; i < this->sceneManagers.size(); i++) {
+        if(this->sceneManagers[i] == in_mgr) {
+            out_mgr = this->sceneManagers[i];
+            return true;
+        }
+    }
+
+    return false;
 }
