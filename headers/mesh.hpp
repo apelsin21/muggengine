@@ -7,65 +7,73 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 #include <vector>
-#include <assert.h>
 #include <iostream>
 #include <string>
-#include <memory>
 
 namespace mugg {
+    namespace core {
+        class ContentManager;
+    }
+    
     namespace graphics {
         class Mesh {
             private:
-                std::vector<std::shared_ptr<mugg::graphics::Texture2D>> textures;
+                mugg::graphics::Texture2D* texture;
 
+                std::vector<unsigned short> indices;
                 std::vector<glm::vec3> vertices;
                 std::vector<glm::vec2> uvs;
                 std::vector<glm::vec3> normals;
 
                 std::string filepath;
 
-                GLuint VBOID; //Vertex Buffer Object ID
-                GLuint IBID; //Index Buffer ID
-                
-                unsigned int numberOfIndices;
-                std::vector<unsigned int> materialIndices;
-                std::vector<unsigned int> indices;
+                GLuint vaoID, positionBufferID, uvBufferID, normalBufferID, elementBufferID;
 
                 bool loaded;
 
-                void ProcessAssimpScene(const aiScene*);
-                void ProcessAssimpMesh(unsigned int, const aiMesh*);
-                void ProcessAssimpMaterials(const aiScene*);
-                
                 void FillBuffers();
-                void Clear();
                 void GenIDS();
+
+                mugg::core::ContentManager* parent;
             public:
-                Mesh();
+                Mesh(mugg::core::ContentManager*);
                 ~Mesh();
 
-                std::vector<std::shared_ptr<mugg::graphics::Texture2D>> GetTextures();
-                bool GetTextureByIndex(int, std::shared_ptr<mugg::graphics::Texture2D>&);
-                void AddTexture(std::shared_ptr<mugg::graphics::Texture2D>&);
+                virtual mugg::graphics::Texture2D* GetTexture();
+                virtual void SetTexture(mugg::graphics::Texture2D*);
 
-                int GetNumberOfTextures();
-                int GetNumberOfVertices();
-                int GetNumberOfIndices();
-                int GetNumberOfUVS();
-                int GetNumberOfNormals();
+                virtual void SetIndices(const std::vector<unsigned short>&);
+                virtual int GetNumberOfIndices();
 
-                GLuint GetVBOID();
-                void SetVBOID(GLuint VBOID);
-
-                GLuint GetIBID();
-                void SetIBID(GLuint IBID);
+                virtual void SetVertices(const std::vector<glm::vec3>&);
+                virtual int GetNumberOfVertices();
                 
-                std::string GetFilepath();
+                virtual void SetUVS(const std::vector<glm::vec2>&);
+                virtual int GetNumberOfUVS();
+                
+                virtual void SetNormals(const std::vector<glm::vec3>&);
+                virtual int GetNumberOfNormals();
+
+                virtual GLuint GetVAOID();
+                virtual void SetVAOID(GLuint);
+                
+                virtual GLuint GetPositionBufferID();
+                virtual void SetPositionBufferID(GLuint);
+                
+                virtual GLuint GetUVBufferID();
+                virtual void SetUVBufferID(GLuint);
+                
+                virtual GLuint GetNormalBufferID();
+                virtual void SetNormalBufferID(GLuint);
+                
+                virtual GLuint GetElementBufferID();
+                virtual void SetElementBufferID(GLuint);
+                
+                virtual std::string GetFilepath();
+                virtual void SetFilepath(const std::string&);
+                
+                virtual void Clear();
         };
     }
 }

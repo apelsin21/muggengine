@@ -43,11 +43,13 @@ namespace mugg {
                 virtual std::size_t GetNumberOfRenderers();
                 virtual bool GetRendererByIndex(int, mugg::graphics::Renderer*&);
                 virtual bool GetRendererByObject(const mugg::graphics::Renderer*&, mugg::graphics::Renderer*&);
-            
+           
                 virtual mugg::scene::SceneManager* CreateSceneManager();
                 virtual std::size_t GetNumberOfSceneManagers();
                 virtual bool GetSceneManagerByIndex(int, mugg::scene::SceneManager*&);
                 virtual bool GetSceneManagerByObject(const mugg::scene::SceneManager*&, mugg::scene::SceneManager*&);
+        
+                virtual void Render();
         };
     }
 }

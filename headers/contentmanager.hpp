@@ -24,6 +24,7 @@
 #include "texture2d.hpp"
 #include "shader.hpp"
 #include "shaderprogram.hpp"
+#include "mesh.hpp"
 
 namespace mugg {
     namespace core {
@@ -37,6 +38,7 @@ namespace mugg {
                 std::vector<graphics::Texture2D*> textures;
                 std::vector<graphics::Shader*> shaders;
                 std::vector<graphics::ShaderProgram*> shaderPrograms;
+                std::vector<graphics::Mesh*> meshes;
 
                 void ProcessAssimpScene(const aiScene*);
                 void ProcessAssimpMesh(unsigned int, const aiMesh*);
@@ -63,6 +65,8 @@ namespace mugg {
                 virtual mugg::graphics::ShaderProgram* CreateShaderProgram();
 
                 virtual mugg::graphics::Shader* CreateShader(mugg::graphics::ShaderType, const std::string&);
+        
+                virtual mugg::graphics::Mesh* CreateMesh(const std::string&);
         };
     }
 }

@@ -7,6 +7,7 @@ window:open(800, 600, title)
 renderer = device:create_renderer()
 content_mgr = device:create_content_manager()
 gui_mgr = device:create_gui_manager()
+scene_mgr = device:create_scene_manager()
 
 renderer:initialize()
 
@@ -14,6 +15,17 @@ keyboard = Keyboard.new()
 
 img = gui_mgr:create_image()
 img:set_texture(content_mgr:create_texture2d("data/textures/error.png", false))
+
+node = scene_mgr:create_node()
+
+mesh = content_mgr:create_mesh("data/models/complexshape.nff")
+
+node:add_mesh(mesh)
+
+print("Mesh has " .. mesh:get_number_of_vertices() .. " vertices")
+print("Mesh has " .. mesh:get_number_of_indices() .. " indices")
+print("Mesh has " .. mesh:get_number_of_uvs() .. " texture coordinates")
+print("Mesh has " .. mesh:get_number_of_normals() .. " normals")
 
 lastkey = ""
 
@@ -48,7 +60,5 @@ while window:is_open() do
 
     window:set_title(title .. " ms/frame: " .. renderer:get_frametime())
 
-    renderer:draw()
-    gui_mgr:render()
-    window:swap_buffers()
+    device:render()
 end

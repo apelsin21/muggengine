@@ -28,7 +28,7 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Device* creator) {
 
     this->posLocation = glGetAttribLocation(this->programID, "v_pos");
     this->uvLocation = glGetAttribLocation(this->programID, "v_uv");
-
+    
     glGenVertexArrays(1, &this->vaoID);
     glGenBuffers(1, &this->vboID);
 
@@ -122,14 +122,16 @@ bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_im
 void mugg::gui::GUIManager::Render() {
     glEnableVertexAttribArray(this->posLocation);
     glEnableVertexAttribArray(this->uvLocation);
-    
+    glEnableVertexAttribArray(this->modelLocation);
+
+    glBindVertexArray(this->vaoID);
     glUseProgram(this->programID);
     
     glBindTexture(GL_TEXTURE_2D, this->textures[this->textures.size() - 1]);
 
-    glBindVertexArray(this->vaoID);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, this->images.size());
     
     glDisableVertexAttribArray(this->posLocation);
     glDisableVertexAttribArray(this->uvLocation);
+    glDisableVertexAttribArray(this->modelLocation);
 }

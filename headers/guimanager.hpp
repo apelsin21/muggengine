@@ -6,7 +6,11 @@
 #include <string>
 
 #include <GL/glew.h>
+
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_CXX11
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "shaderprogram.hpp"
 #include "shader.hpp"
@@ -51,8 +55,9 @@ namespace mugg {
 
                 std::vector<GLuint> textures;
                 std::vector<glm::vec2> positions;
+                std::vector<glm::mat4> modelMatrices;
 
-                GLuint vboID, vaoID, ibID;
+                GLuint vboID, vaoID, ibID, modelMatrixBuffer;
                 GLuint vsID, fsID, programID;
 
                 int posLocation, uvLocation, modelLocation;

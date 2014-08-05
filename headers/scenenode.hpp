@@ -6,6 +6,8 @@
 
 #include <glm/glm.hpp>
 
+#include "mesh.hpp"
+
 namespace mugg {
     namespace scene {
         class SceneManager;
@@ -15,9 +17,13 @@ namespace mugg {
                 glm::vec4 position;
 
                 mugg::scene::SceneManager* parent;
+                std::vector<mugg::graphics::Mesh*> meshes;
             public:
                 SceneNode(mugg::scene::SceneManager*);
                 ~SceneNode();
+
+                void AddMesh(mugg::graphics::Mesh*&);
+                std::size_t GetNumberOfMeshes();
         };
     }
 }

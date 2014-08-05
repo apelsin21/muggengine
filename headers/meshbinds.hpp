@@ -15,33 +15,6 @@ namespace mugg {
             return *(mugg::graphics::Mesh**)luaL_checkudata(L, n, MeshName);
         }
 
-        int meshConstructor(lua_State* L) {
-            mugg::graphics::Mesh** mesh = (mugg::graphics::Mesh**)lua_newuserdata(L, sizeof(mugg::graphics::Mesh*));
-            *mesh = new mugg::graphics::Mesh();
-
-            luaL_getmetatable(L, MeshName);
-            lua_setmetatable(L, -2);
-
-            return 1;
-        }
-        int meshConstructorWithParams(lua_State* L) {
-            const char* path = luaL_checkstring(L, 1);
-
-            mugg::graphics::Mesh** mesh = (mugg::graphics::Mesh**)lua_newuserdata(L, sizeof(mugg::graphics::Mesh*));
-            *mesh = new mugg::graphics::Mesh(path);
-
-            luaL_getmetatable(L, MeshName);
-            lua_setmetatable(L, -2);
-
-            return 1;
-        }
-        int meshDeconstructor(lua_State* L) {
-            mugg::graphics::Mesh* mesh = checkMesh(L, 1);
-
-            delete mesh;
-
-            return 0;
-        }
         int meshGetFilepath(lua_State* L) {
             mugg::graphics::Mesh* mesh = checkMesh(L, 1);
 
@@ -50,22 +23,6 @@ namespace mugg {
             return 1;
         }
 
-        int meshAddTexture(lua_State* L) {
-            mugg::graphics::Mesh* mesh = checkMesh(L, 1);
-            std::shared_ptr<mugg::graphics::Texture2D> texture(checkTexture2D(L, 2));
-
-            mesh->AddTexture(texture);
-            
-            return 0;
-        }
-
-        int meshGetNumberOfTextures(lua_State* L) {
-            mugg::graphics::Mesh* mesh = checkMesh(L, 1);
-
-            lua_pushnumber(L, mesh->GetNumberOfTextures());
-
-            return 1;
-        }
         int meshGetNumberOfVertices(lua_State* L) {
             mugg::graphics::Mesh* mesh = checkMesh(L, 1);
 
@@ -96,18 +53,13 @@ namespace mugg {
         }
 
         luaL_Reg meshFuncs[] = {
-            {"new", meshConstructor},
-            {"new", meshConstructorWithParams},
-
             {"get_filepath", meshGetFilepath},
 
-            {"get_number_of_textures", meshGetNumberOfTextures},
             {"get_number_of_vertices", meshGetNumberOfVertices},
             {"get_number_of_indices", meshGetNumberOfIndices},
             {"get_number_of_uvs", meshGetNumberOfUVS},
             {"get_number_of_normals", meshGetNumberOfNormals},
 
-            {"__gc", meshDeconstructor},
             {NULL, NULL},
         };
     }

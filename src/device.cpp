@@ -200,3 +200,18 @@ bool mugg::core::Device::GetSceneManagerByObject(const mugg::scene::SceneManager
 
     return false;
 }
+
+void mugg::core::Device::Render() {
+    for(unsigned int i = 0; i < this->renderers.size(); i++) {
+        this->renderers[i]->Draw();
+    }
+    for(unsigned int i = 0; i < this->guiManagers.size(); i++) {
+        this->guiManagers[i]->Render();
+    }
+    for(unsigned int i = 0; i < this->sceneManagers.size(); i++) {
+        this->sceneManagers[i]->Render();
+    }
+    for(unsigned int i = 0; i < this->windows.size(); i++) {
+        this->windows[i]->SwapBuffers();
+    }
+}

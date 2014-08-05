@@ -34,6 +34,30 @@ mugg::core::ContentManager::~ContentManager() {
             }
         }
     }
+
+    if(!this->meshes.empty()) {
+        for(unsigned int i = 0; i < this->meshes.size(); i++) {
+            GLuint vaoID = this->meshes[i]->GetVAOID();
+            GLuint positionBuffer = this->meshes[i]->GetPositionBufferID();
+            GLuint uvBuffer = this->meshes[i]->GetUVBufferID();
+            GLuint normalBuffer = this->meshes[i]->GetNormalBufferID();
+            GLuint elementBuffer = this->meshes[i]->GetElementBufferID();
+
+            glDeleteVertexArrays(1, &vaoID);
+            
+            if(glIsBuffer(positionBuffer) == GL_TRUE)
+                glDeleteBuffers(1, &positionBuffer);
+            if(glIsBuffer(uvBuffer) == GL_TRUE)
+                glDeleteBuffers(1, &uvBuffer);
+            if(glIsBuffer(normalBuffer) == GL_TRUE)
+                glDeleteBuffers(1, &normalBuffer);
+            if(glIsBuffer(elementBuffer) == GL_TRUE)
+                glDeleteBuffers(1, &elementBuffer);
+        
+            delete this->meshes[i];
+        }
+
+    }
 }
 
 int mugg::core::ContentManager::GetMaxTextureSize() {
@@ -69,6 +93,7 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::CreateTexture2D(const std
     if(format == FIF_UNKNOWN) {
         std::cout << "Failed to read format of texture " << filepath << ", invalid image!\n";
         texture->SetLoaded(false);
+        this->textures.push_back(texture);
         return texture;
     }
 
@@ -77,12 +102,14 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::CreateTexture2D(const std
     } else {
         std::cout << "Texture " << filepath << " has a format unsupported by FreeImage!\n";
         texture->SetLoaded(false);
+        this->textures.push_back(texture);
         return texture;
     }
 
     if(!bitmap) {
         std::cout << "Failed to load texture " << filepath << ", corrupt or invalid bitmap.\n";
         texture->SetLoaded(false);
+        this->textures.push_back(texture);
         return texture;
     }
 
@@ -97,6 +124,7 @@ mugg::graphics::Texture2D* mugg::core::ContentManager::CreateTexture2D(const std
         if(!bitmap) {
             std::cout << "FreeImage failed to convert texture " << filepath << " to 32 bit colour!\n";
             texture->SetLoaded(false);
+            this->textures.push_back(texture);
             return texture;
         }
         
@@ -138,7 +166,7 @@ void mugg::core::ContentManager::DeleteTextureID(GLuint id) {
 mugg::graphics::Shader* mugg::core::ContentManager::CreateShader(mugg::graphics::ShaderType type, const std::string& filepath) {
     if(filepath == "") {
         std::cout << "Tried loading shader from empty path!\n";
-        return new mugg::graphics::Shader(0);
+        return nullptr;
     }
 
     GLuint id = glCreateShader(mugg::graphics::ShaderTypeToGLEnum(type));
@@ -153,14 +181,16 @@ mugg::graphics::Shader* mugg::core::ContentManager::CreateShader(mugg::graphics:
 
     if(!this->GetTextFile(filepath, data)) {
         std::cout << "Failed to load shader data from " << filepath << std::endl;
-        return new mugg::graphics::Shader(0);
+        this->shaders.push_back(shader);
+        return shader;
     }
 
     shader->SetData(data);
     
     if(!shader->Compile()) {
         std::cout << "Shader " << filepath << " failed to compile!\n";
-        return new mugg::graphics::Shader(0);
+        this->shaders.push_back(shader);
+        return shader;
     }
 
     this->shaders.push_back(shader);
@@ -215,4 +245,104 @@ void mugg::core::ContentManager::DeleteShaderProgramID(GLuint id) {
     if(glIsProgram(id) == GL_TRUE) {
         glDeleteProgram(id);
     }
+}
+
+mugg::graphics::Mesh* mugg::core::ContentManager::CreateMesh(const std::string& filepath) {
+    if(filepath == "") {
+        std::cout << "Path supplied to ContentManager::CreateMesh was empty!\n";
+        return nullptr;
+    }
+    
+    mugg::graphics::Mesh* mesh = new mugg::graphics::Mesh(this);
+
+    mesh->SetFilepath(filepath);
+
+    Assimp::Importer importer;
+    
+    const aiScene* scene = importer.ReadFile(mesh->GetFilepath().c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
+
+    if(!scene) {
+        std::cout << "Failed to read Mesh from " << filepath << ", Assimp error string:\n";
+        std::cout << importer.GetErrorString();
+        this->meshes.push_back(mesh);
+        return mesh;
+    }
+
+    const aiMesh* tempMesh = scene->mMeshes[0];
+
+    std::vector<unsigned short> indices;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec2> uvs;
+    std::vector<glm::vec3> normals;
+
+    if(tempMesh->HasPositions()) {
+        for(unsigned int i = 0; i < tempMesh->mNumVertices; i++) {
+            aiVector3D pos = tempMesh->mVertices[i];
+            vertices.push_back(glm::vec3(pos.x, pos.y, pos.z));
+        }
+        
+        mesh->SetVertices(vertices);
+
+        for(unsigned int i = 0; i < tempMesh->mNumFaces; i++) {
+            indices.push_back(tempMesh->mFaces[i].mIndices[0]);
+            indices.push_back(tempMesh->mFaces[i].mIndices[1]);
+            indices.push_back(tempMesh->mFaces[i].mIndices[2]);
+        }
+
+        mesh->SetIndices(indices);
+    }
+
+
+    for(unsigned int i = 0; i < tempMesh->mNumVertices; i++) {
+        if(tempMesh->HasTextureCoords(i)) {
+            aiVector3D UVW = tempMesh->mTextureCoords[0][i];
+            uvs.push_back(glm::vec2(UVW.x, UVW.y));
+        }
+    }
+        
+    mesh->SetUVS(uvs);
+    
+
+    if(tempMesh->HasNormals()) {
+        for(unsigned int i = 0; i < tempMesh->mNumVertices; i++) {
+            aiVector3D n = tempMesh->mNormals[i];
+            normals.push_back(glm::vec3(n.x, n.y, n.z));
+        }
+        
+        mesh->SetNormals(normals);
+    }
+
+    GLuint vaoID;
+    glGenVertexArrays(1, &vaoID);
+    glBindVertexArray(vaoID);
+
+    GLuint vertexbuffer;
+    glGenBuffers(1, &vertexbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+
+    GLuint uvbuffer;
+    glGenBuffers(1, &uvbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+    glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+
+    GLuint normalbuffer;
+    glGenBuffers(1, &normalbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
+
+    GLuint elementbuffer;
+    glGenBuffers(1, &elementbuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0] , GL_STATIC_DRAW);
+
+
+    mesh->SetVAOID(vaoID);
+    mesh->SetPositionBufferID(vertexbuffer);
+    mesh->SetUVBufferID(uvbuffer);
+    mesh->SetNormalBufferID(normalbuffer);
+    mesh->SetElementBufferID(elementbuffer);
+
+    this->meshes.push_back(mesh);
+    return mesh;
 }

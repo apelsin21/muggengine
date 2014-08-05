@@ -24,6 +24,9 @@
 #include "devicebinds.hpp"
 #include "vec2binds.hpp"
 #include "keyboardbinds.hpp"
+#include "meshbinds.hpp"
+#include "scenemanagerbinds.hpp"
+#include "scenenodebinds.hpp"
 
 int main(int argc, char* argv[]) {
     mugg::ScriptSystem system(true);
@@ -44,6 +47,9 @@ int main(int argc, char* argv[]) {
     system.RegisterMetatable(mugg::binds::deviceFuncs, mugg::binds::DeviceName);
     system.RegisterMetatable(mugg::binds::vec2Funcs, mugg::binds::Vec2Name);
     system.RegisterMetatable(mugg::binds::keyboardFuncs, mugg::binds::KeyboardName);
+    system.RegisterMetatable(mugg::binds::meshFuncs, mugg::binds::MeshName);
+    system.RegisterMetatable(mugg::binds::sceneManagerFuncs, mugg::binds::SceneManagerName);
+    system.RegisterMetatable(mugg::binds::sceneNodeFuncs, mugg::binds::SceneNodeName);
 
     if(argc > 2) {
         std::cout << "Got too many arguments. (Expected one)\n";

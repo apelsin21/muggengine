@@ -11,6 +11,7 @@
 #include "texture2dbinds.hpp"
 #include "shaderbinds.hpp"
 #include "shaderprogrambinds.hpp"
+#include "meshbinds.hpp"
 
 namespace mugg {
     namespace binds {
@@ -69,6 +70,20 @@ namespace mugg {
             return 1;
         }
 
+        int contentManagerCreateMesh(lua_State* L) {
+            mugg::core::ContentManager* mgr = checkContentManager(L, 1);
+
+            const char* path = luaL_checkstring(L, 2);
+
+            mugg::graphics::Mesh** mesh = (mugg::graphics::Mesh**)lua_newuserdata(L, sizeof(mugg::graphics::Mesh*));
+            *mesh = mgr->CreateMesh(path);
+
+            luaL_getmetatable(L, MeshName);
+            lua_setmetatable(L, -2);
+
+            return 1;
+        }
+
         int contentManagerGetMaxTextureSize(lua_State* L) {
             mugg::core::ContentManager* mgr = checkContentManager(L, 1);
 
@@ -81,6 +96,7 @@ namespace mugg {
             {"create_texture2d", contentManagerCreateTexture2D},
             {"create_shader", contentManagerCreateShader},
             {"create_shaderprogram", contentManagerCreateShaderProgram},
+            {"create_mesh", contentManagerCreateMesh},
 
             {"get_max_texture_size", contentManagerGetMaxTextureSize},
 

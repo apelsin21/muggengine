@@ -8,6 +8,7 @@
 #include "windowbinds.hpp"
 #include "rendererbinds.hpp"
 #include "contentmanagerbinds.hpp"
+#include "scenemanagerbinds.hpp"
 
 namespace mugg {
     namespace binds {
@@ -82,6 +83,26 @@ namespace mugg {
             return 1;
         }
 
+        int deviceCreateSceneManager(lua_State* L) {
+            mugg::core::Device* device = checkDevice(L, 1);
+
+            mugg::scene::SceneManager** mgr = (mugg::scene::SceneManager**)lua_newuserdata(L, sizeof(mugg::scene::SceneManager*));
+            *mgr = device->CreateSceneManager();
+
+            luaL_getmetatable(L, SceneManagerName);
+            lua_setmetatable(L, -2);
+
+            return 1;
+        }
+
+        int deviceRender(lua_State* L) {
+            mugg::core::Device* device = checkDevice(L, 1);
+
+            device->Render();
+
+            return 0;
+        }
+
         luaL_Reg deviceFuncs[] = {
             {"new", deviceConstructor},
 
@@ -89,6 +110,9 @@ namespace mugg {
             {"create_content_manager", deviceCreateContentManager},
             {"create_window", deviceCreateWindow},
             {"create_renderer", deviceCreateRenderer},
+            {"create_scene_manager", deviceCreateSceneManager},
+
+            {"render", deviceRender},
 
             {"__gc", deviceDeconstructor},
             {NULL, NULL},

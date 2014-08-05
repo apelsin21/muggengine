@@ -5,6 +5,8 @@
 
 #include "scenenode.hpp"
 
+#include <GL/glew.h>
+
 namespace mugg {
     namespace core {
         class Device;
@@ -16,6 +18,8 @@ namespace mugg {
                 std::vector<mugg::scene::SceneNode*> sceneNodes;
             
                 mugg::core::Device* parent;
+            
+                GLuint programID;
             public:
                 SceneManager(mugg::core::Device*);
                 ~SceneManager();
@@ -23,6 +27,8 @@ namespace mugg {
                 virtual mugg::scene::SceneNode* CreateSceneNode();
                 virtual std::size_t GetNumberOfSceneNodes();
                 virtual bool GetSceneNodeByIndex(int, mugg::scene::SceneNode*&);
+
+                virtual void Render();
         };
     }
 }

@@ -2,6 +2,7 @@
 
 mugg::scene::SceneManager::SceneManager(mugg::core::Device* parent) {
     this->parent = parent;
+    this->programID = -1;
 }
 mugg::scene::SceneManager::~SceneManager() {
     for(unsigned int i = 0; i < this->sceneNodes.size(); i++) {
@@ -29,4 +30,14 @@ bool mugg::scene::SceneManager::GetSceneNodeByIndex(int index, mugg::scene::Scen
 
     out_node = this->sceneNodes[index];
     return true;
+}
+
+void mugg::scene::SceneManager::Render() {
+    if(glIsProgram(this->programID) == GL_FALSE) {
+    } else {
+        for(unsigned int i = 0; i < this->sceneNodes.size(); i++) {
+            for(unsigned int u = 0; u < this->sceneNodes[i]->GetNumberOfMeshes(); i++) {
+            }
+        }
+    }
 }
