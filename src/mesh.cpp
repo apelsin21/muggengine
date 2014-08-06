@@ -9,6 +9,7 @@ mugg::graphics::Mesh::Mesh(mugg::core::ContentManager* parent) {
     this->uvBufferID = -1;
     this->normalBufferID = -1;
     this->elementBufferID = -1;
+    this->texture = nullptr;
 }
 mugg::graphics::Mesh::~Mesh() {
     this->Clear();

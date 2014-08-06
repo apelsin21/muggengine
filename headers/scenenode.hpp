@@ -23,7 +23,8 @@ namespace mugg {
                 ~SceneNode();
 
                 void AddMesh(mugg::graphics::Mesh*&);
-                std::size_t GetNumberOfMeshes();
+                bool GetMeshByIndex(int, mugg::graphics::Mesh*&);
+                int GetNumberOfMeshes();
         };
     }
 }

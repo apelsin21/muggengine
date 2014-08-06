@@ -18,7 +18,7 @@ img:set_texture(content_mgr:create_texture2d("data/textures/error.png", false))
 
 node = scene_mgr:create_node()
 
-mesh = content_mgr:create_mesh("data/models/complexshape.nff")
+mesh = content_mgr:create_mesh("data/models/astronaut1.3ds")
 
 node:add_mesh(mesh)
 

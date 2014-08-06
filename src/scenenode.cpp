@@ -9,6 +9,14 @@ mugg::scene::SceneNode::~SceneNode() {
 void mugg::scene::SceneNode::AddMesh(mugg::graphics::Mesh*& mesh) {
     this->meshes.push_back(mesh);
 }
-std::size_t mugg::scene::SceneNode::GetNumberOfMeshes() {
+bool mugg::scene::SceneNode::GetMeshByIndex(int index, mugg::graphics::Mesh*& out_mesh) {
+    if(index < 0 || index > this->meshes.size() || this->meshes.empty()) {
+        return false;
+    }
+
+    out_mesh = this->meshes[index];
+    return true;
+}
+int mugg::scene::SceneNode::GetNumberOfMeshes() {
     return this->meshes.size();
 }

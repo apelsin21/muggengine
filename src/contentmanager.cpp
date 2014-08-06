@@ -259,11 +259,11 @@ mugg::graphics::Mesh* mugg::core::ContentManager::CreateMesh(const std::string& 
 
     Assimp::Importer importer;
     
-    const aiScene* scene = importer.ReadFile(mesh->GetFilepath().c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
+    const aiScene* scene = importer.ReadFile(mesh->GetFilepath().c_str(), aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs);
 
     if(!scene) {
         std::cout << "Failed to read Mesh from " << filepath << ", Assimp error string:\n";
-        std::cout << importer.GetErrorString();
+        std::cout << importer.GetErrorString() << std::endl;
         this->meshes.push_back(mesh);
         return mesh;
     }
@@ -284,9 +284,10 @@ mugg::graphics::Mesh* mugg::core::ContentManager::CreateMesh(const std::string& 
         mesh->SetVertices(vertices);
 
         for(unsigned int i = 0; i < tempMesh->mNumFaces; i++) {
-            indices.push_back(tempMesh->mFaces[i].mIndices[0]);
-            indices.push_back(tempMesh->mFaces[i].mIndices[1]);
-            indices.push_back(tempMesh->mFaces[i].mIndices[2]);
+            if(tempMesh->mFaces[i].mNumIndices == 3)
+                indices.push_back(tempMesh->mFaces[i].mIndices[0]);
+                indices.push_back(tempMesh->mFaces[i].mIndices[1]);
+                indices.push_back(tempMesh->mFaces[i].mIndices[2]);
         }
 
         mesh->SetIndices(indices);
@@ -310,6 +311,21 @@ mugg::graphics::Mesh* mugg::core::ContentManager::CreateMesh(const std::string& 
         }
         
         mesh->SetNormals(normals);
+    }
+
+    if(scene->mNumMaterials > 0) {
+        const aiMaterial* material = scene->mMaterials[0];
+        
+       if(material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
+           aiString path;
+
+           if(material->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+               //TODO: FIX PATH
+               std::string tempPath = "data/models/";
+               tempPath += path.data;
+               mesh->SetTexture(this->CreateTexture2D(tempPath, false));
+           }
+       }
     }
 
     GLuint vaoID;

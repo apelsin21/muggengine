@@ -33,11 +33,4 @@ bool mugg::scene::SceneManager::GetSceneNodeByIndex(int index, mugg::scene::Scen
 }
 
 void mugg::scene::SceneManager::Render() {
-    if(glIsProgram(this->programID) == GL_FALSE) {
-    } else {
-        for(unsigned int i = 0; i < this->sceneNodes.size(); i++) {
-            for(unsigned int u = 0; u < this->sceneNodes[i]->GetNumberOfMeshes(); i++) {
-            }
-        }
-    }
 }
