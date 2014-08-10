@@ -6,7 +6,7 @@
 
 namespace mugg {
     namespace binds {
-        static const char* Vec2Name = "Vec2";
+        static const char* Vec2Name = "Vector2D";
 
         glm::vec2* checkVec2(lua_State* L, int n) {
             return *(glm::vec2**)luaL_checkudata(L, n, Vec2Name);
@@ -15,15 +15,6 @@ namespace mugg {
         int vec2Constructor(lua_State* L) {
             glm::vec2** vec = (glm::vec2**)lua_newuserdata(L, sizeof(glm::vec2*));
             *vec = new glm::vec2();
-
-            luaL_getmetatable(L, Vec2Name);
-            lua_setmetatable(L, -2);
-
-            return 1;
-        }
-        int vec2ConstructorParams(lua_State* L) {
-            glm::vec2** vec = (glm::vec2**)lua_newuserdata(L, sizeof(glm::vec2*));
-            *vec = new glm::vec2(luaL_checknumber(L, 1), luaL_checknumber(L, 2));
 
             luaL_getmetatable(L, Vec2Name);
             lua_setmetatable(L, -2);
@@ -78,7 +69,6 @@ namespace mugg {
 
         luaL_Reg vec2Funcs[] = {
             {"new", vec2Constructor},
-            {"new", vec2ConstructorParams},
 
             {"set_x", vec2SetX},
             {"set_y", vec2SetY},

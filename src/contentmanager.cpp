@@ -259,7 +259,7 @@ mugg::graphics::Mesh* mugg::core::ContentManager::CreateMesh(const std::string& 
 
     Assimp::Importer importer;
     
-    const aiScene* scene = importer.ReadFile(mesh->GetFilepath().c_str(), aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(mesh->GetFilepath().c_str(), aiProcessPreset_TargetRealtime_Fast);
 
     if(!scene) {
         std::cout << "Failed to read Mesh from " << filepath << ", Assimp error string:\n";
@@ -321,7 +321,8 @@ mugg::graphics::Mesh* mugg::core::ContentManager::CreateMesh(const std::string& 
 
            if(material->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
                //TODO: FIX PATH
-               std::string tempPath = "data/models/";
+               std::string tempPath = filepath.substr(0, filepath.find_last_of("\\/"));
+               tempPath += "/";
                tempPath += path.data;
                mesh->SetTexture(this->CreateTexture2D(tempPath, false));
            }

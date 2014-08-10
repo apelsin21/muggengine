@@ -2,6 +2,19 @@
 #include "image.hpp"
 
 mugg::gui::GUIManager::GUIManager(mugg::core::Device* creator) {
+    this->vboID = -1;
+    this->vaoID = -1;
+    this->ibID = -1;
+    this->modelMatrixBuffer = -1;
+    this->vsID = -1;
+    this->fsID = -1;
+    this->programID = -1;
+
+    this->posLocation = -1;
+    this->uvLocation = -1;
+    this->modelLocation = -1;
+
+    
     this->creator = creator;
 
     this->vsID = glCreateShader(GL_VERTEX_SHADER);

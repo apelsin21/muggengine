@@ -3,7 +3,6 @@ project(muggengine)
 
 set(LIBRARIES
     lua
-    glfw
     GLEW
     enet
     freeimage

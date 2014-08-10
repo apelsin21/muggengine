@@ -23,6 +23,7 @@
 #include "imagebinds.hpp"
 #include "devicebinds.hpp"
 #include "vec2binds.hpp"
+#include "vec4binds.hpp"
 #include "keyboardbinds.hpp"
 #include "meshbinds.hpp"
 #include "scenemanagerbinds.hpp"
@@ -46,6 +47,7 @@ int main(int argc, char* argv[]) {
     system.RegisterMetatable(mugg::binds::imageFuncs, mugg::binds::ImageName);
     system.RegisterMetatable(mugg::binds::deviceFuncs, mugg::binds::DeviceName);
     system.RegisterMetatable(mugg::binds::vec2Funcs, mugg::binds::Vec2Name);
+    system.RegisterMetatable(mugg::binds::vec4Funcs, mugg::binds::Vec4Name);
     system.RegisterMetatable(mugg::binds::keyboardFuncs, mugg::binds::KeyboardName);
     system.RegisterMetatable(mugg::binds::meshFuncs, mugg::binds::MeshName);
     system.RegisterMetatable(mugg::binds::sceneManagerFuncs, mugg::binds::SceneManagerName);

@@ -18,7 +18,7 @@ img:set_texture(content_mgr:create_texture2d("data/textures/error.png", false))
 
 node = scene_mgr:create_node()
 
-mesh = content_mgr:create_mesh("data/models/astronaut1.3ds")
+mesh = content_mgr:create_mesh("data/models/complexshape.nff")
 
 node:add_mesh(mesh)
 
@@ -28,6 +28,11 @@ print("Mesh has " .. mesh:get_number_of_uvs() .. " texture coordinates")
 print("Mesh has " .. mesh:get_number_of_normals() .. " normals")
 
 lastkey = ""
+
+temp = Vector4D.new()
+temp:set_xyzw(123, 321, 65, 634.5454)
+
+print("x: " .. temp:get_x() .. " y: "  .. temp:get_y() .. " z: " .. temp:get_z() .. " w: " .. temp:get_w())
 
 while window:is_open() do
     if keyboard:is_key_down("Escape") and lastkey ~= "Escape" then

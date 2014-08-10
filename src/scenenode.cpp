@@ -20,3 +20,10 @@ bool mugg::scene::SceneNode::GetMeshByIndex(int index, mugg::graphics::Mesh*& ou
 int mugg::scene::SceneNode::GetNumberOfMeshes() {
     return this->meshes.size();
 }
+
+void mugg::scene::SceneNode::SetPosition(const glm::vec4& in_position) {
+    this->position = position;
+}
+glm::vec4 mugg::scene::SceneNode::GetPosition() {
+    return this->position;
+}
