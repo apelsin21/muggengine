@@ -284,10 +284,12 @@ mugg::graphics::Mesh* mugg::core::ContentManager::CreateMesh(const std::string& 
         mesh->SetVertices(vertices);
 
         for(unsigned int i = 0; i < tempMesh->mNumFaces; i++) {
-            if(tempMesh->mFaces[i].mNumIndices == 3)
+            //Since we will be drawing it as triangles, anything other than a triangle will not be indexed.
+            if(tempMesh->mFaces[i].mNumIndices == 3) {
                 indices.push_back(tempMesh->mFaces[i].mIndices[0]);
                 indices.push_back(tempMesh->mFaces[i].mIndices[1]);
                 indices.push_back(tempMesh->mFaces[i].mIndices[2]);
+            }
         }
 
         mesh->SetIndices(indices);
@@ -324,6 +326,7 @@ mugg::graphics::Mesh* mugg::core::ContentManager::CreateMesh(const std::string& 
                std::string tempPath = filepath.substr(0, filepath.find_last_of("\\/"));
                tempPath += "/";
                tempPath += path.data;
+               std::cout << tempPath << std::endl;
                mesh->SetTexture(this->CreateTexture2D(tempPath, false));
            }
        }

@@ -12,6 +12,10 @@
 #include "netdefs.hpp"
 
 namespace mugg {
+    namespace core {
+        class Device;
+    }
+
     namespace net {
         class NetManager {
             private:
@@ -25,8 +29,10 @@ namespace mugg {
 
                 bool running;
                 void Poll();
+     
+                mugg::core::Device* parent;
             public:
-                NetManager();
+                NetManager(mugg::core::Device*);
                 ~NetManager();
 
                 bool AddClient(mugg::net::Client&);

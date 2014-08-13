@@ -1,8 +1,8 @@
 #include "netmanager.hpp"
 
-mugg::net::NetManager::NetManager() {
+mugg::net::NetManager::NetManager(mugg::core::Device* parent) {
+    this->parent = parent;
     this->running = false;
-
 }
 mugg::net::NetManager::~NetManager() {
     this->Break();

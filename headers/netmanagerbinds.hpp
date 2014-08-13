@@ -18,22 +18,6 @@ namespace mugg {
             return *(mugg::net::NetManager**)luaL_checkudata(L, n, NetManagerName);
         }
 
-        int netManagerConstructor(lua_State* L) {
-            mugg::net::NetManager** netMgr = (mugg::net::NetManager**)lua_newuserdata(L, sizeof(mugg::net::NetManager*));
-            *netMgr = new mugg::net::NetManager();
-
-            luaL_getmetatable(L, NetManagerName);
-            lua_setmetatable(L, -2);
-           
-            return 1;
-        }
-        int netManagerDeconstructor(lua_State* L) {
-            mugg::net::NetManager* netMgr = checkNetManager(L, 1);
-
-            delete netMgr;
-
-            return 0;
-        }
 
         int netManagerAddClient(lua_State* L) {
             mugg::net::NetManager* netMgr = checkNetManager(L, 1);
@@ -50,9 +34,6 @@ namespace mugg {
         }
 
         luaL_Reg netManagerFuncs[] = {
-            {"new", netManagerConstructor},
-            
-            {"__gc", netManagerDeconstructor},
             {NULL, NULL}
         };
     }
