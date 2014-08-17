@@ -35,7 +35,7 @@ scale:set_xy(0.1, 0.1)
 img:set_scale(scale)
 
 img2 = gui_mgr:create_image()
-img2:set_texture(content_mgr:create_texture2d("data/models/media/dwarf.jpg", false))
+img2:set_texture(content_mgr:create_texture2d("data/textures/error.png", false))
 img2:get_texture():set_filter("Linear", "Linear")
 
 lastkey = ""
