@@ -3,8 +3,11 @@
 
 #include <lua.hpp>
 
+#include <glm/glm.hpp>
+
 #include "scenenode.hpp"
 #include "meshbinds.hpp"
+#include "vec4binds.hpp"
 
 namespace mugg {
     namespace binds {
@@ -23,9 +26,20 @@ namespace mugg {
             return 0;
         }
 
+        int sceneNodeSetPosition(lua_State* L) {
+            mugg::scene::SceneNode* node = checkSceneNode(L, 1);
+            glm::vec4* position = checkvec4(L, 2);
+
+            node->SetPosition(position);
+
+            return 0;
+        }
+
         luaL_Reg sceneNodeFuncs[] = {
             {"add_mesh", sceneNodeAddMesh},
-            
+         
+            {"set_position", sceneNodeSetPosition},
+
             {NULL, NULL},
         };
     }

@@ -17,8 +17,8 @@ mugg::graphics::Texture2D::Texture2D(mugg::core::ContentManager* creator) : GLOb
     //Enums
     this->minFilter = mugg::graphics::TextureFilter::Nearest;
     this->magFilter = mugg::graphics::TextureFilter::Nearest;
-    this->uWrap = mugg::graphics::TextureWrap::Repeat;
-    this->vWrap = mugg::graphics::TextureWrap::Repeat;
+    this->uWrap = mugg::graphics::TextureWrap::ClampToEdge;
+    this->vWrap = mugg::graphics::TextureWrap::ClampToEdge;
 }
 mugg::graphics::Texture2D::~Texture2D() {
 }

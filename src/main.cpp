@@ -28,6 +28,7 @@
 #include "meshbinds.hpp"
 #include "scenemanagerbinds.hpp"
 #include "scenenodebinds.hpp"
+#include "mousebinds.hpp"
 
 int main(int argc, char* argv[]) {
     mugg::ScriptSystem system(true);
@@ -52,6 +53,7 @@ int main(int argc, char* argv[]) {
     system.RegisterMetatable(mugg::binds::meshFuncs, mugg::binds::MeshName);
     system.RegisterMetatable(mugg::binds::sceneManagerFuncs, mugg::binds::SceneManagerName);
     system.RegisterMetatable(mugg::binds::sceneNodeFuncs, mugg::binds::SceneNodeName);
+    system.RegisterMetatable(mugg::binds::mouseFuncs, mugg::binds::MouseName);
 
     if(argc > 2) {
         std::cout << "Got too many arguments. (Expected one)\n";

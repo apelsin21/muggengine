@@ -11,16 +11,16 @@ namespace mugg {
     namespace graphics {
         class GLObject {
             protected:
-                GLuint ID = 0;
+                GLuint ID = -1;
                 unsigned int index = 0;
-                mugg::core::ContentManager* creator;
+                mugg::core::ContentManager* parent;
             public:
-                GLObject(mugg::core::ContentManager* creator) {
-                    this->creator = creator;
+                GLObject(mugg::core::ContentManager* parent) {
+                    this->parent = parent;
                 }
                 
-                virtual mugg::core::ContentManager* GetCreator() {
-                    return this->creator;
+                virtual mugg::core::ContentManager* GetParent() {
+                    return this->parent;
                 }
 
                 virtual void SetID(GLuint newID) {

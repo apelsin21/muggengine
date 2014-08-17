@@ -12,6 +12,8 @@
 #include "scenemanager.hpp"
 #include "netmanager.hpp"
 
+#include <SDL2/SDL.h>
+
 namespace mugg {
     namespace core {
         class Device {

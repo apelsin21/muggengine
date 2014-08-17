@@ -1,7 +1,7 @@
 #include "guimanager.hpp"
 #include "image.hpp"
 
-mugg::gui::GUIManager::GUIManager(mugg::core::Device* creator) {
+mugg::gui::GUIManager::GUIManager(mugg::core::Device* parent) {
     this->vboID = -1;
     this->vaoID = -1;
     this->ibID = -1;
@@ -14,8 +14,7 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Device* creator) {
     this->uvLocation = -1;
     this->modelLocation = -1;
 
-    
-    this->creator = creator;
+    this->parent = parent;
 
     this->vsID = glCreateShader(GL_VERTEX_SHADER);
     this->fsID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -87,35 +86,12 @@ mugg::gui::GUIManager::~GUIManager() {
             delete this->images[i];
         }
     }
-    for(unsigned int i = 0; i < this->textures.size(); i++) {
-        if(glIsTexture(this->textures[i])) {
-            glDeleteShader(this->textures[i]);
-        }
-    }
-}
-
-void mugg::gui::GUIManager::SetObjectPosition(unsigned int index, glm::vec2 position) {
-    this->positions[index] = position;
-}
-glm::vec2 mugg::gui::GUIManager::GetObjectPosition(unsigned int index) {
-    return this->positions[index];
-}
-
-void mugg::gui::GUIManager::SetObjectTexture(unsigned int index, GLuint texture) {
-    this->textures[index] = texture;
-}
-GLuint mugg::gui::GUIManager::GetObjectTexture(unsigned int index) {
-    return this->textures[index];
 }
 
 mugg::gui::Image* mugg::gui::GUIManager::CreateImage() {
     Image* img = new Image(this, this->images.size());
     
     this->images.push_back(img);
-
-    //Needed so that their indices map correctly
-    this->textures.push_back(0);
-    this->positions.push_back(glm::vec2(0, 0));
     
     return img;
 }
@@ -133,18 +109,26 @@ bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_im
 }
 
 void mugg::gui::GUIManager::Render() {
-    glEnableVertexAttribArray(this->posLocation);
-    glEnableVertexAttribArray(this->uvLocation);
-    glEnableVertexAttribArray(this->modelLocation);
+    for(unsigned int i = 0; i < this->images.size(); i++) {
+        glEnableVertexAttribArray(this->posLocation);
+        glEnableVertexAttribArray(this->uvLocation);
 
-    glBindVertexArray(this->vaoID);
-    glUseProgram(this->programID);
-    
-    glBindTexture(GL_TEXTURE_2D, this->textures[this->textures.size() - 1]);
+        glBindVertexArray(this->vaoID);
+        glUseProgram(this->programID);
 
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, this->images.size());
-    
-    glDisableVertexAttribArray(this->posLocation);
-    glDisableVertexAttribArray(this->uvLocation);
-    glDisableVertexAttribArray(this->modelLocation);
+        glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(this->images[i]->GetScale().x, this->images[i]->GetScale().y, 0.0f));
+        glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(this->images[i]->GetPosition().x, this->images[i]->GetPosition().y, 0.0f));
+        glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(1.0f, 1.0f, 0.0f));
+        glm::mat4 modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+
+        GLint modelMatrixLocation = glGetUniformLocation(this->programID, "v_model");
+        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+        glBindTexture(GL_TEXTURE_2D, this->images[i]->GetTexture()->GetID());
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        
+        glDisableVertexAttribArray(this->posLocation);
+        glDisableVertexAttribArray(this->uvLocation);
+    }
 }

@@ -32,5 +32,71 @@ bool mugg::scene::SceneManager::GetSceneNodeByIndex(int index, mugg::scene::Scen
     return true;
 }
 
+void mugg::scene::SceneManager::SetShaderProgramID(GLuint id) {
+    this->programID = id;
+}
+GLuint mugg::scene::SceneManager::GetShaderProgramID() {
+    return this->programID;
+}
+
+//TODO:PLACEHOLDER
 void mugg::scene::SceneManager::Render() {
+    if(glIsProgram(this->programID) == GL_TRUE) {
+        for(unsigned int i= 0; i < this->sceneNodes.size(); i++) {
+            for(unsigned int u = 0; u < this->sceneNodes[i]->GetNumberOfMeshes(); u++) {
+                mugg::graphics::Mesh* mesh = nullptr;
+                
+                if(!this->sceneNodes[i]->GetMeshByIndex(u, mesh)) {
+                    std::cout << "FAILED TO GET MESH BY INDEX\n";
+                }
+                
+                if(mesh == nullptr) {
+                    std::cout << "We got a mesh but it's still a pointer to nothing\n";
+                }
+
+                glUseProgram(this->programID);
+
+                GLint modelMatrixLocation = glGetUniformLocation(this->programID, "v_model");
+                GLint projectionMatrixLocation = glGetUniformLocation(this->programID, "v_projection");
+
+                glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(this->sceneNodes[i]->GetPosition().x, this->sceneNodes[i]->GetPosition().y, this->sceneNodes[i]->GetPosition().z));
+                glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+                glm::mat4 projectionMatrix = glm::perspective(3.1415f / 2.0f, 4.0f / 3.0f, 0.001f, 100000.0f);
+                glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+                
+                glBindVertexArray(mesh->GetVAOID());
+
+                // Vertices
+                glEnableVertexAttribArray(0);
+                glBindBuffer(GL_ARRAY_BUFFER, mesh->GetPositionBufferID());
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+                
+                // Texture Coordinates
+                glEnableVertexAttribArray(1);
+                glBindBuffer(GL_ARRAY_BUFFER, mesh->GetUVBufferID());
+                glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+                
+                // Normals
+                glEnableVertexAttribArray(2);
+                glBindBuffer(GL_ARRAY_BUFFER, mesh->GetNormalBufferID());
+                glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+                
+                if(mesh->GetTexture() != nullptr && glIsTexture(mesh->GetTexture()->GetID()) == GL_TRUE) {
+                    glActiveTexture(GL_TEXTURE0);
+                    glBindTexture(GL_TEXTURE_2D, mesh->GetTexture()->GetID());
+                    glUniform1i(mesh->GetTexture()->GetID(), 0);
+                }
+
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->GetElementBufferID());
+                glDrawElements(GL_TRIANGLES, mesh->GetNumberOfIndices(), GL_UNSIGNED_SHORT, nullptr);
+
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+                glDisableVertexAttribArray(2);
+            }
+        }
+    } else {
+        std::cout << "SceneManager has invalid shaderprogram!\n";
+    }
 }

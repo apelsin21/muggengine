@@ -10,7 +10,6 @@
 #include <string>
 
 #include "keydefs.hpp"
-#include "errorhandling.hpp"
 
 namespace mugg {
     namespace core {

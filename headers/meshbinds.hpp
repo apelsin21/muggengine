@@ -52,7 +52,18 @@ namespace mugg {
             return 1;
         }
 
+        int meshSetTexture2D(lua_State* L) {
+            mugg::graphics::Mesh* mesh = checkMesh(L, 1);
+            mugg::graphics::Texture2D* texture = checkTexture2D(L, 2);
+
+            mesh->SetTexture(texture);
+
+            return 0;
+        }
+
         luaL_Reg meshFuncs[] = {
+            {"set_texture2d", meshSetTexture2D},
+
             {"get_filepath", meshGetFilepath},
 
             {"get_number_of_vertices", meshGetNumberOfVertices},

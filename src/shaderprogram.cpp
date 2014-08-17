@@ -4,13 +4,11 @@ mugg::graphics::ShaderProgram::ShaderProgram() : GLObject(nullptr) {
     this->linked = false;
     this->compiledSuccessfully = false;
     this->hasGeneratedID = false;
-    this->ID = 0;
 }
 mugg::graphics::ShaderProgram::ShaderProgram(mugg::core::ContentManager* creator) : GLObject(creator) {
     this->linked = false;
     this->compiledSuccessfully = false;
     this->hasGeneratedID = true;
-    this->ID = 0;
 }
 
 mugg::graphics::ShaderProgram::~ShaderProgram() {

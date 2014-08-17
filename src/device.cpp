@@ -13,17 +13,26 @@ mugg::core::Device::~Device() {
             delete this->renderers[i];
         }
     }
-    for(unsigned int i = 0; i < this->contentManagers.size(); i++) {
-        if(this->contentManagers[i] != nullptr) {
-            delete this->contentManagers[i];
-        }
-    }
     for(unsigned int i = 0; i < this->windows.size(); i++) {
         if(this->windows[i] != nullptr) {
             delete this->windows[i];
         }
     }
-    
+    for(unsigned int i = 0; i < this->sceneManagers.size(); i++) {
+        if(this->sceneManagers[i] != nullptr) {
+            delete this->sceneManagers[i];
+        }
+    }
+    for(unsigned int i = 0; i < this->netManagers.size(); i++) {
+        if(this->netManagers[i] != nullptr) {
+            delete this->netManagers[i];
+        }
+    }
+    for(unsigned int i = 0; i < this->contentManagers.size(); i++) {
+        if(this->contentManagers[i] != nullptr) {
+            delete this->contentManagers[i];
+        }
+    }
 }
 
 mugg::gui::GUIManager* mugg::core::Device::CreateGUIManager() {

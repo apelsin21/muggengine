@@ -53,7 +53,7 @@ mugg::core::ContentManager::~ContentManager() {
                 glDeleteBuffers(1, &normalBuffer);
             if(glIsBuffer(elementBuffer) == GL_TRUE)
                 glDeleteBuffers(1, &elementBuffer);
-        
+            
             delete this->meshes[i];
         }
 
@@ -259,7 +259,10 @@ mugg::graphics::Mesh* mugg::core::ContentManager::CreateMesh(const std::string& 
 
     Assimp::Importer importer;
     
-    const aiScene* scene = importer.ReadFile(mesh->GetFilepath().c_str(), aiProcessPreset_TargetRealtime_Fast);
+    const aiScene* scene = importer.ReadFile(mesh->GetFilepath().c_str(),  aiProcess_CalcTangentSpace |
+                                                                                aiProcess_Triangulate |
+                                                                      aiProcess_JoinIdenticalVertices |
+                                                                                aiProcess_SortByPType);
 
     if(!scene) {
         std::cout << "Failed to read Mesh from " << filepath << ", Assimp error string:\n";
@@ -267,53 +270,60 @@ mugg::graphics::Mesh* mugg::core::ContentManager::CreateMesh(const std::string& 
         this->meshes.push_back(mesh);
         return mesh;
     }
-
-    const aiMesh* tempMesh = scene->mMeshes[0];
-
+    
     std::vector<unsigned short> indices;
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> uvs;
     std::vector<glm::vec3> normals;
+    
+    if(scene->HasMeshes()) {
+        for(unsigned int i = 0; i < scene->mNumMeshes; i++) {
+            const aiMesh* tempMesh = scene->mMeshes[i];
 
-    if(tempMesh->HasPositions()) {
-        for(unsigned int i = 0; i < tempMesh->mNumVertices; i++) {
-            aiVector3D pos = tempMesh->mVertices[i];
-            vertices.push_back(glm::vec3(pos.x, pos.y, pos.z));
-        }
-        
-        mesh->SetVertices(vertices);
+            
+            if(tempMesh->HasPositions()) {
+                for(unsigned int u = 0; u < tempMesh->mNumVertices; u++) {
+                    aiVector3D pos = tempMesh->mVertices[i];
+                    vertices.push_back(glm::vec3(pos.x, pos.y, pos.z));
+                }
+                
 
-        for(unsigned int i = 0; i < tempMesh->mNumFaces; i++) {
-            //Since we will be drawing it as triangles, anything other than a triangle will not be indexed.
-            if(tempMesh->mFaces[i].mNumIndices == 3) {
-                indices.push_back(tempMesh->mFaces[i].mIndices[0]);
-                indices.push_back(tempMesh->mFaces[i].mIndices[1]);
-                indices.push_back(tempMesh->mFaces[i].mIndices[2]);
+                for(unsigned int u = 0; u < tempMesh->mNumFaces; u++) {
+                    if(tempMesh->mFaces[i].mNumIndices == 3) {
+                        indices.push_back(tempMesh->mFaces[i].mIndices[0]);
+                        indices.push_back(tempMesh->mFaces[i].mIndices[1]);
+                        indices.push_back(tempMesh->mFaces[i].mIndices[2]);
+                    }
+                }
+
+            }
+
+
+            for(unsigned int u = 0; u < tempMesh->mNumVertices; u++) {
+                for(unsigned int y = 0; y <= AI_MAX_NUMBER_OF_TEXTURECOORDS; y++) {
+                    if(tempMesh->HasTextureCoords(y)) {
+                        aiVector3D UVW = tempMesh->mTextureCoords[0][y];
+                        uvs.push_back(glm::vec2(UVW.x, UVW.y));
+                    }
+                }
+            }
+                
+            
+
+            if(tempMesh->HasNormals()) {
+                for(unsigned int u = 0; u < tempMesh->mNumVertices; u++) {
+                    aiVector3D n = tempMesh->mNormals[u];
+                    normals.push_back(glm::vec3(n.x, n.y, n.z));
+                }
+                
             }
         }
-
-        mesh->SetIndices(indices);
     }
 
-
-    for(unsigned int i = 0; i < tempMesh->mNumVertices; i++) {
-        if(tempMesh->HasTextureCoords(i)) {
-            aiVector3D UVW = tempMesh->mTextureCoords[0][i];
-            uvs.push_back(glm::vec2(UVW.x, UVW.y));
-        }
-    }
-        
+    mesh->SetNormals(normals);
     mesh->SetUVS(uvs);
-    
-
-    if(tempMesh->HasNormals()) {
-        for(unsigned int i = 0; i < tempMesh->mNumVertices; i++) {
-            aiVector3D n = tempMesh->mNormals[i];
-            normals.push_back(glm::vec3(n.x, n.y, n.z));
-        }
-        
-        mesh->SetNormals(normals);
-    }
+    mesh->SetIndices(indices);
+    mesh->SetVertices(vertices);
 
     if(scene->mNumMaterials > 0) {
         const aiMaterial* material = scene->mMaterials[0];
@@ -322,11 +332,9 @@ mugg::graphics::Mesh* mugg::core::ContentManager::CreateMesh(const std::string& 
            aiString path;
 
            if(material->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-               //TODO: FIX PATH
                std::string tempPath = filepath.substr(0, filepath.find_last_of("\\/"));
                tempPath += "/";
                tempPath += path.data;
-               std::cout << tempPath << std::endl;
                mesh->SetTexture(this->CreateTexture2D(tempPath, false));
            }
        }

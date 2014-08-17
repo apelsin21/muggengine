@@ -148,9 +148,9 @@ namespace mugg {
         int windowSetTitle(lua_State* L) {
             mugg::core::Window* window = checkWindow(L, 1);
 
-            std::string arg = luaL_checkstring(L, 2);
+            const char* title = luaL_checkstring(L, 2);
 
-            window->SetTitle(arg);
+            window->SetTitle(title);
 
             return 0;
         }

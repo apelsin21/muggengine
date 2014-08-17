@@ -26,7 +26,7 @@ namespace mugg {
                 bool GetMeshByIndex(int, mugg::graphics::Mesh*&);
                 int GetNumberOfMeshes();
 
-                void SetPosition(const glm::vec4&);
+                void SetPosition(glm::vec4*);
                 glm::vec4 GetPosition();
         };
     }

@@ -44,15 +44,19 @@ namespace mugg {
                 virtual void SetTexture(mugg::graphics::Texture2D*);
 
                 virtual void SetIndices(const std::vector<unsigned short>&);
+                virtual std::vector<unsigned short> GetIndices();
                 virtual int GetNumberOfIndices();
 
                 virtual void SetVertices(const std::vector<glm::vec3>&);
+                virtual std::vector<glm::vec3> GetVertices();
                 virtual int GetNumberOfVertices();
                 
                 virtual void SetUVS(const std::vector<glm::vec2>&);
+                virtual std::vector<glm::vec2> GetUVS();
                 virtual int GetNumberOfUVS();
                 
                 virtual void SetNormals(const std::vector<glm::vec3>&);
+                virtual std::vector<glm::vec3> GetNormals();
                 virtual int GetNumberOfNormals();
 
                 virtual GLuint GetVAOID();

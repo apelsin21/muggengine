@@ -4,7 +4,6 @@ mugg::core::Window::Window(mugg::core::Device* p) {
     this->parent = p;
 
     if(SDL_WasInit(SDL_INIT_VIDEO) != SDL_INIT_VIDEO) {
-        //If SDL_VIDEO wasn't initialized, try to initialize.
         if(SDL_Init(SDL_INIT_VIDEO) != 0) {
             std::cerr << "SDL failed to initialize! Error:\n";
             this->CheckSDLError(__LINE__);
@@ -39,7 +38,8 @@ bool mugg::core::Window::Open(int w, int h, const std::string& t) {
     }
     
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -245,8 +245,8 @@ bool mugg::core::Window::IsHidden() {
     return this->hidden;
 }
 
-void mugg::core::Window::SetTitle(const std::string& title) {
-    this->title = title;
+void mugg::core::Window::SetTitle(const std::string& in_title) {
+    this->title = in_title;
     SDL_SetWindowTitle(this->sdlWindow, this->title.c_str());
 }
 std::string mugg::core::Window::GetTitle() {

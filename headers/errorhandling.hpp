@@ -5,10 +5,6 @@
 
 namespace mugg {
     namespace error {
-        static void glfwErrorCallback(int error, const char* description) {
-            std::cerr << "GLFW error occurred! Description: \n" << std::endl;
-            std::cerr << description << std::endl;
-        }
     }
 }
 

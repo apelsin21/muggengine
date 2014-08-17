@@ -6,6 +6,8 @@
 #include "scenemanager.hpp"
 #include "scenenodebinds.hpp"
 
+#include "shaderprogrambinds.hpp"
+
 namespace mugg {
     namespace binds {
         static const char* SceneManagerName = "SceneManager";
@@ -26,8 +28,29 @@ namespace mugg {
             return 1;
         }
 
+        int sceneManagerSetShaderProgram(lua_State* L) {
+            mugg::scene::SceneManager* mgr = checkSceneManager(L, 1);
+            mugg::graphics::ShaderProgram* program = checkShaderProgram(L, 2);
+
+            mgr->SetShaderProgramID(program->GetID());
+
+            return 0;
+        }
+
+        int sceneManagerRender(lua_State* L) {
+            mugg::scene::SceneManager* mgr = checkSceneManager(L, 1);
+
+            mgr->Render();
+
+            return 0;
+        }
+
         luaL_Reg sceneManagerFuncs[] = {
             {"create_node", sceneManagerCreateNode},
+
+            {"set_shaderprogram", sceneManagerSetShaderProgram},
+
+            {"render", sceneManagerRender},
 
             {NULL, NULL},
         };

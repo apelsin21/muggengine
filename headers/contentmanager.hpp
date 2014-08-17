@@ -12,9 +12,6 @@
 
 #include <FreeImage.h>
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -25,15 +22,6 @@
 #include "shader.hpp"
 #include "shaderprogram.hpp"
 #include "mesh.hpp"
-
-#include <stdio.h>  /* defines FILENAME_MAX */
-#ifdef WINDOWS
-    #include <direct.h>
-    #define GetCurrentDir _getcwd
-#else
-    #include <unistd.h>
-    #define GetCurrentDir getcwd
- #endif
 
 namespace mugg {
     namespace core {

@@ -74,12 +74,18 @@ void mugg::graphics::Mesh::FillBuffers() {
 void mugg::graphics::Mesh::SetIndices(const std::vector<unsigned short>& indices) {
     this->indices = indices;
 }
+std::vector<unsigned short> mugg::graphics::Mesh::GetIndices() {
+    return this->indices;
+}
 int mugg::graphics::Mesh::GetNumberOfIndices() {
     return this->indices.size();
 }
 
 void mugg::graphics::Mesh::SetVertices(const std::vector<glm::vec3>& vertices) {
     this->vertices = vertices;
+}
+std::vector<glm::vec3> mugg::graphics::Mesh::GetVertices() {
+    return this->vertices;
 }
 int mugg::graphics::Mesh::GetNumberOfVertices() {
     return this->vertices.size();
@@ -88,12 +94,18 @@ int mugg::graphics::Mesh::GetNumberOfVertices() {
 void mugg::graphics::Mesh::SetUVS(const std::vector<glm::vec2>& uvs) {
     this->uvs = uvs;
 }
+std::vector<glm::vec2> mugg::graphics::Mesh::GetUVS() {
+    return this->uvs;
+}
 int mugg::graphics::Mesh::GetNumberOfUVS() {
     return this->uvs.size();
 }
 
 void mugg::graphics::Mesh::SetNormals(const std::vector<glm::vec3>& normals) {
     this->normals = normals;
+}
+std::vector<glm::vec3> mugg::graphics::Mesh::GetNormals() {
+    return this->normals;
 }
 int mugg::graphics::Mesh::GetNumberOfNormals() {
     return this->normals.size();
