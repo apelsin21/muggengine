@@ -18,7 +18,6 @@ namespace mugg {
                 std::vector<ENetAddress> connectedClients;
                 int numberOfClients;
 
-                const char* AddressToString(ENetAddress address);
             public:
                 Server();
                 ~Server();
@@ -26,7 +25,7 @@ namespace mugg {
                 bool Initialize(const char* address, unsigned short port, int maxConnections, int maxChannels, unsigned int inLimit, unsigned int outLimit);
                 bool Initialize(unsigned short port);
                 
-                const char* GetClientAddressByIndex(unsigned int index);
+                std::string GetClientAddressByIndex(unsigned int index);
                 unsigned short GetClientPortByIndex(unsigned int index);
 
                 int GetNumberOfClients();

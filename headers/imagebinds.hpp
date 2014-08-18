@@ -75,26 +75,6 @@ namespace mugg {
             return 1;
         }
 
-        int imageSetRotation(lua_State* L) {
-            mugg::gui::Image* img = checkImage(L, 1);
-            glm::vec2* vec = checkVec2(L, 2);
-            
-            img->SetRotation(*vec);
-
-            return 0;
-        }
-        int imageGetRotation(lua_State* L) {
-            mugg::gui::Image* img = checkImage(L, 1);
-
-            glm::vec2** vec = (glm::vec2**)lua_newuserdata(L, sizeof(glm::vec2*));
-            *vec = new glm::vec2(img->GetRotation());
-
-            luaL_getmetatable(L, Vec2Name);
-            lua_setmetatable(L, -2);
-            
-            return 1;
-        }
-        
         int imageSetRotationAngle(lua_State* L) {
             mugg::gui::Image* img = checkImage(L, 1);
            
@@ -108,7 +88,7 @@ namespace mugg {
             mugg::gui::Image* img = checkImage(L, 1);
 
             lua_pushnumber(L, img->GetRotationAngle());
-
+            
             return 1;
         }
 
@@ -121,9 +101,6 @@ namespace mugg {
 
             {"set_scale", imageSetScale},
             {"get_scale", imageGetScale},
-
-            {"set_rotation", imageSetRotation},
-            {"get_rotation", imageGetRotation},
 
             {"set_rotation_angle", imageSetRotationAngle},
             {"get_rotation_angle", imageGetRotationAngle},

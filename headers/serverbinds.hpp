@@ -107,7 +107,7 @@ namespace mugg {
         int serverGetClientAddressByIndex(lua_State* L) {
             mugg::net::Server* server = checkServer(L, 1);
 
-            lua_pushstring(L, server->GetClientAddressByIndex(luaL_checknumber(L, 2)));
+            lua_pushstring(L, server->GetClientAddressByIndex(luaL_checknumber(L, 2)).c_str());
 
             return 1;
         }
@@ -126,6 +126,20 @@ namespace mugg {
             int eventIndex = server->GetLatestEvent();
 
             lua_pushstring(L, mugg::net::EventString[eventIndex]);
+
+            return 1;
+        }
+        int serverGetLatestEventAddress(lua_State* L) {
+            mugg::net::Server* server = checkServer(L, 1);
+
+            lua_pushstring(L, server->GetLatestEventAddress().c_str());
+
+            return 1;
+        }
+        int serverGetLatestEventData(lua_State* L) {
+            mugg::net::Server* server = checkServer(L, 1);
+
+            lua_pushstring(L, (const char*)server->GetLatestEventData());
 
             return 1;
         }
@@ -161,6 +175,8 @@ namespace mugg {
             {"set_bandwidth_limit", serverSetBandwidthLimit},
 
             {"get_latest_event", serverGetLatestEvent},
+            {"get_latest_event_address", serverGetLatestEventAddress},
+            {"get_latest_event_data", serverGetLatestEventData},
 
             {"poll", serverPollEvents},
 

@@ -13,7 +13,6 @@ namespace mugg {
         
         class Image : public GUIObject {
             private:
-                glm::mat4 modelMatrix;
             public:
                 Image(mugg::gui::GUIManager*, unsigned int);
                 ~Image();

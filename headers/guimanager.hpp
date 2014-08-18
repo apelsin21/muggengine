@@ -29,10 +29,9 @@ namespace mugg {
                 #define GLSL(src) "#version 330 core\n" #src
 
                 std::string vsData = GLSL(
-                    in vec2 v_pos;
-                    in vec2 v_uv;
-
-                    uniform mat4 v_model;
+                    layout(location = 0) in vec2 v_pos;
+                    layout(location = 1) in vec2 v_uv;
+                    layout(location = 2) in mat4 v_model;
 
                     out vec2 f_uv;
 
@@ -41,7 +40,7 @@ namespace mugg {
                         gl_Position = v_model * vec4(v_pos, 0.0, 1.0);
                     }
                 );
-
+                
                 std::string fsData = GLSL(
                     in vec2 f_uv;
                     out vec4 color;
@@ -54,7 +53,7 @@ namespace mugg {
 
                 std::vector<mugg::gui::Image*> images;
 
-                GLuint vboID, vaoID, ibID, modelMatrixBuffer;
+                GLuint positionBuffer, vaoID, modelMatrixBuffer;
                 GLuint vsID, fsID, programID;
 
                 int posLocation, uvLocation, modelLocation;

@@ -19,7 +19,7 @@ keyboard = Keyboard.new()
 -- shaderprogram:link()
 -- scene_mgr:set_shaderprogram(shaderprogram)
 -- node = scene_mgr:create_node()
--- mesh = content_mgr:create_mesh("data/models/media/dwarf.x")
+-- mesh = content_mgr:create_mesh("data/models/complexshape.nff")
 -- node:add_mesh(mesh)
 -- print("Mesh filepath " .. mesh:get_filepath())
 -- print("Mesh has " .. mesh:get_number_of_vertices() .. " vertices")
@@ -29,20 +29,22 @@ keyboard = Keyboard.new()
 
 img = gui_mgr:create_image()
 img:set_texture(content_mgr:create_texture2d("data/textures/error.png", false))
-
 scale = Vector2D.new()
 scale:set_xy(0.1, 0.1)
 img:set_scale(scale)
 
 img2 = gui_mgr:create_image()
 img2:set_texture(content_mgr:create_texture2d("data/textures/error.png", false))
-img2:get_texture():set_filter("Linear", "Linear")
 
 lastkey = ""
 
 mouse = Mouse.new()
 
 position = Vector2D.new()
+rotation = 0
+
+client = Client.new()
+client:initialize(2, 0, 0)
 
 function update()
     if keyboard:is_key_down("Escape") and lastkey ~= "Escape" then
@@ -69,6 +71,9 @@ function update()
     elseif keyboard:is_key_down("F1") and lastkey ~= "F1" then
         renderer:set_wireframe(not renderer:get_wireframe())
         lastkey = "F1"
+    elseif keyboard:is_key_down("Return") and laskey ~= "Return" then
+        client:connect("127.0.0.1", 2300, 3000)
+        lastkey = "Return"
     elseif lastkey ~= "" and keyboard:is_key_up(lastkey) then
         lastkey = ""
     end 
@@ -87,6 +92,9 @@ function update()
     end
 
     img:set_position(position)
+    img:set_rotation_angle(math.sin(os.clock() * 100))
+
+    client:poll(0)
 
     if mouse:is_left_button_down() or mouse:is_right_button_down() or mouse:is_middle_button_down() then
         print("Mouse: " .. mouse:get_x() .. "x" .. mouse:get_y())

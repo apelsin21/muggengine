@@ -83,9 +83,7 @@ void mugg::scene::SceneManager::Render() {
                 glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
                 
                 if(mesh->GetTexture() != nullptr && glIsTexture(mesh->GetTexture()->GetID()) == GL_TRUE) {
-                    glActiveTexture(GL_TEXTURE0);
                     glBindTexture(GL_TEXTURE_2D, mesh->GetTexture()->GetID());
-                    glUniform1i(mesh->GetTexture()->GetID(), 0);
                 }
 
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->GetElementBufferID());

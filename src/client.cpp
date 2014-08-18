@@ -55,7 +55,8 @@ bool mugg::net::Client::Connect(const char* address, unsigned short port, int ti
     this->peer = enet_host_connect(this->host, &this->address, this->maxChannels, 0);
 
     if(this->peer == NULL) {
-        std::cout << "No connection available to connect to " << address << ":" << port << "!\n";
+        std::cout << "No peer available to connect to " << address << ":" << port << "!\n";
+        std::cout << "This is probably because you already are connected!\n";
         this->connected = false;
         return false;
     }

@@ -14,6 +14,8 @@ namespace mugg {
                 ENetEvent event;
             
                 mugg::net::Event latestEvent;
+                std::string latestEventAddress;
+                unsigned char* latestEventData;
 
                 int maxConnections, maxChannels;
                 unsigned int inLimit, outLimit;
@@ -35,8 +37,29 @@ namespace mugg {
                     return this->initialized;
                 }
 
+
+                std::string AddressToString(ENetAddress address) {
+                    unsigned char bytes[4];
+                    bytes[0] = address.host & 0xFF;
+                    bytes[1] = (address.host >> 8) & 0xFF;
+                    bytes[2] = (address.host >> 16) & 0xFF;
+                    bytes[3] = (address.host >> 24) & 0xFF;   
+                
+                    char buffer[100];
+                
+                    snprintf(buffer, 100, "%d.%d.%d.%d:%d", bytes[0], bytes[1], bytes[2], bytes[3], address.port);
+                
+                    return std::string(buffer);
+                }
+
                 mugg::net::Event GetLatestEvent() {
                     return this->latestEvent;
+                }
+                std::string GetLatestEventAddress() {
+                    return this->latestEventAddress;
+                }
+                unsigned char* GetLatestEventData() {
+                    return this->latestEventData;
                 }
         };
     }

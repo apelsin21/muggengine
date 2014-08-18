@@ -73,21 +73,7 @@ bool mugg::net::Server::Initialize(unsigned short port) {
     return true;
 }
 
-const char* mugg::net::Server::AddressToString(ENetAddress address) {
-    unsigned char bytes[4];
-    bytes[0] = address.host & 0xFF;
-    bytes[1] = (address.host >> 8) & 0xFF;
-    bytes[2] = (address.host >> 16) & 0xFF;
-    bytes[3] = (address.host >> 24) & 0xFF;   
-
-    char buffer[100];
-
-    snprintf(buffer, 100, "%d.%d.%d.%d:%d", bytes[0], bytes[1], bytes[2], bytes[3], address.port);
-
-    return std::string(buffer).c_str();
-}
-
-const char* mugg::net::Server::GetClientAddressByIndex(unsigned int index) {
+std::string mugg::net::Server::GetClientAddressByIndex(unsigned int index) {
     if(!this->initialized) {
         std::cout << "Tried to get client address of uninitialized server!\n";
         return "";
@@ -120,28 +106,21 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
         return;
     }
     
+    this->latestEvent = mugg::net::Event::None;
+
     while(enet_host_service(this->host, &this->event, timeout) > 0) {
         switch(event.type) {
             case ENET_EVENT_TYPE_CONNECT:
-                if(this->numberOfClients == this->maxConnections) {
-                    std::cout << "A client tried to connect, but max connections of the server has been reached. Disconnecting client!\n";
-                    enet_peer_disconnect(event.peer, 0);
-                } else {
-                    this->latestEvent = mugg::net::Event::Connected;
-                    this->connectedClients.push_back(this->event.peer->address);
-                    this->numberOfClients++;
-                    std::cout << this->AddressToString(this->event.peer->address) << " connected!\n";
-                }    
-                break;
+                this->latestEvent = mugg::net::Event::Connected;
+                this->latestEventAddress = this->AddressToString(this->event.peer->address);
+            
             case ENET_EVENT_TYPE_NONE:
                 this->latestEvent = mugg::net::Event::None;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                std::cout << this->AddressToString(event.peer->address)
-                            << ": "
-                            << this->event.packet->data
-                            << std::endl;
                 this->latestEvent = mugg::net::Event::Received;
+                this->latestEventAddress = this->AddressToString(this->event.peer->address);
+                this->latestEventData = this->event.packet->data;
 
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
@@ -149,9 +128,8 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
                     this->numberOfClients--;
                 }
 
-                std::cout << this->AddressToString(this->event.peer->address) << " disconnected!\n";
-
                 this->latestEvent = mugg::net::Event::Disconnected;
+                this->latestEventAddress = this->AddressToString(this->event.peer->address);
 
                 break;
         }
