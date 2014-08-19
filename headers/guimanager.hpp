@@ -18,7 +18,7 @@
 
 namespace mugg {
     namespace core {
-        class Device;
+        class Engine;
     }
     
     namespace gui {
@@ -58,9 +58,9 @@ namespace mugg {
 
                 int posLocation, uvLocation, modelLocation;
 
-                mugg::core::Device* parent;
+                mugg::core::Engine* parent;
             public:
-                GUIManager(mugg::core::Device*);
+                GUIManager(mugg::core::Engine*);
                 ~GUIManager();
 
                 virtual mugg::gui::Image* CreateImage();

@@ -1,7 +1,9 @@
 #include "guimanager.hpp"
 #include "image.hpp"
 
-mugg::gui::GUIManager::GUIManager(mugg::core::Device* parent) {
+mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
+    this->parent = parent;
+    
     this->positionBuffer = -1;
     this->modelMatrixBuffer = -1;
 
@@ -9,8 +11,6 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Device* parent) {
     this->vsID = -1;
     this->fsID = -1;
     this->programID = -1;
-
-    this->parent = parent;
 
     this->vsID = glCreateShader(GL_VERTEX_SHADER);
     this->fsID = glCreateShader(GL_FRAGMENT_SHADER);

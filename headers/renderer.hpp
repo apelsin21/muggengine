@@ -16,7 +16,7 @@
 
 namespace mugg {
     namespace core {
-        class Device;
+        class Engine;
     }
 
     namespace graphics {
@@ -33,9 +33,9 @@ namespace mugg {
                 bool wireframe;
                 
                 void UpdateTime();
-                mugg::core::Device* creator;
+                mugg::core::Engine* parent;
             public:
-                Renderer(mugg::core::Device*);
+                Renderer(mugg::core::Engine*);
                 ~Renderer();
 
                 //Get time between frames
@@ -56,7 +56,7 @@ namespace mugg {
 
                 bool Initialize();
                 
-                void Draw();
+                void Render();
         };
 
     }

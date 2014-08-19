@@ -1,6 +1,6 @@
 #include "window.hpp"
 
-mugg::core::Window::Window(mugg::core::Device* p) {
+mugg::core::Window::Window(mugg::core::Engine* p) {
     this->parent = p;
 
     if(SDL_WasInit(SDL_INIT_VIDEO) != SDL_INIT_VIDEO) {
@@ -19,6 +19,8 @@ mugg::core::Window::Window(mugg::core::Device* p) {
     this->width = 0;
     this->height = 0;
     this->windowID = 0;
+
+    this->Open(800, 600, "MuggEngine Window");
 }
 mugg::core::Window::~Window() {
 }

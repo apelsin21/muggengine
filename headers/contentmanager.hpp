@@ -25,7 +25,7 @@
 
 namespace mugg {
     namespace core {
-        class Device;
+        class Engine;
         
         class ContentManager {
             private:
@@ -48,9 +48,9 @@ namespace mugg {
                 bool SearchForID(std::vector<GLuint>&, GLuint, int&);
                 GLint maxTextureSize;
             
-                mugg::core::Device* creator;
+                mugg::core::Engine* parent;
             public:
-                ContentManager(mugg::core::Device* device);
+                ContentManager(mugg::core::Engine* Engine);
                 ~ContentManager();
 
                 virtual int GetMaxTextureSize();

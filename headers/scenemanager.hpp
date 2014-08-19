@@ -15,7 +15,7 @@
 
 namespace mugg {
     namespace core {
-        class Device;
+        class Engine;
     }
     
     namespace scene {
@@ -23,11 +23,11 @@ namespace mugg {
             private:
                 std::vector<mugg::scene::SceneNode*> sceneNodes;
             
-                mugg::core::Device* parent;
+                mugg::core::Engine* parent;
             
                 GLuint programID;
             public:
-                SceneManager(mugg::core::Device*);
+                SceneManager(mugg::core::Engine*);
                 ~SceneManager();
 
                 virtual mugg::scene::SceneNode* CreateSceneNode();

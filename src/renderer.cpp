@@ -1,7 +1,7 @@
 #include "renderer.hpp"
 
-mugg::graphics::Renderer::Renderer(mugg::core::Device* creator) {
-    this->creator = creator;
+mugg::graphics::Renderer::Renderer(mugg::core::Engine* p) {
+    this->parent = p;
     this->wireframe = false;
     this->deltatime = 0;
     this->frametime = 0;
@@ -84,7 +84,7 @@ void mugg::graphics::Renderer::UpdateTime() {
     }
 }
 
-void mugg::graphics::Renderer::Draw() {
+void mugg::graphics::Renderer::Render() {
     this->UpdateTime();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -101,10 +101,10 @@ namespace mugg {
             return 1;
         }
 
-        int rendererDraw(lua_State* L) {
+        int rendererRender(lua_State* L) {
             mugg::graphics::Renderer* renderer = checkRenderer(L, 1);
 
-            renderer->Draw();
+            renderer->Render();
 
             return 0;
         }
@@ -124,7 +124,7 @@ namespace mugg {
             {"get_frametime", rendererGetFrametime},
             {"get_fps", rendererGetFPS},
 
-            {"draw", rendererDraw},
+            {"draw", rendererRender},
 
             {NULL, NULL}
         };

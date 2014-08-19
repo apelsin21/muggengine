@@ -13,7 +13,7 @@
 
 namespace mugg {
     namespace core {
-        class Device;
+        class Engine;
     
         class Window {
             private:
@@ -26,13 +26,13 @@ namespace mugg {
                 SDL_GLContext sdlContext;
                 Uint32 windowID;
 
-                mugg::core::Device* parent;
+                mugg::core::Engine* parent;
 
                 void CheckSDLError(int);
                 void CheckForEvents();
             public:
-                Window(mugg::core::Device*);
-                Window(mugg::core::Device*, int, int, const std::string&);
+                Window(mugg::core::Engine*);
+                Window(mugg::core::Engine*, int, int, const std::string&);
                 ~Window();
 
                 virtual bool HasFocus();

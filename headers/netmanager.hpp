@@ -13,7 +13,7 @@
 
 namespace mugg {
     namespace core {
-        class Device;
+        class Engine;
     }
 
     namespace net {
@@ -30,9 +30,9 @@ namespace mugg {
                 bool running;
                 void Poll();
      
-                mugg::core::Device* parent;
+                mugg::core::Engine* parent;
             public:
-                NetManager(mugg::core::Device*);
+                NetManager(mugg::core::Engine*);
                 ~NetManager();
 
                 bool AddClient(mugg::net::Client&);

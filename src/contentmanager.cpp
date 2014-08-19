@@ -1,7 +1,7 @@
 #include "contentmanager.hpp"
 
-mugg::core::ContentManager::ContentManager(mugg::core::Device* creator) {
-    this->creator = creator;
+mugg::core::ContentManager::ContentManager(mugg::core::Engine* parent) {
+    this->parent = parent;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &this->maxTextureSize);
 }
 mugg::core::ContentManager::~ContentManager() {

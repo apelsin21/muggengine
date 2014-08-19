@@ -1,6 +1,6 @@
 #include "scenemanager.hpp"
 
-mugg::scene::SceneManager::SceneManager(mugg::core::Device* parent) {
+mugg::scene::SceneManager::SceneManager(mugg::core::Engine* parent) {
     this->parent = parent;
     this->programID = -1;
 }
@@ -41,7 +41,7 @@ GLuint mugg::scene::SceneManager::GetShaderProgramID() {
 
 //TODO:PLACEHOLDER
 void mugg::scene::SceneManager::Render() {
-    if(glIsProgram(this->programID) == GL_TRUE) {
+    if(!this->sceneNodes.empty() && glIsProgram(this->programID) == GL_TRUE) {
         for(unsigned int i= 0; i < this->sceneNodes.size(); i++) {
             for(unsigned int u = 0; u < this->sceneNodes[i]->GetNumberOfMeshes(); u++) {
                 mugg::graphics::Mesh* mesh = nullptr;
@@ -92,7 +92,5 @@ void mugg::scene::SceneManager::Render() {
                 glDisableVertexAttribArray(2);
             }
         }
-    } else {
-        std::cout << "SceneManager has invalid shaderprogram!\n";
     }
 }

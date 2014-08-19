@@ -1,16 +1,13 @@
-device = Device.new()
+engine = Engine.new()
 
-window = device:create_window()
-title = "MuggEngine Window"
-window:open(800, 600, title)
-
-renderer = device:create_renderer()
-content_mgr = device:create_content_manager()
-gui_mgr = device:create_gui_manager()
+window = engine:get_window()
+renderer = engine:get_renderer()
+content_mgr = engine:get_content_manager()
+gui_mgr = engine:get_gui_manager()
 
 renderer:initialize()
 
--- scene_mgr = device:create_scene_manager()
+-- scene_mgr = engine:create_scene_manager()
 -- shaderprogram = content_mgr:create_shaderprogram()
 -- shaderprogram:add(content_mgr:create_shader("VertexShader", "data/shaders/scene_vertex.glsl"))
 -- shaderprogram:add(content_mgr:create_shader("FragmentShader", "data/shaders/scene_fragment.glsl"))
@@ -107,11 +104,11 @@ function update()
  
     end
 
-    window:set_title(title .. " ms/frame: " .. renderer:get_frametime())
+    window:set_title(" ms/frame: " .. renderer:get_frametime())
 end
 
 while window:is_open() do
     update()
 
-    device:render()
+    engine:render()
 end
