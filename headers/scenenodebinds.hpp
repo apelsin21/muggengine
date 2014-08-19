@@ -30,7 +30,7 @@ namespace mugg {
             mugg::scene::SceneNode* node = checkSceneNode(L, 1);
             glm::vec4* position = checkvec4(L, 2);
 
-            node->SetPosition(position);
+            node->SetPosition(*position);
 
             return 0;
         }

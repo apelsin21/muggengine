@@ -62,23 +62,21 @@ void mugg::scene::SceneManager::Render() {
                 glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(this->sceneNodes[i]->GetPosition().x, this->sceneNodes[i]->GetPosition().y, this->sceneNodes[i]->GetPosition().z));
                 glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-                glm::mat4 projectionMatrix = glm::perspective(3.1415f / 2.0f, 4.0f / 3.0f, 0.001f, 100000.0f);
-                glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+                //glm::mat4 projectionMatrix = glm::perspective(3.1415f / 2.0f, 4.0f / 3.0f, 0.001f, 100000.0f);
+                //glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
                 
                 glBindVertexArray(mesh->GetVAOID());
 
-                // Vertices
                 glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(2);
+                glEnableVertexAttribArray(1);
+                
                 glBindBuffer(GL_ARRAY_BUFFER, mesh->GetPositionBufferID());
                 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
                 
-                // Texture Coordinates
-                glEnableVertexAttribArray(1);
                 glBindBuffer(GL_ARRAY_BUFFER, mesh->GetUVBufferID());
                 glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
                 
-                // Normals
-                glEnableVertexAttribArray(2);
                 glBindBuffer(GL_ARRAY_BUFFER, mesh->GetNormalBufferID());
                 glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
                 

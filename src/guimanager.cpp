@@ -39,16 +39,6 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Device* parent) {
     glGenBuffers(1, &this->modelMatrixBuffer);
 
     glBindVertexArray(this->vaoID);
-
-    glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * 100000, NULL, GL_DYNAMIC_DRAW);
-
-    for(unsigned int i = 0; i < 4; i++) {
-        glEnableVertexAttribArray(2 + i);
-        glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (GLvoid*)(sizeof(glm::vec4) * i));
-        glVertexAttribDivisor(2 + i, 1);
-        glDisableVertexAttribArray(2 + i);
-    }
     
     static const GLfloat g_vertex_buffer_data[] = {
         -1.0f, -1.0f, 0.0f, 0.0f,
@@ -71,7 +61,18 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Device* parent) {
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * 100000, NULL, GL_DYNAMIC_DRAW);
+
+    for(unsigned int i = 0; i < 4; i++) {
+        glEnableVertexAttribArray(2 + i);
+        glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (GLvoid*)(sizeof(glm::vec4) * i));
+        glVertexAttribDivisor(2 + i, 1);
+        glDisableVertexAttribArray(2 + i);
+    }
 }
+
 mugg::gui::GUIManager::~GUIManager() {
     glDeleteBuffers(1, &this->positionBuffer);
     glDeleteBuffers(1, &this->modelMatrixBuffer);
@@ -123,10 +124,12 @@ void mugg::gui::GUIManager::Render() {
         glEnableVertexAttribArray(4);
         glEnableVertexAttribArray(5);
         glEnableVertexAttribArray(6);
+        
+        glUseProgram(this->programID);
+        
         glBindVertexArray(this->vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBuffer);
-        glUseProgram(this->programID);
-
+        
         for(unsigned int i = 0; i < this->images.size(); i++) {
             glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * i, sizeof(glm::mat4), (GLvoid*)(&this->images[i]->GetModelMatrix()[0]));
         }

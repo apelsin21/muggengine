@@ -10,8 +10,6 @@ gui_mgr = device:create_gui_manager()
 
 renderer:initialize()
 
-keyboard = Keyboard.new()
-
 -- scene_mgr = device:create_scene_manager()
 -- shaderprogram = content_mgr:create_shaderprogram()
 -- shaderprogram:add(content_mgr:create_shader("VertexShader", "data/shaders/scene_vertex.glsl"))
@@ -27,24 +25,34 @@ keyboard = Keyboard.new()
 -- print("Mesh has " .. mesh:get_number_of_uvs() .. " texture coordinates")
 -- print("Mesh has " .. mesh:get_number_of_normals() .. " normals")
 
-img = gui_mgr:create_image()
-img:set_texture(content_mgr:create_texture2d("data/textures/error.png", false))
-scale = Vector2D.new()
-scale:set_xy(0.1, 0.1)
-img:set_scale(scale)
+img_array = {}
+num_images = 10
 
-img2 = gui_mgr:create_image()
-img2:set_texture(content_mgr:create_texture2d("data/textures/error.png", false))
+ball_texture = content_mgr:create_texture2d("data/textures/ball.png", false)
+ball_pos = Vector2D.new()
+
+for i = 0, num_images do
+    img_array[i] = gui_mgr:create_image()
+    img_array[i]:set_texture(ball_texture)
+    ball_scale = Vector2D.new()
+    scale = 0.1
+    ball_scale:set_xy(scale, scale)
+    img_array[i]:set_scale(ball_scale)
+    ball_pos:set_xy(math.random() * 1.0 + -1.0, math.random() * 0.8 + 0.1)
+    img_array[i]:set_position(ball_pos)
+end
 
 lastkey = ""
 
 mouse = Mouse.new()
+keyboard = Keyboard.new()
 
-position = Vector2D.new()
-rotation = 0
+change_array = {}
 
-client = Client.new()
-client:initialize(2, 0, 0)
+for i = 0, num_images do
+    change_array[i] = Vector2D.new()
+    change_array[i]:set_xy(math.random() * 0.5 + -0.5, math.random() * 0.5 + -0.5)
+end
 
 function update()
     if keyboard:is_key_down("Escape") and lastkey ~= "Escape" then
@@ -71,33 +79,32 @@ function update()
     elseif keyboard:is_key_down("F1") and lastkey ~= "F1" then
         renderer:set_wireframe(not renderer:get_wireframe())
         lastkey = "F1"
-    elseif keyboard:is_key_down("Return") and laskey ~= "Return" then
-        client:connect("127.0.0.1", 2300, 3000)
-        lastkey = "Return"
     elseif lastkey ~= "" and keyboard:is_key_up(lastkey) then
         lastkey = ""
     end 
-    
-    if keyboard:is_key_down("W") and position:get_y() <= 1 then
-        position:set_y(position:get_y() + 0.1)
-    end
-    if keyboard:is_key_down("S") and position:get_y() >= -1 then
-        position:set_y(position:get_y() - 0.1)
-    end
-    if keyboard:is_key_down("A") and position:get_x() >= -1 then
-        position:set_x(position:get_x() - 0.1)
-    end
-    if keyboard:is_key_down("D") and position:get_x() <= 1 then
-        position:set_x(position:get_x() + 0.1)
-    end
 
-    img:set_position(position)
-    img:set_rotation_angle(math.sin(os.clock() * 100))
+    for i = 0, num_images do
+        img_array[i]:set_rotation(img_array[i]:get_rotation() + 0.1)
+ 
+        if img_array[i]:get_rotation() >= 3.14*2 then
+            img_array[i]:set_rotation(0)
+        end
 
-    client:poll(0)
+        img_array[i]:set_position(img_array[i]:get_position() + change_array[i])
 
-    if mouse:is_left_button_down() or mouse:is_right_button_down() or mouse:is_middle_button_down() then
-        print("Mouse: " .. mouse:get_x() .. "x" .. mouse:get_y())
+        if img_array[i]:get_position():get_x() >= 1 then
+            change_array[i]:set_x(change_array[i]:get_x() * -1)
+        end
+        if img_array[i]:get_position():get_x() <= -1 then
+            change_array[i]:set_x(change_array[i]:get_x() * -1)
+        end
+        if img_array[i]:get_position():get_y() >= 1 then
+            change_array[i]:set_y(change_array[i]:get_y() * -1)
+        end
+        if img_array[i]:get_position():get_y() <= -1 then
+            change_array[i]:set_y(change_array[i]:get_y() * -1)
+        end
+ 
     end
 
     window:set_title(title .. " ms/frame: " .. renderer:get_frametime())

@@ -75,19 +75,19 @@ namespace mugg {
             return 1;
         }
 
-        int imageSetRotationAngle(lua_State* L) {
+        int imageSetRotation(lua_State* L) {
             mugg::gui::Image* img = checkImage(L, 1);
            
             float angle = luaL_checknumber(L, 2);
 
-            img->SetRotationAngle(angle);
+            img->SetRotation(angle);
 
             return 0;
         }
-        int imageGetRotationAngle(lua_State* L) {
+        int imageGetRotation(lua_State* L) {
             mugg::gui::Image* img = checkImage(L, 1);
 
-            lua_pushnumber(L, img->GetRotationAngle());
+            lua_pushnumber(L, img->GetRotation());
             
             return 1;
         }
@@ -102,8 +102,8 @@ namespace mugg {
             {"set_scale", imageSetScale},
             {"get_scale", imageGetScale},
 
-            {"set_rotation_angle", imageSetRotationAngle},
-            {"get_rotation_angle", imageGetRotationAngle},
+            {"set_rotation", imageSetRotation},
+            {"get_rotation", imageGetRotation},
 
             {NULL, NULL},
         };

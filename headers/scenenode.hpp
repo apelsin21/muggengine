@@ -4,7 +4,9 @@
 #include <iostream>
 #include <vector>
 
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "mesh.hpp"
 
@@ -15,19 +17,30 @@ namespace mugg {
         class SceneNode {
             private:
                 glm::vec4 position;
+                glm::vec3 rotation;
+                glm::vec3 scale;
 
                 mugg::scene::SceneManager* parent;
                 std::vector<mugg::graphics::Mesh*> meshes;
+                glm::mat4 translationMatrix, rotationMatrix, scaleMatrix;
             public:
                 SceneNode(mugg::scene::SceneManager*);
                 ~SceneNode();
 
-                void AddMesh(mugg::graphics::Mesh*&);
-                bool GetMeshByIndex(int, mugg::graphics::Mesh*&);
-                int GetNumberOfMeshes();
+                virtual void AddMesh(mugg::graphics::Mesh*&);
+                virtual bool GetMeshByIndex(int, mugg::graphics::Mesh*&);
+                virtual int GetNumberOfMeshes();
+                
+                virtual glm::mat4 GetModelMatrix();
 
-                void SetPosition(glm::vec4*);
-                glm::vec4 GetPosition();
+                virtual void SetPosition(const glm::vec4&);
+                virtual glm::vec4 GetPosition();
+
+                virtual void SetRotation(const glm::vec3&);
+                virtual glm::vec3 GetRotation();
+
+                virtual void SetScale(const glm::vec3&);
+                virtual glm::vec3 GetScale();
         };
     }
 }

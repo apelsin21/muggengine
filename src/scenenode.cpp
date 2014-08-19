@@ -21,9 +21,35 @@ int mugg::scene::SceneNode::GetNumberOfMeshes() {
     return this->meshes.size();
 }
 
-void mugg::scene::SceneNode::SetPosition(glm::vec4* in_position) {
-    this->position = position;
+void mugg::scene::SceneNode::SetPosition(const glm::vec4& in_position) {
+    this->position = in_position;
+    
+    this->translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(this->position.x, this->position.y, this->position.z));
 }
 glm::vec4 mugg::scene::SceneNode::GetPosition() {
     return this->position;
+}
+
+void mugg::scene::SceneNode::SetRotation(const glm::vec3& in_rotation) {
+    this->rotation = in_rotation;
+    
+    this->rotationMatrix = glm::rotate(glm::mat4(1.0f), this->rotation.x, glm::vec3(1.0f, 0.0f, 0.0f)) *
+                           glm::rotate(glm::mat4(1.0f), this->rotation.y, glm::vec3(0.0f, 1.0f, 0.0f)) *
+                           glm::rotate(glm::mat4(1.0f), this->rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+}
+glm::vec3 mugg::scene::SceneNode::GetRotation() {
+    return this->rotation;
+}
+
+void mugg::scene::SceneNode::SetScale(const glm::vec3& in_scale) {
+    this->scale = scale;
+    
+    this->scaleMatrix = glm::scale(glm::mat4(1.0f), this->scale);
+}
+glm::vec3 mugg::scene::SceneNode::GetScale() {
+    return this->scale;
+}
+
+glm::mat4 mugg::scene::SceneNode::GetModelMatrix() {
+    return this->translationMatrix * this->rotationMatrix * this->rotationMatrix;
 }

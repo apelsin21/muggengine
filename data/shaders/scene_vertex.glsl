@@ -11,7 +11,7 @@ uniform mat4 v_model;
 uniform mat4 v_projection;
 
 void main(void) {
-   gl_Position = v_projection * v_model * vec4(v_position, 1.0);
+   gl_Position = v_model * vec4(v_position, 1.0);
    f_uv = v_uv;
    f_normal = v_normal;
 }

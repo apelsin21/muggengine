@@ -21,7 +21,7 @@ namespace mugg {
                 mugg::gui::GUIManager* parent;
                 mugg::graphics::Texture2D* texture;
                 glm::vec2 position, scale;
-                float rotationAngle;
+                float rotation;
                 glm::mat4 modelMatrix, translationMatrix, rotationMatrix, scaleMatrix;
             public:
                 GUIObject(mugg::gui::GUIManager*, unsigned int);
@@ -31,8 +31,8 @@ namespace mugg {
                 virtual void SetScale(const glm::vec2&);
                 virtual glm::vec2 GetScale();
 
-                virtual void SetRotationAngle(const float);
-                virtual float GetRotationAngle();
+                virtual void SetRotation(const float);
+                virtual float GetRotation();
 
                 virtual void SetPosition(const glm::vec2&);
                 virtual glm::vec2 GetPosition();
