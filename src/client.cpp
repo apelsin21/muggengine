@@ -132,7 +132,7 @@ void mugg::net::Client::PollEvents(int timeout = 0) {
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 this->latestEvent = mugg::net::Event::Received;
-                this->latestEventData = this->event.peer->data;
+                this->latestEventData = (unsigned char*)this->event.peer->data;
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 this->latestEvent = mugg::net::Event::Disconnected;
