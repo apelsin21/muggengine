@@ -7,6 +7,8 @@
 
 namespace mugg {
     namespace net {
+        class NetManager;
+
         class NetBase {
             protected:
                 ENetAddress address;
@@ -20,31 +22,38 @@ namespace mugg {
                 int maxConnections, maxChannels;
                 unsigned int inLimit, outLimit;
                 bool initialized;
+            
+                mugg::net::NetManager* parent;
             public:
-                int GetMaxConnections() {
+                NetBase(mugg::net::NetManager* parent) {
+                    this->parent = parent;
+                    this->latestEvent = mugg::net::Event::None;
+                }
+
+                virtual int GetMaxConnections() {
                     return this->maxConnections;
                 }
-                int GetMaxChannels() {
+                virtual int GetMaxChannels() {
                     return this->maxChannels;
                 }
                 
-                void SetBandwidthLimit(unsigned int inThrottle, unsigned int outThrottle) {
+                virtual void SetBandwidthLimit(unsigned int inThrottle, unsigned int outThrottle) {
                     enet_host_bandwidth_limit(this->host, inThrottle, outThrottle);
                     this->inLimit = inThrottle;
                     this->outLimit = outThrottle;
                 }
-                unsigned int GetInLimit() {
+                virtual unsigned int GetInLimit() {
                     return this->inLimit;
                 }
-                unsigned int GetOutLimit() {
+                virtual unsigned int GetOutLimit() {
                     return this->outLimit;
                 }
                 
-                bool IsInitialized() {
+                virtual bool IsInitialized() {
                     return this->initialized;
                 }
 
-                std::string AddressToString(ENetAddress address) {
+                virtual std::string AddressToString(ENetAddress address) {
                     unsigned char bytes[4];
                     bytes[0] = address.host & 0xFF;
                     bytes[1] = (address.host >> 8) & 0xFF;
@@ -58,14 +67,20 @@ namespace mugg {
                     return std::string(buffer);
                 }
 
-                mugg::net::Event GetLatestEvent() {
+                virtual mugg::net::Event ClearLatestEvent() {
+                    this->latestEvent = mugg::net::Event::None;
+                }
+                virtual mugg::net::Event GetLatestEvent() {
                     return this->latestEvent;
                 }
-                std::string GetLatestEventAddress() {
+                virtual std::string GetLatestEventAddress() {
                     return this->latestEventAddress;
                 }
-                unsigned char* GetLatestEventData() {
+                virtual unsigned char* GetLatestEventData() {
                     return this->latestEventData;
+                }
+
+                virtual void Poll() {
                 }
         };
     }

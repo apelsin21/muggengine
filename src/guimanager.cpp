@@ -63,7 +63,7 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
     glDisableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * 100000, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * 10000, NULL, GL_DYNAMIC_DRAW);
 
     for(unsigned int i = 0; i < 4; i++) {
         glEnableVertexAttribArray(2 + i);
@@ -132,12 +132,6 @@ void mugg::gui::GUIManager::Render() {
         glBindVertexArray(this->vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBuffer);
         
-        //glm::mat4* modelMatrices = (glm::mat4*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-        //for(unsigned int i = 0; i < this->images.size(); i++) {
-        //    modelMatrices[i] = this->images[i]->GetModelMatrix();
-        //}
-        //glUnmapBuffer(GL_ARRAY_BUFFER);
-
         for(unsigned int i = 0; i < this->images.size(); i++) {
             glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * i, sizeof(glm::mat4), (GLvoid*)(&this->images[i]->GetModelMatrix()[0]));
         }

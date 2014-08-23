@@ -18,7 +18,7 @@ namespace mugg {
                 std::vector<ENetAddress> connectedClients;
                 unsigned int numberOfClients;
             public:
-                Server();
+                Server(mugg::net::NetManager*);
                 ~Server();
 
                 bool Initialize(const char* address, unsigned short port, int maxConnections, int maxChannels, unsigned int inLimit, unsigned int outLimit);
@@ -32,7 +32,7 @@ namespace mugg {
                 void DisconnectAllClients();
                 void DisconnectClient();
     
-                void PollEvents(int timeout);
+                void Poll();
         };
     }
 }

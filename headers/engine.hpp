@@ -24,7 +24,6 @@ namespace mugg {
                 mugg::core::Window* window;
                 mugg::graphics::Renderer* renderer;
                 mugg::net::NetManager* netManager;
-            
             public:
                 Engine();
                 ~Engine();
@@ -40,7 +39,7 @@ namespace mugg {
                 virtual mugg::scene::SceneManager* GetSceneManager();
 
                 virtual mugg::net::NetManager* GetNetManager();
-
+            
                 virtual void Render();
         };
     }

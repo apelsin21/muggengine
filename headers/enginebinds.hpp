@@ -9,6 +9,7 @@
 #include "rendererbinds.hpp"
 #include "contentmanagerbinds.hpp"
 #include "scenemanagerbinds.hpp"
+#include "netmanagerbinds.hpp"
 
 namespace mugg {
     namespace binds {
@@ -95,6 +96,18 @@ namespace mugg {
             return 1;
         }
 
+        int engineGetNetManager(lua_State* L) {
+            mugg::core::Engine* engine = checkEngine(L, 1);
+
+            mugg::net::NetManager** mgr = (mugg::net::NetManager**)lua_newuserdata(L, sizeof(mugg::net::NetManager*));
+            *mgr = engine->GetNetManager();
+
+            luaL_getmetatable(L, NetManagerName);
+            lua_setmetatable(L, -2);
+
+            return 1;
+        }
+
         int engineRender(lua_State* L) {
             mugg::core::Engine* engine = checkEngine(L, 1);
 
@@ -102,7 +115,7 @@ namespace mugg {
 
             return 0;
         }
-
+        
         luaL_Reg engineFuncs[] = {
             {"new", engineConstructor},
 
@@ -111,6 +124,7 @@ namespace mugg {
             {"get_window",          engineGetWindow},
             {"get_renderer",        engineGetRenderer},
             {"get_scene_manager",   engineGetSceneManager},
+            {"get_net_manager", engineGetNetManager},
 
             {"render", engineRender},
 

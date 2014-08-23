@@ -1,6 +1,6 @@
 #include "server.hpp"
 
-mugg::net::Server::Server() {
+mugg::net::Server::Server(mugg::net::NetManager* parent) : NetBase(parent) {
     this->maxConnections = 5;
     this->maxChannels = 2;
     this->inLimit = 0;
@@ -96,7 +96,7 @@ unsigned int mugg::net::Server::GetNumberOfClients() {
     return this->numberOfClients;
 }
 
-void mugg::net::Server::PollEvents(int timeout = 0) {
+void mugg::net::Server::Poll() {
     if(!this->initialized) {
         std::cout << "Tried to poll non-initialized server!\n";
         return;
@@ -104,7 +104,7 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
     
     this->latestEvent = mugg::net::Event::None;
 
-    while(enet_host_service(this->host, &this->event, timeout) > 0) {
+    while(enet_host_service(this->host, &this->event, 0) > 0) {
         switch(event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 this->numberOfClients++;

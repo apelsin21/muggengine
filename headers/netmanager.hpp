@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <vector>
-
 #include <thread>
 #include <mutex>
 
@@ -15,39 +14,44 @@ namespace mugg {
     namespace core {
         class Engine;
     }
-
     namespace net {
+        struct ClientConnectCommand {
+            const char* address;
+            unsigned int timeout;
+            unsigned int port;
+            unsigned int index;
+        };
+        struct ClientDisconnectCommand {
+            unsigned int timeout;
+            unsigned int index;
+        };
+
         class NetManager {
             private:
-                std::vector<mugg::net::Client> clients;
-                std::vector<mugg::net::Server> servers;
-            
-                std::vector<mugg::net::Client> clientQueue;
-                std::vector<mugg::net::Server> serverQueue;
-    
-                std::vector<std::thread> threads;            
+                std::vector<mugg::net::Client*> clients, clientQueue;
+                std::vector<mugg::net::Server*> servers, serverQueue;
 
-                bool running;
-                void Poll();
-     
+                std::vector<ClientConnectCommand> clientConnectQueue;
+                std::vector<ClientDisconnectCommand> clientDisconnectQueue;
+
                 mugg::core::Engine* parent;
+                
+                bool updateServers, updateClients;
+                std::vector<std::thread> threads;
             public:
                 NetManager(mugg::core::Engine*);
                 ~NetManager();
 
-                bool AddClient(mugg::net::Client&);
-                bool GetClientByIndex(int, mugg::net::Client&);
-                std::vector<mugg::net::Client> GetCurrentClients();
-                int GetNumberOfClients();
+                virtual mugg::net::Client* CreateClient();
+                virtual std::size_t GetClientCount();
+                virtual std::size_t GetClientQueueCount();
 
-                bool AddServer(mugg::net::Server&);
-                bool GetServerByIndex(int, mugg::net::Server&);
-                std::vector<mugg::net::Server> GetCurrentServers();
-                int GetNumberOfServers();
-
-                void Start();
-                void Stop();
-                void Break();
+                virtual mugg::net::Server* CreateServer();
+                virtual std::size_t GetServerCount();
+                virtual std::size_t GetServerQueueCount();
+        
+                virtual void UpdateClients();
+                virtual void UpdateServers();
         };
     }
 }

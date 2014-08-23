@@ -15,24 +15,6 @@ namespace mugg {
             return *(mugg::net::Client**)luaL_checkudata(L, n, ClientName);
         }
 
-        int clientConstructor(lua_State* L) {
-            mugg::net::Client** client = (mugg::net::Client**)lua_newuserdata(L, sizeof(mugg::net::Client*));
-            *client = new mugg::net::Client();
-
-            luaL_getmetatable(L, ClientName);
-            lua_setmetatable(L, -2);
-
-            return 1;
-        }
-
-        int clientDeconstructor(lua_State* L) {
-            mugg::net::Client* client = checkClient(L, 1);
-
-            delete client;
-
-            return 0;
-        }
-
         int clientInitialize(lua_State* L) {
             mugg::net::Client* client = checkClient(L, 1);
 
@@ -63,12 +45,10 @@ namespace mugg {
             return 0;
         }
 
-        int clientPollEvents(lua_State* L) {
+        int clientPoll(lua_State* L) {
             mugg::net::Client* client = checkClient(L, 1);
 
-            int timeout = luaL_checknumber(L, 2);
-
-            client->PollEvents(timeout);
+            client->Poll();
 
             return 0;
         }
@@ -99,10 +79,23 @@ namespace mugg {
        
             return 1;
         }
-        
-        luaL_Reg clientFuncs[] = {
-            {"new", clientConstructor},
+        int clientGetPeerAddress(lua_State* L) {
+            mugg::net::Client* client = checkClient(L, 1);
 
+            lua_pushstring(L, client->GetPeerAddress().c_str());
+
+            return 1;
+        }
+
+        int clientClearLatestEvent(lua_State* L) {
+            mugg::net::Client* client = checkClient(L, 1);
+
+            client->ClearLatestEvent();
+
+            return 0;
+        }
+
+        luaL_Reg clientFuncs[] = {
             {"initialize", clientInitialize},
             
             {"connect", clientConnect},
@@ -112,11 +105,13 @@ namespace mugg {
 
             {"send_string_packet", clientSendStringPacket},
 
-            {"poll", clientPollEvents},
+            {"poll", clientPoll},
 
             {"get_latest_event", clientGetLatestEvent},
+            {"get_peer_address", clientGetPeerAddress},
 
-            {"__gc", clientDeconstructor},
+            {"clear_latest_event", clientClearLatestEvent},
+            
             {NULL, NULL}
         };
     }

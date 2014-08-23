@@ -16,6 +16,8 @@
 #include "shaderprogram.hpp"
 #include "shader.hpp"
 
+#include "spritebatch.hpp"
+
 namespace mugg {
     namespace core {
         class Engine;

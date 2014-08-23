@@ -1,6 +1,6 @@
 #include "client.hpp"
 
-mugg::net::Client::Client() {
+mugg::net::Client::Client(mugg::net::NetManager* parent) : NetBase(parent) {
     this->maxConnections = 1;
     this->maxChannels = 2;
     this->inLimit = 0;
@@ -41,6 +41,10 @@ bool mugg::net::Client::Initialize() {
 
     this->initialized = true;
     return true;
+}
+
+std::string mugg::net::Client::GetPeerAddress() {
+    return this->AddressToString(this->peer->address);
 }
 
 bool mugg::net::Client::Connect(const char* address, unsigned short port, int timeout = 5000) {
@@ -130,13 +134,13 @@ bool mugg::net::Client::SendPacket(mugg::net::StringPacket packet, unsigned int 
     return true;
 }
 
-void mugg::net::Client::PollEvents(int timeout = 0) {
+void mugg::net::Client::Poll() {
     if(!this->initialized) {
         std::cout << "Tried to poll an unintialized client!\n";
         return;
     } 
     
-    while(enet_host_service(this->host, &this->event, timeout) > 0) {
+    while(enet_host_service(this->host, &this->event, 0) > 0) {
         switch(this->event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 this->latestEvent = mugg::net::Event::Connected;

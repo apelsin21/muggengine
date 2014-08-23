@@ -2,112 +2,118 @@
 
 mugg::net::NetManager::NetManager(mugg::core::Engine* parent) {
     this->parent = parent;
-    this->running = false;
+
+    this->updateClients = true;
+    this->updateServers = true;
+
+    this->threads.push_back(std::thread(&mugg::net::NetManager::UpdateClients, this));
+    this->threads.push_back(std::thread(&mugg::net::NetManager::UpdateServers, this));
+    
+    for(unsigned int i = 0; i < this->threads.size(); i++) {
+        this->threads[i].detach();
+    }
 }
 mugg::net::NetManager::~NetManager() {
-    this->Break();
+    this->updateClients = false;
+    this->updateServers = false;
+
+    for(unsigned int i = 0; i < this->clients.size(); i++) {
+        if(this->clients[i] != nullptr) {
+            delete this->clients[i];
+        }
+    }
+    for(unsigned int i = 0; i < this->servers.size(); i++) {
+        if(this->servers[i] != nullptr) {
+            delete this->servers[i];
+        }
+    }
+
+    for(unsigned int i = 0; i < this->threads.size(); i++) {
+        if(this->threads[i].joinable()) {
+            this->threads[i].join();
+            std::cout << "Thread joined!\n";
+        } else {
+            std::cout << "Failed to join thread!\n";
+        }
+    }
 }
 
-bool mugg::net::NetManager::AddClient(mugg::net::Client& client) {
-    if(!client.IsConnected() || !client.IsInitialized()) {
-        std::cout << "Tried to add unconnected or unintialized client to netmanager!\n";
-        return false;
-    }
-    
+mugg::net::Client* mugg::net::NetManager::CreateClient() {
+    mugg::net::Client* client = new mugg::net::Client(this);
+
     this->clientQueue.push_back(client);
-    
-    return true;
-}
-bool mugg::net::NetManager::GetClientByIndex(int index, mugg::net::Client &out_client) {
-    if(this->clients.size() != 0 && index <= this->clients.size()) {
-        out_client = this->clients[index];
-        return true;
-    }
 
-    return false;
+    return client;
 }
-std::vector<mugg::net::Client> mugg::net::NetManager::GetCurrentClients() {
-    return this->clients;
+std::size_t mugg::net::NetManager::GetClientCount() {
+    return this->clients.size();
 }
-int mugg::net::NetManager::GetNumberOfClients() {
-    return this->clients.size() + this->clientQueue.size();
+std::size_t mugg::net::NetManager::GetClientQueueCount() {
+    return this->clientQueue.size();
 }
 
-bool mugg::net::NetManager::AddServer(mugg::net::Server& server) {
-    if(!server.IsInitialized()) {
-        std::cout << "Tried to add uninitialized server to netmanager!\n";
-        return false;
-    }
+mugg::net::Server* mugg::net::NetManager::CreateServer() {
+    mugg::net::Server* server = new mugg::net::Server(this);
 
     this->serverQueue.push_back(server);
 
-    return true;
+    return server;
 }
-bool mugg::net::NetManager::GetServerByIndex(int index, mugg::net::Server &out_server) {
-    if(this->clients.size() != 0 && index <= this->clients.size()) {
-        out_server = this->servers[index];
-        return true;
-    }
-
-    return false;
+std::size_t mugg::net::NetManager::GetServerCount() {
+    return this->servers.size();
 }
-std::vector<mugg::net::Server> mugg::net::NetManager::GetCurrentServers() {
-    return this->servers;
-}
-int mugg::net::NetManager::GetNumberOfServers() {
-    return this->servers.size() + this->serverQueue.size();
+std::size_t mugg::net::NetManager::GetServerQueueCount() {
+    return this->serverQueue.size();
 }
 
-void mugg::net::NetManager::Start() {
-    if(this->threads.size() == 0) {
-        this->threads.push_back(std::thread(&mugg::net::NetManager::Poll, this));
-    }
-    
-    this->running = true;
-}
-void mugg::net::NetManager::Stop() {
-    if(this->threads.size() > 0) {
-        if(this->threads[this->threads.size()].joinable()) {
-            this->threads[this->threads.size()].join();
-        }
-    }
-
-    this->running = false;
-}
-void mugg::net::NetManager::Break() {
-    if(this->threads.size() != 0) {
-        for(int i = 0; i <= this->threads.size(); i++) {
-            switch(this->threads[i].joinable()) {
-                case true:
-                    this->threads[i].join();
-                    break;
-                case false:
-                    break;
+void mugg::net::NetManager::UpdateClients() {
+    while(this->updateClients) {
+        if(!this->clientQueue.empty()) {
+            for(unsigned int i = 0; i < this->clientQueue.size(); i++) {
+                this->clients.push_back(this->clientQueue[i]);
+                this->clientQueue.erase(this->clientQueue.begin() + i);
+                i--;
             }
         }
-    }    
-}
+        
+        if(!this->clients.empty()) {
+            for(unsigned int i = 0; i < this->clients.size(); i++) {
+                this->clients[i]->Poll();
+            }
+            
+            if(!this->clientConnectQueue.empty()) {
+                for(unsigned int i = 0; i < this->clientConnectQueue.size(); i++) {
+                    this->clients[this->clientConnectQueue[i].index]->Connect(this->clientConnectQueue[i].address, this->clientConnectQueue[i].port, this->clientConnectQueue[i].timeout);
+                    this->clientDisconnectQueue.erase(this->clientDisconnectQueue.begin() + i);
+                    i--;
+                }
+            }
+            
+            if(!this->clientDisconnectQueue.empty()) {
+                for(unsigned int i = 0; i < this->clientDisconnectQueue.size(); i++) {
+                    this->clients[this->clientDisconnectQueue[i].index]->Disconnect(this->clientConnectQueue[i].timeout);
+                    this->clientDisconnectQueue.erase(this->clientDisconnectQueue.begin() + i);
+                    i--;
+                }
+            }
+        }
 
-void mugg::net::NetManager::Poll() {
-    if(this->clientQueue.size() != 0) {
-        for(int i = 0; i <= this->clientQueue.size(); i++) {
-            this->clients.push_back(this->clientQueue[i]);
-            this->clientQueue.erase(this->clientQueue.begin() + i);
-        }
     }
-    if(this->serverQueue.size() != 0) {
-        for(int i = 0; i <= this->serverQueue.size(); i++) {
-            this->servers.push_back(this->serverQueue[i]);
-            this->serverQueue.erase(this->serverQueue.begin() + 1);
+}
+void mugg::net::NetManager::UpdateServers() {
+    while(this->updateServers) {
+        if(!this->serverQueue.empty()) {
+            for(unsigned int i = 0; i < this->serverQueue.size(); i++) {
+                this->servers.push_back(this->serverQueue[i]);
+                this->serverQueue.erase(this->serverQueue.begin() + i);
+                i--;
+            }
         }
-    }
-    
-    while(running) {
-        for(int i = 0; i <= this->clients.size(); i++) {
-            this->clients[i].PollEvents(0);
-        }
-        for(int i = 0; i <= this->servers.size(); i++) {
-            this->servers[i].PollEvents(0);
+        
+        if(!this->servers.empty()) {
+            for(unsigned int i = 0; i < this->servers.size(); i++) {
+                this->servers[i]->Poll();
+            }
         }
     }
 }

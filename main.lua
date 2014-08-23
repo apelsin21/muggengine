@@ -4,6 +4,7 @@ window = engine:get_window()
 renderer = engine:get_renderer()
 content_mgr = engine:get_content_manager()
 gui_mgr = engine:get_gui_manager()
+net_mgr = engine:get_net_manager()
 
 renderer:initialize()
 
@@ -22,39 +23,16 @@ renderer:initialize()
 -- print("Mesh has " .. mesh:get_number_of_uvs() .. " texture coordinates")
 -- print("Mesh has " .. mesh:get_number_of_normals() .. " normals")
 
-img_array = {}
-num_images = 10
+server = net_mgr:create_server()
+server:initialize(2300)
 
-ball_texture = content_mgr:create_texture2d("data/textures/ball.png", false)
-ball_pos = Vector2D.new()
-
-client = Client.new()
+client = net_mgr:create_client()
 client:initialize()
-
-client:connect("192.168.1.139", 2300, 3000)
-
-for i = 0, num_images do
-    img_array[i] = gui_mgr:create_image()
-    img_array[i]:set_texture(ball_texture)
-    ball_scale = Vector2D.new()
-    scale = 0.1
-    ball_scale:set_xy(scale, scale)
-    img_array[i]:set_scale(ball_scale)
-    ball_pos:set_xy(math.random() * 1.0 + -1.0, math.random() * 0.8 + 0.1)
-    img_array[i]:set_position(ball_pos)
-end
 
 lastkey = ""
 
 mouse = Mouse.new()
 keyboard = Keyboard.new()
-
-change_array = {}
-
-for i = 0, num_images do
-    change_array[i] = Vector2D.new()
-    change_array[i]:set_xy(math.random() * 10 + -10, math.random() * 10 + -10)
-end
 
 start_time = os.clock()
 
@@ -83,49 +61,34 @@ function update()
     elseif keyboard:is_key_down("F1") and lastkey ~= "F1" then
         renderer:set_wireframe(not renderer:get_wireframe())
         lastkey = "F1"
+    elseif keyboard:is_key_down("Return") and lastkey ~= "Return" then
+        client:connect("127.0.0.1", 2300, 3000);
+        lastkey = "Return"
     elseif lastkey ~= "" and keyboard:is_key_up(lastkey) then
         lastkey = ""
     end 
 
-    deltatime = os.clock() - start_time
-
-    for i = 0, num_images do
-        img_array[i]:set_rotation(img_array[i]:get_rotation() + 31.4 * deltatime)
- 
-        if img_array[i]:get_rotation() >= 3.14*2 then
-            img_array[i]:set_rotation(0)
-        end
-
-        img_array[i]:set_position(img_array[i]:get_position() + change_array[i] * deltatime)
-
-        if img_array[i]:get_position():get_x() >= 1 then
-            change_array[i]:set_x(change_array[i]:get_x() * -1)
-        end
-        if img_array[i]:get_position():get_x() <= -1 then
-            change_array[i]:set_x(change_array[i]:get_x() * -1)
-        end
-        if img_array[i]:get_position():get_y() >= 1 then
-            change_array[i]:set_y(change_array[i]:get_y() * -1)
-        end
-        if img_array[i]:get_position():get_y() <= -1 then
-            change_array[i]:set_y(change_array[i]:get_y() * -1)
-        end
- 
-    end
-
     window:set_title("ms/frame: " .. renderer:get_frametime())
 
-    start_time = os.clock()
+    if server:get_latest_event() == "Connected" then
+        print("Connected to " .. server:get_latest_event_address())
+    elseif server:get_latest_event() == "Disconnected" then
+        print("Disconnected from " .. server:get_latest_event_address())
+    elseif server:get_latest_event() == "Received" then
+        print("Received " .. server:get_latest_event_data() .. " from " .. server:get_latest_event_addres())
+    end
+    
+    server:clear_latest_event()
 
     if client:get_latest_event() == "Connected" then
         print("Connected to " .. client:get_peer_address())
     elseif client:get_latest_event() == "Disconnected" then
-        print("Disconnected from " .. client:get_peer_address())
+        print("Disconnected from " .. server:get_peer_address())
     elseif client:get_latest_event() == "Received" then
-        print("Received " .. client:get_latest_event_data() .. " from " .. client:get_peer_addres())
+        print("Received from " .. server:get_peer_address())
     end
 
-    client:poll(0)
+    client:clear_latest_event()
 end
 
 while window:is_open() do

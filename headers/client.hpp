@@ -9,13 +9,15 @@
 
 namespace mugg {
     namespace net {
+        class NetManager;
+
         class Client : public NetBase {
             private:
                 ENetPeer* peer;
 
                 bool connected;
             public:
-                Client();
+                Client(mugg::net::NetManager*);
                 ~Client();
 
                 bool Initialize(int, unsigned int, unsigned int);
@@ -28,7 +30,9 @@ namespace mugg {
 
                 bool SendPacket(mugg::net::StringPacket, unsigned int);
 
-                void PollEvents(int);
+                std::string GetPeerAddress();
+
+                void Poll();
         };
     }
 }

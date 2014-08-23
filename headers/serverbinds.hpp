@@ -15,24 +15,6 @@ namespace mugg {
             return *(mugg::net::Server**)luaL_checkudata(L, n, ServerName);
         }
 
-        int serverConstructor(lua_State* L) {
-            mugg::net::Server** server = (mugg::net::Server**)lua_newuserdata(L, sizeof(mugg::net::Server*));
-            *server = new mugg::net::Server();
-
-            luaL_getmetatable(L, ServerName);
-            lua_setmetatable(L, -2);
-
-            return 1;
-        }
-
-        int serverDeconstructor(lua_State* L) {
-            mugg::net::Server* server = checkServer(L, 1);
-
-            delete server;
-
-            return 0;
-        }
-
         int serverInitialize(lua_State* L) {
             mugg::net::Server* server = checkServer(L, 1);
 
@@ -58,12 +40,10 @@ namespace mugg {
             return 0;
         }
 
-        int serverPollEvents(lua_State* L) {
+        int serverPoll(lua_State* L) {
             mugg::net::Server* server = checkServer(L, 1);
 
-            int timeout = luaL_checknumber(L, 2);
-
-            server->PollEvents(timeout);
+            server->Poll();
 
             return 0;
         }
@@ -155,9 +135,15 @@ namespace mugg {
             return 0;
         }
 
-        luaL_Reg serverFuncs[] = {
-            {"new", serverConstructor},
+        int serverClearLatestEvent(lua_State* L) {
+            mugg::net::Server* server = checkServer(L, 1);
 
+            server->ClearLatestEvent();
+
+            return 0;
+        }
+
+        luaL_Reg serverFuncs[] = {
             {"initialize", serverInitialize},
             {"initialize", serverInitializeMinimal},
 
@@ -178,9 +164,10 @@ namespace mugg {
             {"get_latest_event_address", serverGetLatestEventAddress},
             {"get_latest_event_data", serverGetLatestEventData},
 
-            {"poll", serverPollEvents},
+            {"poll", serverPoll},
 
-            {"__gc", serverDeconstructor},
+            {"clear_latest_event", serverClearLatestEvent},
+
             {NULL, NULL}
         };
     }
