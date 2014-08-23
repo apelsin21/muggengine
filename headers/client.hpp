@@ -18,16 +18,17 @@ namespace mugg {
                 Client();
                 ~Client();
 
-                bool Initialize(int maxChannels, unsigned int inLimit, unsigned int outLimit);
-                
+                bool Initialize(int, unsigned int, unsigned int);
+                bool Initialize();
+
                 bool IsConnected();
 
-                bool Connect(const char* address, unsigned short port, int timeout);
-                void Disconnect(int timeout);
+                bool Connect(const char*, unsigned short, int);
+                void Disconnect(int);
 
-                bool SendPacket(mugg::net::StringPacket packet, unsigned int channel);
+                bool SendPacket(mugg::net::StringPacket, unsigned int);
 
-                void PollEvents(int timeout);
+                void PollEvents(int);
         };
     }
 }

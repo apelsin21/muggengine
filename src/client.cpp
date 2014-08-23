@@ -30,6 +30,18 @@ bool mugg::net::Client::Initialize(int maxChannels = 2, unsigned int inLimit = 0
     this->initialized = true;
     return true;
 }
+bool mugg::net::Client::Initialize() {
+    this->host = enet_host_create(NULL, 1, this->maxChannels, this->inLimit, this->outLimit);
+
+    if(this->host == NULL) {
+        std::cout << "Error occurred initializing a net client!\n";
+        this->initialized = false;
+        return false;
+    }
+
+    this->initialized = true;
+    return true;
+}
 
 bool mugg::net::Client::Connect(const char* address, unsigned short port, int timeout = 5000) {
     if(!this->initialized) {
@@ -127,6 +139,7 @@ void mugg::net::Client::PollEvents(int timeout = 0) {
     while(enet_host_service(this->host, &this->event, timeout) > 0) {
         switch(this->event.type) {
             case ENET_EVENT_TYPE_CONNECT:
+                this->latestEvent = mugg::net::Event::Connected;
                 this->peer = event.peer;
                 this->connected = true;
                 break;

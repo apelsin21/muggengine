@@ -36,11 +36,7 @@ namespace mugg {
         int clientInitialize(lua_State* L) {
             mugg::net::Client* client = checkClient(L, 1);
 
-            int maxChannels = luaL_checknumber(L, 2);
-            int incThrottle = luaL_checknumber(L, 3);
-            int outThrottle = luaL_checknumber(L, 4);
-
-            client->Initialize(maxChannels, incThrottle, outThrottle);
+            client->Initialize();
 
             return 0;
         }
@@ -95,6 +91,14 @@ namespace mugg {
 
             return 0;
         }
+
+        int clientGetLatestEvent(lua_State* L) {
+            mugg::net::Client* client = checkClient(L, 1);
+
+            lua_pushstring(L, mugg::net::EventString[(int)client->GetLatestEvent()]);
+       
+            return 1;
+        }
         
         luaL_Reg clientFuncs[] = {
             {"new", clientConstructor},
@@ -109,6 +113,8 @@ namespace mugg {
             {"send_string_packet", clientSendStringPacket},
 
             {"poll", clientPollEvents},
+
+            {"get_latest_event", clientGetLatestEvent},
 
             {"__gc", clientDeconstructor},
             {NULL, NULL}

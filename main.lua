@@ -28,8 +28,10 @@ num_images = 10
 ball_texture = content_mgr:create_texture2d("data/textures/ball.png", false)
 ball_pos = Vector2D.new()
 
-server = Server.new()
-server:initialize(2300)
+client = Client.new()
+client:initialize()
+
+client:connect("192.168.1.139", 2300, 3000)
 
 for i = 0, num_images do
     img_array[i] = gui_mgr:create_image()
@@ -115,15 +117,15 @@ function update()
 
     start_time = os.clock()
 
-    if server:get_latest_event() == "Connected" then
-        print(server:get_latest_event_address() .. " connected")
-    elseif server:get_latest_event() == "Disconnected" then
-        print(server:get_latest_event_address() .. " disconnected")
-    elseif server:get_latest_event() == "Recieved" then
-        print(server:get_latest_event_address() .. " sent: " .. server:get_latest_event_data())
+    if client:get_latest_event() == "Connected" then
+        print("Connected to " .. client:get_peer_address())
+    elseif client:get_latest_event() == "Disconnected" then
+        print("Disconnected from " .. client:get_peer_address())
+    elseif client:get_latest_event() == "Received" then
+        print("Received " .. client:get_latest_event_data() .. " from " .. client:get_peer_addres())
     end
 
-    server:poll(0)
+    client:poll(0)
 end
 
 while window:is_open() do
