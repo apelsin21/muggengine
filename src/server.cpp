@@ -92,12 +92,8 @@ std::string mugg::net::Server::GetClientAddressByIndex(unsigned int index) {
     }
 }
 
-int mugg::net::Server::GetNumberOfClients() {
+unsigned int mugg::net::Server::GetNumberOfClients() {
     return this->numberOfClients;
-}
-
-void mugg::net::Server::SetBandwidthLimit(unsigned int incThrottle, unsigned int outThrottle) {
-    enet_host_bandwidth_limit(this->host, incThrottle, outThrottle);
 }
 
 void mugg::net::Server::PollEvents(int timeout = 0) {
@@ -111,6 +107,8 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
     while(enet_host_service(this->host, &this->event, timeout) > 0) {
         switch(event.type) {
             case ENET_EVENT_TYPE_CONNECT:
+                this->numberOfClients++;
+
                 this->latestEvent = mugg::net::Event::Connected;
                 this->latestEventAddress = this->AddressToString(this->event.peer->address);
             
@@ -124,9 +122,7 @@ void mugg::net::Server::PollEvents(int timeout = 0) {
 
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
-                if(this->numberOfClients != 0) {
-                    this->numberOfClients--;
-                }
+                this->numberOfClients--;
 
                 this->latestEvent = mugg::net::Event::Disconnected;
                 this->latestEventAddress = this->AddressToString(this->event.peer->address);

@@ -32,7 +32,6 @@ namespace mugg {
 
                 bool loaded;
 
-                void FillBuffers();
                 void GenIDS();
 
                 mugg::core::ContentManager* parent;

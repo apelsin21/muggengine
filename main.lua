@@ -7,7 +7,7 @@ gui_mgr = engine:get_gui_manager()
 
 renderer:initialize()
 
--- scene_mgr = engine:create_scene_manager()
+-- scene_mgr = engine:get_scene_manager()
 -- shaderprogram = content_mgr:create_shaderprogram()
 -- shaderprogram:add(content_mgr:create_shader("VertexShader", "data/shaders/scene_vertex.glsl"))
 -- shaderprogram:add(content_mgr:create_shader("FragmentShader", "data/shaders/scene_fragment.glsl"))
@@ -27,6 +27,9 @@ num_images = 10
 
 ball_texture = content_mgr:create_texture2d("data/textures/ball.png", false)
 ball_pos = Vector2D.new()
+
+server = Server.new()
+server:initialize(2300)
 
 for i = 0, num_images do
     img_array[i] = gui_mgr:create_image()
@@ -48,8 +51,10 @@ change_array = {}
 
 for i = 0, num_images do
     change_array[i] = Vector2D.new()
-    change_array[i]:set_xy(math.random() * 0.5 + -0.5, math.random() * 0.5 + -0.5)
+    change_array[i]:set_xy(math.random() * 10 + -10, math.random() * 10 + -10)
 end
+
+start_time = os.clock()
 
 function update()
     if keyboard:is_key_down("Escape") and lastkey ~= "Escape" then
@@ -80,14 +85,16 @@ function update()
         lastkey = ""
     end 
 
+    deltatime = os.clock() - start_time
+
     for i = 0, num_images do
-        img_array[i]:set_rotation(img_array[i]:get_rotation() + 0.1)
+        img_array[i]:set_rotation(img_array[i]:get_rotation() + 31.4 * deltatime)
  
         if img_array[i]:get_rotation() >= 3.14*2 then
             img_array[i]:set_rotation(0)
         end
 
-        img_array[i]:set_position(img_array[i]:get_position() + change_array[i])
+        img_array[i]:set_position(img_array[i]:get_position() + change_array[i] * deltatime)
 
         if img_array[i]:get_position():get_x() >= 1 then
             change_array[i]:set_x(change_array[i]:get_x() * -1)
@@ -104,7 +111,19 @@ function update()
  
     end
 
-    window:set_title(" ms/frame: " .. renderer:get_frametime())
+    window:set_title("ms/frame: " .. renderer:get_frametime())
+
+    start_time = os.clock()
+
+    if server:get_latest_event() == "Connected" then
+        print(server:get_latest_event_address() .. " connected")
+    elseif server:get_latest_event() == "Disconnected" then
+        print(server:get_latest_event_address() .. " disconnected")
+    elseif server:get_latest_event() == "Recieved" then
+        print(server:get_latest_event_address() .. " sent: " .. server:get_latest_event_data())
+    end
+
+    server:poll(0)
 end
 
 while window:is_open() do

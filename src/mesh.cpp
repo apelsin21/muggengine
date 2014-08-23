@@ -65,12 +65,6 @@ void mugg::graphics::Mesh::SetFilepath(const std::string& filepath) {
     this->filepath = filepath;
 }
 
-void mugg::graphics::Mesh::GenIDS() {
-}
-
-void mugg::graphics::Mesh::FillBuffers() {
-}
-
 void mugg::graphics::Mesh::SetIndices(const std::vector<unsigned short>& indices) {
     this->indices = indices;
 }

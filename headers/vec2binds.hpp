@@ -100,15 +100,77 @@ namespace mugg {
 
         int vec2Add(lua_State* L) {
             glm::vec2* lvec = checkVec2(L, 1);
-            glm::vec2* rvec = checkVec2(L, 2);
+            int rtype = lua_type(L, 2);
 
-            glm::vec2** returnvec = (glm::vec2**)lua_newuserdata(L, sizeof(glm::vec2*));
-            *returnvec = new glm::vec2(*lvec + *rvec);
+            switch(rtype) {
+                case LUA_TNUMBER: {
+                    float rnumber = luaL_checknumber(L, 2);
+                    
+                    glm::vec2** numbervec = (glm::vec2**)lua_newuserdata(L, sizeof(glm::vec2*));
+                    *numbervec = new glm::vec2(*lvec + rnumber);
 
-            luaL_getmetatable(L, Vec2Name);
-            lua_setmetatable(L, -2);
+                    luaL_getmetatable(L, Vec2Name);
+                    lua_setmetatable(L, -2);
+                   
+                    return 1;
 
-            return 1;
+                    break;
+                                  }
+                case LUA_TUSERDATA: {
+                    glm::vec2* rvec = checkVec2(L, 2);
+                    glm::vec2** vec = (glm::vec2**)lua_newuserdata(L, sizeof(glm::vec2*));
+                    *vec = new glm::vec2(*lvec + *rvec);
+
+                    luaL_getmetatable(L, Vec2Name);
+                    lua_setmetatable(L, -2);
+                        
+                    return 1;
+
+                    break;
+                                    }
+                default:
+                    luaL_error(L, "Vector2D __add right arg not number or userdata");
+
+                    return 0;
+                    break;
+            }
+        }
+        int vec2Multiplication(lua_State* L) {
+            glm::vec2* lvec = checkVec2(L, 1);
+            int rtype = lua_type(L, 2);
+
+            switch(rtype) {
+                case LUA_TNUMBER: {
+                    float rnumber = luaL_checknumber(L, 2);
+                    
+                    glm::vec2** numbervec = (glm::vec2**)lua_newuserdata(L, sizeof(glm::vec2*));
+                    *numbervec = new glm::vec2(*lvec * rnumber);
+
+                    luaL_getmetatable(L, Vec2Name);
+                    lua_setmetatable(L, -2);
+                   
+                    return 1;
+
+                    break;
+                                  }
+                case LUA_TUSERDATA: {
+                    glm::vec2* rvec = checkVec2(L, 2);
+                    glm::vec2** vec = (glm::vec2**)lua_newuserdata(L, sizeof(glm::vec2*));
+                    *vec = new glm::vec2(*lvec * *rvec);
+
+                    luaL_getmetatable(L, Vec2Name);
+                    lua_setmetatable(L, -2);
+                        
+                    return 1;
+
+                    break;
+                                    }
+                default:
+                    luaL_error(L, "Vector2D __mul right arg not number or userdata");
+
+                    return 0;
+                    break;
+            }
         }
 
         int vec2Clamp(lua_State* L) {
@@ -136,6 +198,7 @@ namespace mugg {
             {"normalize", vec2Normalize},
             {"clamp", vec2Clamp},
 
+            {"__mul", vec2Multiplication},
             {"__add", vec2Add},
             {"__concat", vec2Concat},
             {"__eq", vec2Equal},

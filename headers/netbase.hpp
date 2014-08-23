@@ -27,16 +27,22 @@ namespace mugg {
                 int GetMaxChannels() {
                     return this->maxChannels;
                 }
+                
+                void SetBandwidthLimit(unsigned int inThrottle, unsigned int outThrottle) {
+                    enet_host_bandwidth_limit(this->host, inThrottle, outThrottle);
+                    this->inLimit = inThrottle;
+                    this->outLimit = outThrottle;
+                }
                 unsigned int GetInLimit() {
                     return this->inLimit;
                 }
                 unsigned int GetOutLimit() {
                     return this->outLimit;
                 }
+                
                 bool IsInitialized() {
                     return this->initialized;
                 }
-
 
                 std::string AddressToString(ENetAddress address) {
                     unsigned char bytes[4];

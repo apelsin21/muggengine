@@ -115,6 +115,8 @@ bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_im
     return true;
 }
 
+#include <stdio.h>
+
 void mugg::gui::GUIManager::Render() {
     if(!this->images.empty()) {
         glEnableVertexAttribArray(0);
@@ -130,6 +132,12 @@ void mugg::gui::GUIManager::Render() {
         glBindVertexArray(this->vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBuffer);
         
+        //glm::mat4* modelMatrices = (glm::mat4*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+        //for(unsigned int i = 0; i < this->images.size(); i++) {
+        //    modelMatrices[i] = this->images[i]->GetModelMatrix();
+        //}
+        //glUnmapBuffer(GL_ARRAY_BUFFER);
+
         for(unsigned int i = 0; i < this->images.size(); i++) {
             glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * i, sizeof(glm::mat4), (GLvoid*)(&this->images[i]->GetModelMatrix()[0]));
         }

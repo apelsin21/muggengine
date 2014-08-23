@@ -34,7 +34,7 @@ bool mugg::graphics::ShaderProgram::GetCompiledSuccessfully() {
 }
 
 bool mugg::graphics::ShaderProgram::Link() {
-    if(this->shaders.size() != 0) {
+    if(!this->shaders.empty()) {
         for(unsigned int i = 0; i < this->shaders.size(); i++) {
             glAttachShader(this->ID, this->shaders[i]);
         }
@@ -46,6 +46,10 @@ bool mugg::graphics::ShaderProgram::Link() {
     
     glLinkProgram(this->ID);
     this->CheckForErrors();
+
+    for(unsigned int i = 0; i < this->shaders.size(); i++) {
+        glDetachShader(this->ID, this->shaders[i]);
+    }
 
     if(!this->compiledSuccessfully) {
         this->linked = false;
