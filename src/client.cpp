@@ -128,12 +128,14 @@ void mugg::net::Client::PollEvents(int timeout = 0) {
         switch(this->event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 this->peer = event.peer;
+                this->connected = true;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                std::cout << "CLIENT: RECEIVE EVENT\n";
+                this->latestEvent = mugg::net::Event::Received;
+                this->latestEventData = this->event.peer->data;
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
-                std::cout << "CLIENT: DISCONNECT EVENT\n";
+                this->latestEvent = mugg::net::Event::Disconnected;
                 this->connected = false;
                 break;
         }
