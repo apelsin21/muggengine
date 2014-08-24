@@ -23,6 +23,8 @@ namespace mugg {
                 glm::vec2 position, scale;
                 float rotation;
                 glm::mat4 modelMatrix, translationMatrix, rotationMatrix, scaleMatrix;
+            
+                bool changed;
             public:
                 GUIObject(mugg::gui::GUIManager*, unsigned int);
 
@@ -44,6 +46,8 @@ namespace mugg {
                 virtual glm::mat4 GetModelMatrix();
 
                 virtual unsigned int GetIndex();
+       
+                virtual bool HasChanged();
         };
     }
 }

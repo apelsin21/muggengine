@@ -54,7 +54,8 @@ namespace mugg {
                 );
 
                 std::vector<mugg::gui::Image*> images;
-
+                std::vector<mugg::graphics::SpriteBatch*> spriteBatches;
+                    
                 GLuint positionBuffer, vaoID, modelMatrixBuffer;
                 GLuint vsID, fsID, programID;
 

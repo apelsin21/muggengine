@@ -29,6 +29,16 @@ server:initialize(2300)
 client = net_mgr:create_client()
 client:initialize()
 
+
+ball_array = {}
+num_balls = 2000
+balltexture = content_mgr:create_texture2d("data/textures/ball.png", false)
+
+for i = 0, num_balls do
+    ball_array[i] = gui_mgr:create_image()
+    ball_array[i]:set_texture(balltexture)
+end
+
 lastkey = ""
 
 mouse = Mouse.new()

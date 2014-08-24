@@ -40,14 +40,6 @@ namespace mugg {
             return 0;
         }
 
-        int serverPoll(lua_State* L) {
-            mugg::net::Server* server = checkServer(L, 1);
-
-            server->Poll();
-
-            return 0;
-        }
-
         int serverGetMaxConnections(lua_State* L) {
             mugg::net::Server* server = checkServer(L, 1);
 
@@ -163,8 +155,6 @@ namespace mugg {
             {"get_latest_event", serverGetLatestEvent},
             {"get_latest_event_address", serverGetLatestEventAddress},
             {"get_latest_event_data", serverGetLatestEventData},
-
-            {"poll", serverPoll},
 
             {"clear_latest_event", serverClearLatestEvent},
 

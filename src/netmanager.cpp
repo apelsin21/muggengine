@@ -31,9 +31,6 @@ mugg::net::NetManager::~NetManager() {
     for(unsigned int i = 0; i < this->threads.size(); i++) {
         if(this->threads[i].joinable()) {
             this->threads[i].join();
-            std::cout << "Thread joined!\n";
-        } else {
-            std::cout << "Failed to join thread!\n";
         }
     }
 }
@@ -78,7 +75,7 @@ void mugg::net::NetManager::UpdateClients() {
         
         if(!this->clients.empty()) {
             for(unsigned int i = 0; i < this->clients.size(); i++) {
-                this->clients[i]->Poll();
+                this->clients[i]->Poll(200);
             }
             
             if(!this->clientConnectQueue.empty()) {
@@ -112,7 +109,7 @@ void mugg::net::NetManager::UpdateServers() {
         
         if(!this->servers.empty()) {
             for(unsigned int i = 0; i < this->servers.size(); i++) {
-                this->servers[i]->Poll();
+                this->servers[i]->Poll(200);
             }
         }
     }

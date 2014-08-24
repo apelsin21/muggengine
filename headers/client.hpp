@@ -32,7 +32,7 @@ namespace mugg {
 
                 std::string GetPeerAddress();
 
-                void Poll();
+                void Poll(unsigned int);
         };
     }
 }

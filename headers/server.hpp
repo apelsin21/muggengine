@@ -32,7 +32,7 @@ namespace mugg {
                 void DisconnectAllClients();
                 void DisconnectClient();
     
-                void Poll();
+                void Poll(unsigned int);
         };
     }
 }

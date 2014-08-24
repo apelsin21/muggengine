@@ -13,9 +13,13 @@ namespace mugg {
         
         class Image : public GUIObject {
             private:
+                unsigned int spriteBatchIndex;
             public:
                 Image(mugg::gui::GUIManager*, unsigned int);
                 ~Image();
+
+                virtual unsigned int GetSpriteBatchIndex();
+                virtual void SetSpriteBatchIndex(unsigned int);
         };
     }
 }

@@ -62,15 +62,6 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
 
-    glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * 10000, NULL, GL_DYNAMIC_DRAW);
-
-    for(unsigned int i = 0; i < 4; i++) {
-        glEnableVertexAttribArray(2 + i);
-        glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (GLvoid*)(sizeof(glm::vec4) * i));
-        glVertexAttribDivisor(2 + i, 1);
-        glDisableVertexAttribArray(2 + i);
-    }
 }
 
 mugg::gui::GUIManager::~GUIManager() {
@@ -93,13 +84,36 @@ mugg::gui::GUIManager::~GUIManager() {
             delete this->images[i];
         }
     }
+    for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
+        if(this->spriteBatches[i] != nullptr) {
+            delete this->spriteBatches[i];
+        }
+    }
 }
 
 mugg::gui::Image* mugg::gui::GUIManager::CreateImage() {
     Image* img = new Image(this, this->images.size());
     
-    this->images.push_back(img);
+    if(this->spriteBatches.empty()) {
+        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(500));
+    }
+    else if(this->spriteBatches[this->spriteBatches.size() - 1]->GetSpriteCount() == this->spriteBatches[this->spriteBatches.size() - 1]->GetMaxSprites()) {
+        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(500));
+    }
     
+    this->spriteBatches[this->spriteBatches.size() - 1]->Add(img->GetModelMatrix());
+
+    img->SetSpriteBatchIndex(this->spriteBatches.size() - 1);
+
+    for(unsigned int i = 0; i < 4; i++) {
+        glEnableVertexAttribArray(2 + i);
+        glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (GLvoid*)(sizeof(glm::vec4) * i));
+        glVertexAttribDivisor(2 + i, 1);
+        glDisableVertexAttribArray(2 + i);
+    }
+
+    this->images.push_back(img);
+
     return img;
 }
 std::size_t mugg::gui::GUIManager::GetNumberOfImages() {
@@ -115,13 +129,13 @@ bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_im
     return true;
 }
 
-#include <stdio.h>
-
 void mugg::gui::GUIManager::Render() {
-    if(!this->images.empty()) {
+    for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+
+        //Model matrix buffer pointers (4*4)
         glEnableVertexAttribArray(3);
         glEnableVertexAttribArray(4);
         glEnableVertexAttribArray(5);
@@ -130,17 +144,21 @@ void mugg::gui::GUIManager::Render() {
         glUseProgram(this->programID);
         
         glBindVertexArray(this->vaoID);
-        glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, this->spriteBatches[i]->GetModelMatrixBuffer());
         
-        for(unsigned int i = 0; i < this->images.size(); i++) {
-            glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * i, sizeof(glm::mat4), (GLvoid*)(&this->images[i]->GetModelMatrix()[0]));
+        for(unsigned int u = 0; u < this->images.size(); u++) {
+            if(this->images[i]->GetSpriteBatchIndex() == i && this->images[i]->HasChanged()) {
+                std::cout << "Updating sprite " << u << std::endl;
+                this->spriteBatches[i]->Replace(u, this->images[u]->GetModelMatrix());
+            }
         }
 
         glBindTexture(GL_TEXTURE_2D, this->images[0]->GetTexture()->GetID());
-        glDrawArraysInstanced(GL_TRIANGLES, 0, this->images.size() * 6, this->images.size());
+        glDrawArraysInstanced(GL_TRIANGLES, 0, this->spriteBatches[i]->GetSpriteCount() * 6, this->spriteBatches[i]->GetSpriteCount());
         
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
+        
         glDisableVertexAttribArray(2);
         glDisableVertexAttribArray(3);
         glDisableVertexAttribArray(4);

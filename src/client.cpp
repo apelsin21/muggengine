@@ -134,13 +134,12 @@ bool mugg::net::Client::SendPacket(mugg::net::StringPacket packet, unsigned int 
     return true;
 }
 
-void mugg::net::Client::Poll() {
+void mugg::net::Client::Poll(unsigned int timeout = 0) {
     if(!this->initialized) {
-        std::cout << "Tried to poll an unintialized client!\n";
         return;
     } 
     
-    while(enet_host_service(this->host, &this->event, 0) > 0) {
+    while(enet_host_service(this->host, &this->event, timeout) > 0) {
         switch(this->event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 this->latestEvent = mugg::net::Event::Connected;

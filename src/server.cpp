@@ -96,15 +96,14 @@ unsigned int mugg::net::Server::GetNumberOfClients() {
     return this->numberOfClients;
 }
 
-void mugg::net::Server::Poll() {
+void mugg::net::Server::Poll(unsigned int timeout = 0) {
     if(!this->initialized) {
-        std::cout << "Tried to poll non-initialized server!\n";
         return;
     }
     
     this->latestEvent = mugg::net::Event::None;
 
-    while(enet_host_service(this->host, &this->event, 0) > 0) {
+    while(enet_host_service(this->host, &this->event, timeout) > 0) {
         switch(event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 this->numberOfClients++;

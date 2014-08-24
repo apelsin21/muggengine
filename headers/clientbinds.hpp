@@ -45,14 +45,6 @@ namespace mugg {
             return 0;
         }
 
-        int clientPoll(lua_State* L) {
-            mugg::net::Client* client = checkClient(L, 1);
-
-            client->Poll();
-
-            return 0;
-        }
-
         int clientIsConnected(lua_State* L) {
             mugg::net::Client* client = checkClient(L, 1);
 
@@ -104,8 +96,6 @@ namespace mugg {
             {"is_connected", clientIsConnected},
 
             {"send_string_packet", clientSendStringPacket},
-
-            {"poll", clientPoll},
 
             {"get_latest_event", clientGetLatestEvent},
             {"get_peer_address", clientGetPeerAddress},

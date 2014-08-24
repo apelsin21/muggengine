@@ -13,8 +13,18 @@ namespace mugg {
         }
 
         int vec2Constructor(lua_State* L) {
+            unsigned int num_args = lua_gettop(L);
+
             glm::vec2** vec = (glm::vec2**)lua_newuserdata(L, sizeof(glm::vec2*));
-            *vec = new glm::vec2();
+            
+            if(num_args == 2) {
+                double x = luaL_checknumber(L, 1);
+                double y = luaL_checknumber(L, 2);
+
+                *vec = new glm::vec2(x, y);
+            } else {
+                *vec = new glm::vec2();
+            }
 
             luaL_getmetatable(L, Vec2Name);
             lua_setmetatable(L, -2);
