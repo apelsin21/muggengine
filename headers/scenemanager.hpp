@@ -26,6 +26,7 @@ namespace mugg {
                 mugg::core::Engine* parent;
             
                 GLuint programID;
+                GLint posLocation, uvLocation, normalLocation;
             public:
                 SceneManager(mugg::core::Engine*);
                 ~SceneManager();

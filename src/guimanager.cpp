@@ -33,10 +33,16 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
 
     glGenVertexArrays(1, &this->vaoID);
 
-    this->posLocation   = 0; 
-    this->uvLocation    = 1; 
-    this->colLocation   = 2; 
-    this->modelLocation = 3; 
+    //These need to be hardcoded to be compatible with GLSL 130 compat
+    //this->posLocation   = 0; 
+    //this->uvLocation    = 1; 
+    //this->colLocation   = 2; 
+    //this->modelLocation = 3; 
+    
+    this->posLocation   = glGetAttribLocation(this->programID, "v_pos"); 
+    this->uvLocation    = glGetAttribLocation(this->programID, "v_uv"); 
+    this->colLocation   = glGetAttribLocation(this->programID, "v_color"); 
+    this->modelLocation = glGetAttribLocation(this->programID, "v_model"); 
 }
 
 mugg::gui::GUIManager::~GUIManager() {

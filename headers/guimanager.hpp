@@ -28,13 +28,13 @@ namespace mugg {
         
         class GUIManager {
             private:
-                #define GLSL(src) "#version 330 core\n" #src
+                #define GLSL(src) "#version 130\n" #src
 
                 std::string vsData = GLSL(
-                    layout(location = 0) in vec2 v_pos;
-                    layout(location = 1) in vec2 v_uv;
-                    layout(location = 2) in vec3 v_color;
-                    layout(location = 3) in mat4 v_model;
+                    in vec2 v_pos;
+                    in vec2 v_uv;
+                    in vec3 v_color;
+                    in mat4 v_model;
 
                     out vec2 f_uv;
                     out vec3 f_color;
@@ -54,7 +54,7 @@ namespace mugg {
                     uniform sampler2D sampler;
 
                     void main() {
-                        color = vec4(f_color.rgb, 1.0);//texture(sampler, f_uv);
+                        color = vec4(color.rgb, 1.0);//texture(sampler, f_uv);
                     }    
                 );
 

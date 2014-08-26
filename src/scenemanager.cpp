@@ -34,6 +34,10 @@ bool mugg::scene::SceneManager::GetSceneNodeByIndex(int index, mugg::scene::Scen
 
 void mugg::scene::SceneManager::SetShaderProgramID(GLuint id) {
     this->programID = id;
+    
+    this->posLocation = glGetAttribLocation(this->programID, "v_pos");
+    this->uvLocation = glGetAttribLocation(this->programID, "v_uv");
+    this->normalLocation = glGetAttribLocation(this->programID, "v_normal");
 }
 GLuint mugg::scene::SceneManager::GetShaderProgramID() {
     return this->programID;
@@ -67,18 +71,18 @@ void mugg::scene::SceneManager::Render() {
                 
                 glBindVertexArray(mesh->GetVAOID());
 
-                glEnableVertexAttribArray(0);
-                glEnableVertexAttribArray(2);
-                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(this->posLocation);
+                glEnableVertexAttribArray(this->uvLocation);
+                glEnableVertexAttribArray(this->normalLocation);
                 
                 glBindBuffer(GL_ARRAY_BUFFER, mesh->GetPositionBufferID());
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+                glVertexAttribPointer(this->posLocation, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
                 
                 glBindBuffer(GL_ARRAY_BUFFER, mesh->GetUVBufferID());
-                glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+                glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
                 
                 glBindBuffer(GL_ARRAY_BUFFER, mesh->GetNormalBufferID());
-                glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+                glVertexAttribPointer(this->normalLocation, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
                 
                 if(mesh->GetTexture() != nullptr && glIsTexture(mesh->GetTexture()->GetID()) == GL_TRUE) {
                     glBindTexture(GL_TEXTURE_2D, mesh->GetTexture()->GetID());
@@ -87,9 +91,9 @@ void mugg::scene::SceneManager::Render() {
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->GetElementBufferID());
                 glDrawElements(GL_TRIANGLES, mesh->GetNumberOfIndices(), GL_UNSIGNED_SHORT, nullptr);
 
-                glDisableVertexAttribArray(0);
-                glDisableVertexAttribArray(1);
-                glDisableVertexAttribArray(2);
+                glDisableVertexAttribArray(this->posLocation);
+                glDisableVertexAttribArray(this->uvLocation);
+                glDisableVertexAttribArray(this->normalLocation);
             }
         }
     }

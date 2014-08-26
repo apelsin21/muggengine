@@ -1,4 +1,4 @@
-#version 330 core
+#version 130
 
 in vec2 f_uv;
 in vec3 f_normal;

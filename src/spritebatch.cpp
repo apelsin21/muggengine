@@ -42,7 +42,7 @@ mugg::graphics::SpriteBatch::SpriteBatch(unsigned int maxSprites, GLuint vaoID, 
     //COLOR BUFFER
     glGenBuffers(1, &this->colorBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, this->colorBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * this->maxSprites, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec3) * 6) * this->maxSprites, NULL, GL_DYNAMIC_DRAW);
     
     glVertexAttribPointer(this->colLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -98,6 +98,11 @@ void mugg::graphics::SpriteBatch::Add() {
        
         //Color default values
         this->UpdateColor(this->spriteCount, glm::vec3(1.0f, 1.0f, 1.0f));
+        this->UpdateColor(this->spriteCount + 1, glm::vec3(1.0f, 1.0f, 1.0f));
+        this->UpdateColor(this->spriteCount + 2, glm::vec3(1.0f, 1.0f, 1.0f));
+        this->UpdateColor(this->spriteCount + 3, glm::vec3(1.0f, 1.0f, 1.0f));
+        this->UpdateColor(this->spriteCount + 4, glm::vec3(1.0f, 1.0f, 1.0f));
+        this->UpdateColor(this->spriteCount + 5, glm::vec3(1.0f, 1.0f, 1.0f));
 
         //Identity model matrix
         this->UpdateModelMatrix(this->spriteCount, glm::mat4(1.0f));
