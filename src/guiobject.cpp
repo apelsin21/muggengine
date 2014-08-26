@@ -16,6 +16,7 @@ void mugg::gui::GUIObject::SetScale(const glm::vec2& scale) {
     
     this->scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(this->scale.x, this->scale.y, 0.0f));
     this->changed = true;
+    this->parent->UpdateImage(this->index);
 }
 glm::vec2 mugg::gui::GUIObject::GetScale() {
     return this->scale;
@@ -26,6 +27,7 @@ void mugg::gui::GUIObject::SetRotation(const float rotation) {
 
     this->rotationMatrix = glm::rotate(glm::mat4(1.0f), this->rotation, glm::vec3(0.0f, 0.0f, 1.0f));
     this->changed = true;
+    this->parent->UpdateImage(this->index);
 }
 float mugg::gui::GUIObject::GetRotation() {
     return this->rotation;
@@ -36,6 +38,7 @@ void mugg::gui::GUIObject::SetPosition(const glm::vec2& position) {
 
     this->translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(this->position.x, this->position.y, 0.0f));
     this->changed = true;
+    this->parent->UpdateImage(this->index);
 }
 glm::vec2 mugg::gui::GUIObject::GetPosition() {
     return this->position;
@@ -52,6 +55,7 @@ mugg::graphics::Texture2D* mugg::gui::GUIObject::GetTexture() {
 
 void mugg::gui::GUIObject::SetModelMatrix(const glm::mat4& matrix) {
     this->modelMatrix = matrix;
+    this->parent->UpdateImage(this->index);
 }
 glm::mat4 mugg::gui::GUIObject::GetModelMatrix() {
     this->changed = false;

@@ -3,9 +3,6 @@
 
 mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
     this->parent = parent;
-    
-    this->positionBuffer = -1;
-    this->modelMatrixBuffer = -1;
 
     this->vaoID = -1;
     this->vsID = -1;
@@ -35,40 +32,14 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
     shaderProgram.Link();
 
     glGenVertexArrays(1, &this->vaoID);
-    glGenBuffers(1, &this->positionBuffer);
-    glGenBuffers(1, &this->modelMatrixBuffer);
 
-    glBindVertexArray(this->vaoID);
-    
-    static const GLfloat g_vertex_buffer_data[] = {
-        -1.0f, -1.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 0.0f, 1.0f,
-    
-        -1.0f, -1.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, 1.0f, 0.0f,
-        1.0f, 1.0f, 1.0f, 1.0f,
-    };
-    
-    glBindBuffer(GL_ARRAY_BUFFER, this->positionBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), 0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), (GLvoid*)(2*sizeof(GLfloat)));
-
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-
+    this->posLocation   = 0; 
+    this->uvLocation    = 1; 
+    this->colLocation   = 2; 
+    this->modelLocation = 3; 
 }
 
 mugg::gui::GUIManager::~GUIManager() {
-    glDeleteBuffers(1, &this->positionBuffer);
-    glDeleteBuffers(1, &this->modelMatrixBuffer);
-    glDeleteVertexArrays(1, &this->vaoID);
-
     if(glIsShader(this->vsID)) {
         glDeleteShader(this->vsID);
     }
@@ -89,32 +60,32 @@ mugg::gui::GUIManager::~GUIManager() {
             delete this->spriteBatches[i];
         }
     }
+
+    glDeleteVertexArrays(1, &this->vaoID);
 }
 
 mugg::gui::Image* mugg::gui::GUIManager::CreateImage() {
     Image* img = new Image(this, this->images.size());
     
     if(this->spriteBatches.empty()) {
-        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(500));
+        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation, this->modelLocation));
     }
     else if(this->spriteBatches[this->spriteBatches.size() - 1]->GetSpriteCount() == this->spriteBatches[this->spriteBatches.size() - 1]->GetMaxSprites()) {
-        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(500));
+        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation, this->modelLocation));
     }
     
-    this->spriteBatches[this->spriteBatches.size() - 1]->Add(img->GetModelMatrix());
-
+    this->spriteBatches[this->spriteBatches.size() - 1]->Add();
+    
     img->SetSpriteBatchIndex(this->spriteBatches.size() - 1);
-
-    for(unsigned int i = 0; i < 4; i++) {
-        glEnableVertexAttribArray(2 + i);
-        glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (GLvoid*)(sizeof(glm::vec4) * i));
-        glVertexAttribDivisor(2 + i, 1);
-        glDisableVertexAttribArray(2 + i);
-    }
-
+    
     this->images.push_back(img);
 
     return img;
+}
+void mugg::gui::GUIManager::UpdateImage(unsigned int index) {
+    if(index <= this->images.size()) {
+        this->imagesToBeUpdated.push_back(index);
+    }
 }
 std::size_t mugg::gui::GUIManager::GetNumberOfImages() {
     return this->images.size();
@@ -130,39 +101,28 @@ bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_im
 }
 
 void mugg::gui::GUIManager::Render() {
-    for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
+    glUseProgram(this->programID);
+    glBindVertexArray(this->vaoID);
 
-        //Model matrix buffer pointers (4*4)
-        glEnableVertexAttribArray(3);
-        glEnableVertexAttribArray(4);
-        glEnableVertexAttribArray(5);
-        glEnableVertexAttribArray(6);
-        
-        glUseProgram(this->programID);
-        
-        glBindVertexArray(this->vaoID);
-        glBindBuffer(GL_ARRAY_BUFFER, this->spriteBatches[i]->GetModelMatrixBuffer());
-        
-        for(unsigned int u = 0; u < this->images.size(); u++) {
-            if(this->images[i]->GetSpriteBatchIndex() == i && this->images[i]->HasChanged()) {
-                std::cout << "Updating sprite " << u << std::endl;
-                this->spriteBatches[i]->Replace(u, this->images[u]->GetModelMatrix());
-            }
+    for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
+        for(unsigned int u = 0; u < this->imagesToBeUpdated.size(); u++) {
+            std::cout << "Updating sprite " << u + 1 << " of " << this->imagesToBeUpdated.size() << std::endl;
+            this->spriteBatches[i]->UpdateModelMatrix(u, this->images[this->imagesToBeUpdated[u]]->GetModelMatrix());
+            this->imagesToBeUpdated.erase(this->imagesToBeUpdated.begin() + u);
+            u--;
         }
 
-        glBindTexture(GL_TEXTURE_2D, this->images[0]->GetTexture()->GetID());
-        glDrawArraysInstanced(GL_TRIANGLES, 0, this->spriteBatches[i]->GetSpriteCount() * 6, this->spriteBatches[i]->GetSpriteCount());
-        
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        
-        glDisableVertexAttribArray(2);
-        glDisableVertexAttribArray(3);
-        glDisableVertexAttribArray(4);
-        glDisableVertexAttribArray(5);
-        glDisableVertexAttribArray(6);
+        glVertexAttribPointer(this->posLocation, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), 0);
+        glEnableVertexAttribArray(this->posLocation);
+        glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), 0);
+        glEnableVertexAttribArray(this->uvLocation);
+        glVertexAttribPointer(this->colLocation, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
+        glEnableVertexAttribArray(this->colLocation);
+        for(unsigned int i = this->modelLocation; i < this->modelLocation + 5; i++) {
+            glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
+            glEnableVertexAttribArray(i);
+        }
+
+        this->spriteBatches[i]->Render();
     }
 }

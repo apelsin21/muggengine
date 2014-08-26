@@ -16,5 +16,3 @@ Dependencies:
 Requirements:
     Platform: Whatever x86 platforms SDL2 runs on.
     GPU: OpenGL 3.0+, GLSL 1.30+ (OpenGL ES isn't supported)
-    CPU: Whatever, it only uses a single thread so far, which is abysmal
-    RAM: More than you'd think

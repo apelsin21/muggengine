@@ -29,14 +29,15 @@ server:initialize(2300)
 client = net_mgr:create_client()
 client:initialize()
 
-
 ball_array = {}
-num_balls = 2000
+num_balls = 200
 balltexture = content_mgr:create_texture2d("data/textures/ball.png", false)
+ballscale = Vector2D.new(0.1, 0.1)
 
-for i = 0, num_balls do
+for i = 1, num_balls do
     ball_array[i] = gui_mgr:create_image()
     ball_array[i]:set_texture(balltexture)
+    ball_array[i]:set_scale(ballscale)
 end
 
 lastkey = ""
@@ -97,6 +98,23 @@ function update()
     elseif client:get_latest_event() == "Received" then
         print("Received from " .. server:get_peer_address())
     end
+
+    pos = ball_array[1]:get_position()
+
+    if keyboard:is_key_down("W") then
+        pos:set_y(pos:get_y() + 0.1)
+    end
+    if keyboard:is_key_down("S") then
+        pos:set_y(pos:get_y() - 0.1)
+    end
+    if keyboard:is_key_down("A") then
+        pos:set_x(pos:get_x() - 0.1)
+    end
+    if keyboard:is_key_down("D") then
+        pos:set_x(pos:get_x() + 0.1)
+    end
+
+    ball_array[1]:set_position(pos)
 
     client:clear_latest_event()
 end

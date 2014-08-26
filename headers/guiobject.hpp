@@ -7,14 +7,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "guimanager.hpp"
+
 namespace mugg {
     namespace graphics {
         class Texture2D;
     }
 
     namespace gui {
-        class GUIManager;
-
         class GUIObject {
             protected:
                 unsigned int index;
