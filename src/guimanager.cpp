@@ -103,6 +103,13 @@ bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_im
 void mugg::gui::GUIManager::Render() {
     glUseProgram(this->programID);
     glBindVertexArray(this->vaoID);
+    glEnableVertexAttribArray(this->posLocation);
+    glEnableVertexAttribArray(this->uvLocation);
+    glEnableVertexAttribArray(this->colLocation);
+    
+    for(unsigned int i = this->modelLocation; i < this->modelLocation + 4; i++) {
+        glEnableVertexAttribArray(i);
+    }
 
     for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
         for(unsigned int u = 0; u < this->imagesToBeUpdated.size(); u++) {
@@ -112,17 +119,13 @@ void mugg::gui::GUIManager::Render() {
             u--;
         }
 
-        glVertexAttribPointer(this->posLocation, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), 0);
-        glEnableVertexAttribArray(this->posLocation);
-        glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), 0);
-        glEnableVertexAttribArray(this->uvLocation);
-        glVertexAttribPointer(this->colLocation, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
-        glEnableVertexAttribArray(this->colLocation);
-        for(unsigned int i = this->modelLocation; i < this->modelLocation + 5; i++) {
-            glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
-            glEnableVertexAttribArray(i);
-        }
-
         this->spriteBatches[i]->Render();
     }
+    for(unsigned int i = this->modelLocation; i < this->modelLocation + 4; i++) {
+        glDisableVertexAttribArray(i);
+    }
+    
+    glDisableVertexAttribArray(this->colLocation);
+    glDisableVertexAttribArray(this->uvLocation);
+    glDisableVertexAttribArray(this->posLocation);
 }

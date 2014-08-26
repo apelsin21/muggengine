@@ -30,7 +30,7 @@ client = net_mgr:create_client()
 client:initialize()
 
 ball_array = {}
-num_balls = 200
+num_balls = 1000
 balltexture = content_mgr:create_texture2d("data/textures/ball.png", false)
 ballscale = Vector2D.new(0.1, 0.1)
 

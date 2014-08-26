@@ -54,7 +54,7 @@ namespace mugg {
                     uniform sampler2D sampler;
 
                     void main() {
-                        color = vec4(color.rgb, 1.0) * texture(sampler, f_uv);
+                        color = vec4(f_color.rgb, 1.0);//texture(sampler, f_uv);
                     }    
                 );
 

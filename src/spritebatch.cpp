@@ -16,7 +16,7 @@ mugg::graphics::SpriteBatch::SpriteBatch(unsigned int maxSprites, GLuint vaoID, 
     this->colLocation = colLocation;
     this->modelLocation = modelLocation;
 
-    glBindVertexArray(vaoID);
+    glBindVertexArray(this->vaoID);
 
     glEnableVertexAttribArray(this->posLocation);
     glEnableVertexAttribArray(this->uvLocation);
@@ -30,21 +30,21 @@ mugg::graphics::SpriteBatch::SpriteBatch(unsigned int maxSprites, GLuint vaoID, 
     glBindBuffer(GL_ARRAY_BUFFER, this->positionBuffer);
     glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec2) * 6) * this->maxSprites, NULL, GL_DYNAMIC_DRAW);
     
-    glVertexAttribPointer(this->posLocation, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), 0);
+    glVertexAttribPointer(this->posLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     //UV BUFFER
     glGenBuffers(1, &this->uvBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, this->uvBuffer);
     glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec2) * 6) * this->maxSprites, NULL, GL_DYNAMIC_DRAW);
     
-    glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), 0);
+    glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
     
     //COLOR BUFFER
     glGenBuffers(1, &this->colorBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, this->colorBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * this->maxSprites, NULL, GL_DYNAMIC_DRAW);
     
-    glVertexAttribPointer(this->colLocation, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
+    glVertexAttribPointer(this->colLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     //MODEL MATRIX BUFFER
     glGenBuffers(1, &this->modelMatrixBuffer);
@@ -52,7 +52,7 @@ mugg::graphics::SpriteBatch::SpriteBatch(unsigned int maxSprites, GLuint vaoID, 
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * this->maxSprites, NULL, GL_DYNAMIC_DRAW);
     
     for(unsigned int i = this->modelLocation; i < this->modelLocation + 4; i++) {
-        glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
+        glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, 0, 0);
     }
 
     glDisableVertexAttribArray(this->posLocation);
@@ -80,15 +80,6 @@ mugg::graphics::SpriteBatch::~SpriteBatch() {
 
 void mugg::graphics::SpriteBatch::Add() {
     if(this->spriteCount < this->maxSprites) {
-        glBindVertexArray(vaoID);
-
-        glEnableVertexAttribArray(this->posLocation);
-        glEnableVertexAttribArray(this->uvLocation);
-        glEnableVertexAttribArray(this->colLocation);
-        for(unsigned int i = this->modelLocation; i < this->modelLocation + 4; i++) {
-            glEnableVertexAttribArray(i);
-        }
-       
         //Position default values
         this->UpdatePosition(this->spriteCount, glm::vec2(-1.0f, -1.0f));
         this->UpdatePosition(this->spriteCount + 1, glm::vec2(1.0f, 1.0f));
@@ -110,13 +101,6 @@ void mugg::graphics::SpriteBatch::Add() {
 
         //Identity model matrix
         this->UpdateModelMatrix(this->spriteCount, glm::mat4(1.0f));
-        
-        glDisableVertexAttribArray(this->posLocation);
-        glDisableVertexAttribArray(this->uvLocation);
-        glDisableVertexAttribArray(this->colLocation);
-        for(unsigned int i = this->modelLocation; i < this->modelLocation + 4; i++) {
-            glDisableVertexAttribArray(i);
-        }
         
         this->spriteCount++;
     } else {
@@ -142,7 +126,6 @@ void mugg::graphics::SpriteBatch::UpdateColor(unsigned int index, const glm::vec
         glBindVertexArray(this->vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->colorBuffer);
         glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * index, sizeof(glm::vec3), (GLvoid*)(&color[0]));
-        
     }
 }
 void mugg::graphics::SpriteBatch::UpdateModelMatrix(unsigned int index, const glm::mat4& modelMatrix) {
@@ -150,7 +133,6 @@ void mugg::graphics::SpriteBatch::UpdateModelMatrix(unsigned int index, const gl
         glBindVertexArray(this->vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBuffer);
         glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * index, sizeof(glm::mat4), (GLvoid*)(&modelMatrix[0]));
-    
     }
 }
 
@@ -179,6 +161,11 @@ GLuint mugg::graphics::SpriteBatch::GetTexture() {
 }
 
 void mugg::graphics::SpriteBatch::Render() {
+    glBindBuffer(GL_ARRAY_BUFFER, this->positionBuffer);     
+    glBindBuffer(GL_ARRAY_BUFFER, this->uvBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, this->colorBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBuffer);
+
     glBindTexture(GL_TEXTURE_2D, 1);
     glDrawArrays(GL_TRIANGLES, 0, this->spriteCount * 6);
 }
