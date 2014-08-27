@@ -119,7 +119,7 @@ void mugg::graphics::SpriteBatch::UpdatePosition(unsigned int index, const glm::
     if(index <= this->spriteCount) {
         glBindVertexArray(vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->positionBuffer);
-        glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * index, sizeof(glm::vec2), (GLvoid*)(&position[0]));
+        glBufferSubData(GL_ARRAY_BUFFER, (sizeof(glm::vec2) * this->spriteCount) * index, sizeof(glm::vec2), (GLvoid*)(&position[0]));
     }
 }
 void mugg::graphics::SpriteBatch::UpdateUV(unsigned int index, const glm::vec2& uv) {

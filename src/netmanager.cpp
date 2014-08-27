@@ -2,12 +2,6 @@
 
 mugg::net::NetManager::NetManager(mugg::core::Engine* parent) {
     this->parent = parent;
-
-    this->updateClients = true;
-    this->updateServers = true;
-
-    this->threads.push_back(std::thread(&mugg::net::NetManager::UpdateClients, this));
-    this->threads.push_back(std::thread(&mugg::net::NetManager::UpdateServers, this));
     
     for(unsigned int i = 0; i < this->threads.size(); i++) {
         this->threads[i].detach();
@@ -37,6 +31,12 @@ mugg::net::NetManager::~NetManager() {
 
 mugg::net::Client* mugg::net::NetManager::CreateClient() {
     mugg::net::Client* client = new mugg::net::Client(this);
+    
+    if(this->clients.empty() && this->clientQueue.empty()) {
+        this->threads.push_back(std::thread(&mugg::net::NetManager::UpdateClients, this));
+    }
+    
+    this->updateClients = true;
 
     this->clientQueue.push_back(client);
 
@@ -52,6 +52,12 @@ std::size_t mugg::net::NetManager::GetClientQueueCount() {
 mugg::net::Server* mugg::net::NetManager::CreateServer() {
     mugg::net::Server* server = new mugg::net::Server(this);
 
+    if(this->servers.empty() && this->serverQueue.empty()) {
+        this->threads.push_back(std::thread(&mugg::net::NetManager::UpdateServers, this));
+    }
+
+    this->updateServers = true;
+    
     this->serverQueue.push_back(server);
 
     return server;
@@ -81,7 +87,7 @@ void mugg::net::NetManager::UpdateClients() {
             if(!this->clientConnectQueue.empty()) {
                 for(unsigned int i = 0; i < this->clientConnectQueue.size(); i++) {
                     this->clients[this->clientConnectQueue[i].index]->Connect(this->clientConnectQueue[i].address, this->clientConnectQueue[i].port, this->clientConnectQueue[i].timeout);
-                    this->clientDisconnectQueue.erase(this->clientDisconnectQueue.begin() + i);
+                    this->clientConnectQueue.erase(this->clientConnectQueue.begin() + i);
                     i--;
                 }
             }
@@ -94,7 +100,6 @@ void mugg::net::NetManager::UpdateClients() {
                 }
             }
         }
-
     }
 }
 void mugg::net::NetManager::UpdateServers() {

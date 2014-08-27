@@ -23,14 +23,8 @@ renderer:initialize()
 -- print("Mesh has " .. mesh:get_number_of_uvs() .. " texture coordinates")
 -- print("Mesh has " .. mesh:get_number_of_normals() .. " normals")
 
-server = net_mgr:create_server()
-server:initialize(2300)
-
-client = net_mgr:create_client()
-client:initialize()
-
 ball_array = {}
-num_balls = 1000
+num_balls = 2
 balltexture = content_mgr:create_texture2d("data/textures/ball.png", false)
 ballscale = Vector2D.new(0.1, 0.1)
 
@@ -81,24 +75,6 @@ function update()
 
     window:set_title("ms/frame: " .. renderer:get_frametime())
 
-    if server:get_latest_event() == "Connected" then
-        print("Connected to " .. server:get_latest_event_address())
-    elseif server:get_latest_event() == "Disconnected" then
-        print("Disconnected from " .. server:get_latest_event_address())
-    elseif server:get_latest_event() == "Received" then
-        print("Received " .. server:get_latest_event_data() .. " from " .. server:get_latest_event_addres())
-    end
-    
-    server:clear_latest_event()
-
-    if client:get_latest_event() == "Connected" then
-        print("Connected to " .. client:get_peer_address())
-    elseif client:get_latest_event() == "Disconnected" then
-        print("Disconnected from " .. server:get_peer_address())
-    elseif client:get_latest_event() == "Received" then
-        print("Received from " .. server:get_peer_address())
-    end
-
     pos = ball_array[1]:get_position()
 
     if keyboard:is_key_down("W") then
@@ -115,8 +91,6 @@ function update()
     end
 
     ball_array[1]:set_position(pos)
-
-    client:clear_latest_event()
 end
 
 while window:is_open() do

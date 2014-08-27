@@ -223,6 +223,10 @@ bool mugg::core::Window::SetBorderlessFullscreen() {
     return false;
 }
 bool mugg::core::Window::SetWindowed() {
+    if(this->fullscreen == false) {
+        return true;
+    }
+    
     if(SDL_SetWindowFullscreen(this->sdlWindow, 0) == 0) {
         this->fullscreen = false;
         return true;
