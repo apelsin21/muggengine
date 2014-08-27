@@ -80,6 +80,7 @@ mugg::graphics::SpriteBatch::~SpriteBatch() {
 
 void mugg::graphics::SpriteBatch::Add() {
     if(this->spriteCount < this->maxSprites) {
+        //Add default values so it is onscreen even when you haven't explicitly set the sprite's position.
         //Position default values
         this->UpdatePosition(this->spriteCount, glm::vec2(-1.0f, -1.0f));
         this->UpdatePosition(this->spriteCount + 1, glm::vec2(1.0f, 1.0f));
@@ -104,11 +105,13 @@ void mugg::graphics::SpriteBatch::Add() {
         this->UpdateColor(this->spriteCount + 4, glm::vec3(1.0f, 1.0f, 1.0f));
         this->UpdateColor(this->spriteCount + 5, glm::vec3(1.0f, 1.0f, 1.0f));
 
-        //Identity model matrix
+        //Identity matrix
         this->UpdateModelMatrix(this->spriteCount, glm::mat4(1.0f));
         
         this->spriteCount++;
     } else {
+        //Shouldn't ever happen, the parent GUIManager should always create a new one at the correct time,
+        //but you never know
         std::cout << "Tried to add sprite to full spritebatch!\n";
     }
 }
