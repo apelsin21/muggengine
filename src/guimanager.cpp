@@ -21,8 +21,17 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
     fragmentShader.SetID(this->fsID);
     shaderProgram.SetID(this->programID);
 
-    vertexShader.SetData(this->vsData);
-    fragmentShader.SetData(this->fsData);
+    std::string vsData, fsData;
+
+    if(!mugg::io::LoadTextFromFile("data/shaders/gui_v.glsl", vsData)) {
+        std::cout << "Failed to load vsData\n";
+    }
+    if(!mugg::io::LoadTextFromFile("data/shaders/gui_f.glsl", fsData)) {
+        std::cout << "Failed to load fsData\n";
+    }
+    
+    vertexShader.SetData(vsData);
+    fragmentShader.SetData(fsData);
 
     vertexShader.Compile();
     fragmentShader.Compile();
@@ -33,16 +42,9 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
 
     glGenVertexArrays(1, &this->vaoID);
 
-    //These need to be hardcoded to be compatible with GLSL 130 compat
-    //this->posLocation   = 0; 
-    //this->uvLocation    = 1; 
-    //this->colLocation   = 2; 
-    //this->modelLocation = 3; 
-    
-    this->posLocation   = glGetAttribLocation(this->programID, "v_pos"); 
-    this->uvLocation    = glGetAttribLocation(this->programID, "v_uv"); 
-    this->colLocation   = glGetAttribLocation(this->programID, "v_color"); 
-    this->modelLocation = glGetAttribLocation(this->programID, "v_model"); 
+    this->posLocation = 0; 
+    this->uvLocation  = 1;
+    this->colLocation = 2;
 }
 
 mugg::gui::GUIManager::~GUIManager() {
@@ -74,10 +76,10 @@ mugg::gui::Image* mugg::gui::GUIManager::CreateImage() {
     Image* img = new Image(this, this->images.size());
     
     if(this->spriteBatches.empty()) {
-        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation, this->modelLocation));
+        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
     }
     else if(this->spriteBatches[this->spriteBatches.size() - 1]->GetSpriteCount() == this->spriteBatches[this->spriteBatches.size() - 1]->GetMaxSprites()) {
-        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation, this->modelLocation));
+        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
     }
     
     this->spriteBatches[this->spriteBatches.size() - 1]->Add();
@@ -109,26 +111,22 @@ bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_im
 void mugg::gui::GUIManager::Render() {
     glUseProgram(this->programID);
     glBindVertexArray(this->vaoID);
+
     glEnableVertexAttribArray(this->posLocation);
     glEnableVertexAttribArray(this->uvLocation);
     glEnableVertexAttribArray(this->colLocation);
-    
-    for(unsigned int i = this->modelLocation; i < this->modelLocation + 4; i++) {
-        glEnableVertexAttribArray(i);
-    }
+
+    GLint modelMatrixUniformLocation = glGetUniformLocation(this->programID, "u_model");
+    glUniformMatrix4fv(modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
     for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
         for(unsigned int u = 0; u < this->imagesToBeUpdated.size(); u++) {
-            std::cout << "Updating sprite " << u + 1 << " of " << this->imagesToBeUpdated.size() << std::endl;
-            this->spriteBatches[i]->UpdateModelMatrix(u, this->images[this->imagesToBeUpdated[u]]->GetModelMatrix());
+            this->spriteBatches[i]->UpdateSprite(u, this->images[this->imagesToBeUpdated[u]]->GetModelMatrix());
             this->imagesToBeUpdated.erase(this->imagesToBeUpdated.begin() + u);
             u--;
         }
 
         this->spriteBatches[i]->Render();
-    }
-    for(unsigned int i = this->modelLocation; i < this->modelLocation + 4; i++) {
-        glDisableVertexAttribArray(i);
     }
     
     glDisableVertexAttribArray(this->colLocation);

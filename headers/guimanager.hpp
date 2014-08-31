@@ -18,6 +18,8 @@
 
 #include "spritebatch.hpp"
 
+#include "fileutils.hpp"
+
 namespace mugg {
     namespace core {
         class Engine;
@@ -28,36 +30,6 @@ namespace mugg {
         
         class GUIManager {
             private:
-                #define GLSL(src) "#version 130\n" #src
-
-                std::string vsData = GLSL(
-                    in vec2 v_pos;
-                    in vec2 v_uv;
-                    in vec3 v_color;
-                    in mat4 v_model;
-
-                    out vec2 f_uv;
-                    out vec3 f_color;
-
-                    void main() {
-                        f_uv = v_uv;
-                        f_color = v_color;
-                        gl_Position = v_model * vec4(v_pos, 0.0, 1.0);
-                    }
-                );
-                
-                std::string fsData = GLSL(
-                    in vec2 f_uv;
-                    in vec3 f_color;
-
-                    out vec4 color;
-                    uniform sampler2D sampler;
-
-                    void main() {
-                        color = vec4(color.rgb, 1.0);//texture(sampler, f_uv);
-                    }    
-                );
-
                 std::vector<mugg::gui::Image*> images;
                 std::vector<unsigned int> imagesToBeUpdated;
                 
@@ -66,7 +38,7 @@ namespace mugg {
                 GLuint vaoID;
                 GLuint vsID, fsID, programID;
                
-                GLint posLocation, uvLocation, colLocation, modelLocation;
+                GLint posLocation, uvLocation, colLocation;
 
                 mugg::core::Engine* parent;
             public:

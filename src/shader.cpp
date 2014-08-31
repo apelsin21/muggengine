@@ -63,7 +63,12 @@ bool mugg::graphics::Shader::Compile() {
     this->CheckForErrors();
 
     if(!this->compiledSuccessfully) {
-        std::cout << this->GetLog() << std::endl;
+        if(this->type == mugg::graphics::ShaderType::VertexShader) {
+            std::cout << "Error in vertex shader:\n" << this->GetLog() << std::endl;
+        } else if(this->type == mugg::graphics::ShaderType::FragmentShader) {
+            std::cout << "Error in fragment shader:\n" << this->GetLog() << std::endl;
+        }
+
         return false;
     }
 

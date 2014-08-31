@@ -24,8 +24,10 @@ bool mugg::graphics::ShaderProgram::AddShader(GLuint shader) {
         return false;
     }
 
+    glAttachShader(this->ID, shader);
+
     this->shaders.push_back(shader);
-    
+
     return true;
 }
 
@@ -34,16 +36,11 @@ bool mugg::graphics::ShaderProgram::GetCompiledSuccessfully() {
 }
 
 bool mugg::graphics::ShaderProgram::Link() {
-    if(!this->shaders.empty()) {
-        for(unsigned int i = 0; i < this->shaders.size(); i++) {
-            glAttachShader(this->ID, this->shaders[i]);
-        }
-    } else {
-        std::cout << "Tried to link shaderless shaderprogram!\n";
-        this->compiledSuccessfully = false;
+    if(this->GetNumberOfAttachedShaders() <= 0) {
+        std::cout << "Tried to link shaderprogram without attaching any shaders!\n";
         return false;
     }
-    
+
     glLinkProgram(this->ID);
     this->CheckForErrors();
 
@@ -92,7 +89,14 @@ const char* mugg::graphics::ShaderProgram::GetLog() {
 }
 
 bool mugg::graphics::ShaderProgram::Validate() {
+
+    if(glIsProgram(this->ID) != GL_TRUE) {
+        return false;
+    }
+    
     int result = GL_FALSE;
+
+    glValidateProgram(this->ID);
 
     glGetProgramiv(this->ID, GL_VALIDATE_STATUS, &result);
 
