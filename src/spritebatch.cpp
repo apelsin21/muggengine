@@ -1,87 +1,114 @@
 #include "spritebatch.hpp"
 
 mugg::graphics::SpriteBatch::SpriteBatch(unsigned int maxSprites, GLuint vaoID, GLint posLocation, GLint uvLocation, GLint colLocation) {
-    this->vboID = -1;
+    this->positionBufferID = -1;
+    this->uvBufferID = -1;
+    this->colorBufferID = -1;
     this->texID = -1;
     this->spriteCount = 0;
     this->positionCount = 0;
     this->uvCount = 0;
     this->colorCount = 0;
-
     this->maxSprites = maxSprites;
-    this->vaoID = vaoID;
-
     this->posLocation = posLocation;
     this->uvLocation = uvLocation;
     this->colLocation = colLocation;
 
+    glGenVertexArrays(1, &this->vaoID);
     glBindVertexArray(this->vaoID);
 
-    this->stride = ((sizeof(glm::vec3) * 12) + (sizeof(glm::vec2)*6));
+    
+    //(3 POS, 2 UV, 3 COL) * 6
+    static const GLfloat vertex_position_data[] = {
+        -1.0f, -1.0f, 0.0f, 
+         1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
+         1.0f, -1.0f, 0.0f,
+         1.0f,  1.0f, 0.0f,
+    };
 
+    static const GLfloat vertex_uv_data[] = {
+        0.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+    };
+
+    static const GLfloat vertex_color_data[] = {
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+    };
+
+    //POSITION VERTEX DATA====================================================================================================================
     glEnableVertexAttribArray(this->posLocation);
-    glEnableVertexAttribArray(this->uvLocation);
-    glEnableVertexAttribArray(this->colLocation);
     
-    glGenBuffers(1, &this->vboID);
-    glBindBuffer(GL_ARRAY_BUFFER, this->vboID);
-    glBufferData(GL_ARRAY_BUFFER, ((sizeof(glm::vec3) * 12) + sizeof(glm::vec2) * 6) * this->maxSprites, NULL, GL_DYNAMIC_DRAW);
-    
-    glVertexAttribPointer(this->posLocation, 3, GL_FLOAT, GL_FALSE, this->stride, 0);
-    glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, this->stride, (GLvoid*)(sizeof(glm::vec3)));
-    glVertexAttribPointer(this->colLocation, 3, GL_FLOAT, GL_FALSE, this->stride, (GLvoid*)(sizeof(glm::vec3) + sizeof(glm::vec2)));
+    glGenBuffers(1, &this->positionBufferID);
+    glBindBuffer(GL_ARRAY_BUFFER, this->positionBufferID);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_position_data), NULL, GL_STATIC_DRAW);
+
+    for(unsigned int i = 0; i < this->maxSprites; i++) {
+        glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertex_position_data) * i, sizeof(vertex_position_data), (GLvoid*)(vertex_position_data));
+    }
+
+    glVertexAttribPointer(this->posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     glDisableVertexAttribArray(this->posLocation);
-    glDisableVertexAttribArray(this->uvLocation);
-    glDisableVertexAttribArray(this->colLocation);
+    //POSITION VERTEX DATA====================================================================================================================
     
+    //UV VERTEX DATA====================================================================================================================
+    glEnableVertexAttribArray(this->uvLocation);
+    
+    glGenBuffers(1, &this->uvBufferID);
+    glBindBuffer(GL_ARRAY_BUFFER, this->uvBufferID);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_uv_data), NULL, GL_STATIC_DRAW);
+
+    for(unsigned int i = 0; i < this->maxSprites; i++) {
+        glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertex_uv_data) * i, sizeof(vertex_uv_data), (GLvoid*)(vertex_uv_data));
+    }
+
+    glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glDisableVertexAttribArray(this->uvLocation);
+    //UV VERTEX DATA====================================================================================================================
+    
+    //COLOR VERTEX DATA====================================================================================================================
+    glEnableVertexAttribArray(this->colLocation);
+    
+    glGenBuffers(1, &this->colorBufferID);
+    glBindBuffer(GL_ARRAY_BUFFER, this->colorBufferID);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_color_data), NULL, GL_STATIC_DRAW);
+
+    for(unsigned int i = 0; i < this->maxSprites; i++) {
+        glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertex_color_data) * i, sizeof(vertex_color_data), (GLvoid*)(vertex_color_data));
+    }
+
+    glVertexAttribPointer(this->colLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glDisableVertexAttribArray(this->colLocation);
+    //COLOR VERTEX DATA====================================================================================================================
 }
 mugg::graphics::SpriteBatch::~SpriteBatch() {
-    if(glIsBuffer(this->vboID) == GL_TRUE) {
-        glDeleteBuffers(1, &this->vboID);
+    if(glIsBuffer(this->positionBufferID) == GL_TRUE) {
+        glDeleteBuffers(1, &this->positionBufferID);
+    }
+    if(glIsBuffer(this->uvBufferID) == GL_TRUE) {
+        glDeleteBuffers(1, &this->uvBufferID);
+    }
+    if(glIsBuffer(this->colorBufferID) == GL_TRUE) {
+        glDeleteBuffers(1, &this->colorBufferID);
     }
 }
 
 void mugg::graphics::SpriteBatch::Add() {
     if(this->spriteCount < this->maxSprites) {
-        //Add default values so it is onscreen even when you haven't explicitly set the sprite's position.
-        //Position default values
-        //this->UpdateSprite(this->spriteCount, glm::mat4(1.0f));
-       
-        //Bottom left vertex
-        this->UpdatePosition(this->spriteCount, glm::vec3(-1.0f, -1.0f, 0.0f));
-        this->UpdateUV(this->spriteCount, glm::vec2(0.0f, 0.0f));
-        this->UpdateColor(this->spriteCount, glm::vec3(1.0f, 1.0f, 1.0f));
-        
-        //Top right vertex
-        this->UpdatePosition(this->spriteCount + 1, glm::vec3(1.0f, 1.0f, 0.0f));
-        this->UpdateUV(this->spriteCount + 1, glm::vec2(1.0f, 1.0f));
-        this->UpdateColor(this->spriteCount + 1, glm::vec3(1.0f, 1.0f, 1.0f));
-        
-        //Top left vertex
-        this->UpdatePosition(this->spriteCount + 2, glm::vec3(-1.0f, 1.0f, 0.0f));
-        this->UpdateUV(this->spriteCount + 2, glm::vec2(0.0f, 1.0f));
-        this->UpdateColor(this->spriteCount + 2, glm::vec3(1.0f, 1.0f, 1.0f));
-        
-        //Bottom left vertex
-        this->UpdatePosition(this->spriteCount + 3, glm::vec3(-1.0f, -1.0f, 0.0f));
-        this->UpdateUV(this->spriteCount + 3, glm::vec2(0.0f, 0.0f));
-        this->UpdateColor(this->spriteCount + 3, glm::vec3(1.0f, 1.0f, 1.0f));
-        
-        //Bottom right vertex
-        this->UpdatePosition(this->spriteCount + 4, glm::vec3(1.0f, -1.0f, 0.0f));
-        this->UpdateUV(this->spriteCount + 4, glm::vec2(1.0f, 0.0f));
-        this->UpdateColor(this->spriteCount + 4, glm::vec3(1.0f, 1.0f, 1.0f));
-        
-        //Top right vertex
-        this->UpdatePosition(this->spriteCount + 5, glm::vec3(1.0f, 1.0f, 0.0f));
-        this->UpdateUV(this->spriteCount + 5, glm::vec2(1.0f, 1.0f));
-        this->UpdateColor(this->spriteCount + 5, glm::vec3(1.0f, 1.0f, 1.0f));
-        
         this->spriteCount++;
-        this->positionCount += 6;
-        this->uvCount += 6;
-        this->colorCount += 6;
     } else {
         //Shouldn't ever happen, the parent GUIManager should always create a new one at the correct time,
         //but you never know
@@ -90,48 +117,15 @@ void mugg::graphics::SpriteBatch::Add() {
 }
 void mugg::graphics::SpriteBatch::UpdatePosition(unsigned int index, const glm::vec3& position) {
     if(index <= this->spriteCount * 6) {
-        glBindVertexArray(vaoID);
-        glBindBuffer(GL_ARRAY_BUFFER, this->vboID);
+        glBindBuffer(GL_ARRAY_BUFFER, this->positionBufferID);
         glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * index, sizeof(glm::vec3), (GLvoid*)(&position[0]));
-    
-        glVertexAttribPointer(this->posLocation, 3, GL_FLOAT, GL_FALSE, this->stride, 0);
-        glEnableVertexAttribArray(this->posLocation);
     }
 }
 void mugg::graphics::SpriteBatch::UpdateUV(unsigned int index, const glm::vec2& uv) {
-    if(index <= this->spriteCount * 6) {
-        glBindVertexArray(vaoID);
-        glBindBuffer(GL_ARRAY_BUFFER, this->vboID);
-        glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * index, sizeof(glm::vec2), (GLvoid*)(&uv[0]));
-    
-        glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, this->stride, (GLvoid*)(sizeof(glm::vec3)));
-        glEnableVertexAttribArray(this->uvLocation);
-    }
 }
 void mugg::graphics::SpriteBatch::UpdateColor(unsigned int index, const glm::vec3& color) {
-    if(index <= this->spriteCount * 6) {
-        glBindVertexArray(this->vaoID);
-        glBindBuffer(GL_ARRAY_BUFFER, this->vboID);
-        glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * index, sizeof(glm::vec3), (GLvoid*)(&color[0]));
-    
-        glVertexAttribPointer(this->colLocation, 3, GL_FLOAT, GL_FALSE, this->stride, (GLvoid*)(sizeof(glm::vec3) + sizeof(glm::vec2)));
-        glEnableVertexAttribArray(this->colLocation);
-    }
 }
 void mugg::graphics::SpriteBatch::UpdateSprite(unsigned int index, const glm::mat4& modelMatrix) {
-    if(index <= this->spriteCount) {
-        glm::vec4 bottomLeft  = glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f) * modelMatrix; 
-        glm::vec4 topRight    = glm::vec4( 1.0f,  1.0f, 0.0f, 1.0f) * modelMatrix; 
-        glm::vec4 topLeft     = glm::vec4(-1.0f,  1.0f, 0.0f, 1.0f) * modelMatrix; 
-        glm::vec4 bottomRight = glm::vec4( 1.0f, -1.0f, 0.0f, 1.0f) * modelMatrix; 
-
-        this->UpdatePosition(this->spriteCount + 0, glm::vec3(bottomLeft));
-        this->UpdatePosition(this->spriteCount + 1, glm::vec3(topRight));
-        this->UpdatePosition(this->spriteCount + 2, glm::vec3(topLeft));
-        this->UpdatePosition(this->spriteCount + 3, glm::vec3(bottomLeft));
-        this->UpdatePosition(this->spriteCount + 4, glm::vec3(bottomRight));
-        this->UpdatePosition(this->spriteCount + 5, glm::vec3(topLeft));
-    }
 }
 
 unsigned int mugg::graphics::SpriteBatch::GetSpriteCount() {
@@ -141,8 +135,14 @@ unsigned int mugg::graphics::SpriteBatch::GetMaxSprites() {
     return this->maxSprites;
 }
 
-GLuint mugg::graphics::SpriteBatch::GetVBOID() {
-    return this->vboID;
+GLuint mugg::graphics::SpriteBatch::GetPositionBufferID() {
+    return this->positionBufferID;
+}
+GLuint mugg::graphics::SpriteBatch::GetUVBufferID() {
+    return this->uvBufferID;
+}
+GLuint mugg::graphics::SpriteBatch::GetColorBufferID() {
+    return this->colorBufferID;
 }
 
 GLuint mugg::graphics::SpriteBatch::GetTextureID() {
@@ -155,10 +155,14 @@ void mugg::graphics::SpriteBatch::Render() {
     glEnableVertexAttribArray(this->posLocation);
     glEnableVertexAttribArray(this->uvLocation);
     glEnableVertexAttribArray(this->colLocation);
-
-    glBindTexture(GL_TEXTURE_2D, 1);
-    glDrawArrays(GL_TRIANGLES, 0, this->spriteCount * 6);
     
+    if(glIsTexture(1))
+        glBindTexture(GL_TEXTURE_2D, 1);
+    else
+        std::cout << "1 isn't a texture!\n";
+    
+    glDrawArrays(GL_TRIANGLES, 0, this->spriteCount * 6);
+
     glDisableVertexAttribArray(this->posLocation);
     glDisableVertexAttribArray(this->uvLocation);
     glDisableVertexAttribArray(this->colLocation);

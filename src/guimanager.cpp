@@ -113,7 +113,7 @@ bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_im
 void mugg::gui::GUIManager::Render() {
     if(glIsProgram(this->programID) == GL_TRUE && !this->spriteBatches.empty()) {
         glUseProgram(this->programID);
-        
+       
         glUniformMatrix4fv(this->modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
         for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {

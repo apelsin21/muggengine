@@ -32,9 +32,9 @@ mugg::net::NetManager::~NetManager() {
 mugg::net::Client* mugg::net::NetManager::CreateClient() {
     mugg::net::Client* client = new mugg::net::Client(this);
     
-    if(this->clients.empty() && this->clientQueue.empty()) {
-        this->threads.push_back(std::thread(&mugg::net::NetManager::UpdateClients, this));
-    }
+//    if(this->clients.empty() && this->clientQueue.empty()) {
+//        this->threads.push_back(std::thread(&mugg::net::NetManager::UpdateClients, this));
+//    }
     
     this->updateClients = true;
 
@@ -52,9 +52,9 @@ std::size_t mugg::net::NetManager::GetClientQueueCount() {
 mugg::net::Server* mugg::net::NetManager::CreateServer() {
     mugg::net::Server* server = new mugg::net::Server(this);
 
-    if(this->servers.empty() && this->serverQueue.empty()) {
-        this->threads.push_back(std::thread(&mugg::net::NetManager::UpdateServers, this));
-    }
+//    if(this->servers.empty() && this->serverQueue.empty()) {
+//        this->threads.push_back(std::thread(&mugg::net::NetManager::UpdateServers, this));
+//    }
 
     this->updateServers = true;
     

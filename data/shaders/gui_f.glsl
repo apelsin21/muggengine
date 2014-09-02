@@ -8,5 +8,5 @@ out vec4 color;
 uniform sampler2D sampler;
 
 void main() {
-    color =  texture(sampler, f_uv) * vec4(color.rgb, 1.0);
+    color = vec4(f_color.rgb, 1.0) * texture(sampler, f_uv);
 }

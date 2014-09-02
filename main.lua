@@ -9,7 +9,7 @@ net_mgr = engine:get_net_manager()
 renderer:initialize()
 
 ball_array = {}
-num_balls = 20000
+num_balls = 2 
 balltexture = content_mgr:create_texture2d("data/textures/ball.png", false)
 ballscale = Vector2D.new(0.1, 0.1)
 ballpos = Vector2D.new(1.0, 0.0)

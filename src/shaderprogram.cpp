@@ -19,7 +19,7 @@ bool mugg::graphics::ShaderProgram::HasGeneratedID() {
 }
 
 bool mugg::graphics::ShaderProgram::AddShader(GLuint shader) {
-    if(!glIsShader(shader)) {
+    if(glIsShader(shader) == GL_FALSE) {
         std::cout << "Tried adding an unvalid shader to shaderprogram!\n";
         return false;
     }
