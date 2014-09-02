@@ -15,8 +15,9 @@ namespace mugg {
     namespace graphics {
         class SpriteBatch {
             private:
-                GLuint positionBuffer, uvBuffer, colorBuffer, texID, vaoID;
-                unsigned int maxSprites, spriteCount;
+                GLuint vboID, texID, vaoID;
+                unsigned int maxSprites, spriteCount, positionCount, uvCount, colorCount;
+                int stride;
                 GLint posLocation, uvLocation, colLocation, modelLocation;
             public:
                 SpriteBatch(unsigned int, GLuint, GLint, GLint, GLint);
@@ -31,11 +32,9 @@ namespace mugg {
                 virtual unsigned int GetSpriteCount();
                 virtual unsigned int GetMaxSprites();
                 
-                virtual GLuint GetPositionBuffer();
-                virtual GLuint GetUVBuffer();
-                virtual GLuint GetColorBuffer();
+                virtual GLuint GetVBOID();
 
-                virtual GLuint GetTexture();
+                virtual GLuint GetTextureID();
         
                 virtual void Render();
         };
