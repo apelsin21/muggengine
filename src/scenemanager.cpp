@@ -63,7 +63,7 @@ void mugg::scene::SceneManager::Render() {
                 GLint modelMatrixLocation = glGetUniformLocation(this->programID, "v_model");
                 GLint projectionMatrixLocation = glGetUniformLocation(this->programID, "v_projection");
 
-                glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(this->sceneNodes[i]->GetPosition().x, this->sceneNodes[i]->GetPosition().y, this->sceneNodes[i]->GetPosition().z));
+                glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(this->sceneNodes[i]->GetPosition()));
                 glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
                 glm::mat4 projectionMatrix = glm::perspective(3.1415f / 2.0f, 4.0f / 3.0f, 0.001f, 100000.0f);

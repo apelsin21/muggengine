@@ -45,6 +45,8 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
     this->posLocation = 0; 
     this->uvLocation  = 1;
     this->colLocation = 2;
+    
+    this->modelMatrixUniformLocation = glGetUniformLocation(this->programID, "u_model");
 }
 
 mugg::gui::GUIManager::~GUIManager() {
@@ -109,27 +111,20 @@ bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_im
 }
 
 void mugg::gui::GUIManager::Render() {
-    glUseProgram(this->programID);
-    glBindVertexArray(this->vaoID);
+    if(glIsProgram(this->programID) == GL_TRUE && !this->spriteBatches.empty()) {
+        glUseProgram(this->programID);
+        
+        glUniformMatrix4fv(this->modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
-    glEnableVertexAttribArray(this->posLocation);
-    glEnableVertexAttribArray(this->uvLocation);
-    glEnableVertexAttribArray(this->colLocation);
+        for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
+            for(unsigned int u = 0; u < this->imagesToBeUpdated.size(); u++) {
+                this->spriteBatches[i]->UpdateSprite(u, this->images[this->imagesToBeUpdated[u]]->GetModelMatrix());
+                this->imagesToBeUpdated.erase(this->imagesToBeUpdated.begin() + u);
+                u--;
+            }
 
-    GLint modelMatrixUniformLocation = glGetUniformLocation(this->programID, "u_model");
-    glUniformMatrix4fv(modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-
-    for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
-        for(unsigned int u = 0; u < this->imagesToBeUpdated.size(); u++) {
-            this->spriteBatches[i]->UpdateSprite(u, this->images[this->imagesToBeUpdated[u]]->GetModelMatrix());
-            this->imagesToBeUpdated.erase(this->imagesToBeUpdated.begin() + u);
-            u--;
+            this->spriteBatches[i]->Render();
         }
 
-        this->spriteBatches[i]->Render();
     }
-    
-    glDisableVertexAttribArray(this->colLocation);
-    glDisableVertexAttribArray(this->uvLocation);
-    glDisableVertexAttribArray(this->posLocation);
 }

@@ -24,10 +24,10 @@ renderer:initialize()
 -- print("Mesh has " .. mesh:get_number_of_normals() .. " normals")
 
 ball_array = {}
-num_balls = 50
+num_balls = 2
 balltexture = content_mgr:create_texture2d("data/textures/ball.png", false)
 ballscale = Vector2D.new(0.1, 0.1)
-ballpos = Vector2D.new(0.0, 0.0)
+ballpos = Vector2D.new(1.0, 0.0)
 
 for i = 1, num_balls do
     ball_array[i] = gui_mgr:create_image()
@@ -91,7 +91,7 @@ function update()
         pos:set_x(pos:get_x() + 0.1)
     end
 
-    ball_array[1]:set_position(pos)
+    ball_array[1]:set_position(Vector2D.new(0.1, 0.5))
 end
 
 while window:is_open() do

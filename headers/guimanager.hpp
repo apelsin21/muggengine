@@ -38,7 +38,7 @@ namespace mugg {
                 GLuint vaoID;
                 GLuint vsID, fsID, programID;
                
-                GLint posLocation, uvLocation, colLocation;
+                GLint posLocation, uvLocation, colLocation, modelMatrixUniformLocation;
 
                 mugg::core::Engine* parent;
             public:

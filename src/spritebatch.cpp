@@ -61,12 +61,14 @@ void mugg::graphics::SpriteBatch::Add() {
     if(this->spriteCount < this->maxSprites) {
         //Add default values so it is onscreen even when you haven't explicitly set the sprite's position.
         //Position default values
-        this->UpdatePosition(this->spriteCount, glm::vec3(-1.0f, -1.0f, 0.0f));
-        this->UpdatePosition(this->spriteCount + 1, glm::vec3(1.0f, 1.0f, 0.0f));
-        this->UpdatePosition(this->spriteCount + 2, glm::vec3(-1.0f, 1.0f, 0.0f));
-        this->UpdatePosition(this->spriteCount + 3, glm::vec3(-1.0f, -1.0f, 0.0f));
-        this->UpdatePosition(this->spriteCount + 4, glm::vec3(1.0f, -1.0f, 0.0f));
-        this->UpdatePosition(this->spriteCount + 5, glm::vec3(1.0f, 1.0f, 0.0f));
+        this->UpdateSprite(this->spriteCount, glm::mat4(1.0f));
+        
+        //this->UpdatePosition(this->spriteCount, glm::vec3(-1.0f, -1.0f, 0.0f));
+        //this->UpdatePosition(this->spriteCount + 1, glm::vec3(1.0f, 1.0f, 0.0f));
+        //this->UpdatePosition(this->spriteCount + 2, glm::vec3(-1.0f, 1.0f, 0.0f));
+        //this->UpdatePosition(this->spriteCount + 3, glm::vec3(-1.0f, -1.0f, 0.0f));
+        //this->UpdatePosition(this->spriteCount + 4, glm::vec3(1.0f, -1.0f, 0.0f));
+        //this->UpdatePosition(this->spriteCount + 5, glm::vec3(1.0f, 1.0f, 0.0f));
         
         //UV default values
         this->UpdateUV(this->spriteCount, glm::vec2(0.0f, 0.0f));
@@ -96,6 +98,9 @@ void mugg::graphics::SpriteBatch::UpdatePosition(unsigned int index, const glm::
         glBindVertexArray(vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->positionBuffer);
         glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * index, sizeof(glm::vec3), (GLvoid*)(&position[0]));
+        
+        glVertexAttribPointer(this->posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(this->posLocation);
     }
 }
 void mugg::graphics::SpriteBatch::UpdateUV(unsigned int index, const glm::vec2& uv) {
@@ -103,6 +108,9 @@ void mugg::graphics::SpriteBatch::UpdateUV(unsigned int index, const glm::vec2& 
         glBindVertexArray(vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->uvBuffer);
         glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * index, sizeof(glm::vec2), (GLvoid*)(&uv[0]));
+        
+        glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(this->uvLocation);
     }
 }
 void mugg::graphics::SpriteBatch::UpdateColor(unsigned int index, const glm::vec3& color) {
@@ -110,14 +118,17 @@ void mugg::graphics::SpriteBatch::UpdateColor(unsigned int index, const glm::vec
         glBindVertexArray(this->vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->colorBuffer);
         glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * index, sizeof(glm::vec3), (GLvoid*)(&color[0]));
+    
+        glVertexAttribPointer(this->colLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(this->colLocation);
     }
 }
 void mugg::graphics::SpriteBatch::UpdateSprite(unsigned int index, const glm::mat4& modelMatrix) {
     if(index <= this->spriteCount) {
-        glm::vec4 bottomLeft = glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f) * modelMatrix; 
-        glm::vec4 topRight = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f) * modelMatrix; 
-        glm::vec4 topLeft = glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f) * modelMatrix; 
-        glm::vec4 bottomRight = glm::vec4(1.0f, -1.0f, 0.0f, 1.0f) * modelMatrix; 
+        glm::vec4 bottomLeft  = glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f) * modelMatrix; 
+        glm::vec4 topRight    = glm::vec4( 1.0f,  1.0f, 0.0f, 1.0f) * modelMatrix; 
+        glm::vec4 topLeft     = glm::vec4(-1.0f,  1.0f, 0.0f, 1.0f) * modelMatrix; 
+        glm::vec4 bottomRight = glm::vec4( 1.0f, -1.0f, 0.0f, 1.0f) * modelMatrix; 
 
         this->UpdatePosition(this->spriteCount + 0, glm::vec3(bottomLeft));
         this->UpdatePosition(this->spriteCount + 1, glm::vec3(topRight));
@@ -150,10 +161,16 @@ GLuint mugg::graphics::SpriteBatch::GetTexture() {
 }
 
 void mugg::graphics::SpriteBatch::Render() {
-    glBindBuffer(GL_ARRAY_BUFFER, this->positionBuffer);     
-    glBindBuffer(GL_ARRAY_BUFFER, this->uvBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, this->colorBuffer);
-
+    glBindVertexArray(this->vaoID);
+    
+    glEnableVertexAttribArray(this->posLocation);
+    glEnableVertexAttribArray(this->uvLocation);
+    glEnableVertexAttribArray(this->colLocation);
+    
     glBindTexture(GL_TEXTURE_2D, 1);
     glDrawArrays(GL_TRIANGLES, 0, this->spriteCount * 6);
+    
+    glDisableVertexAttribArray(this->posLocation);
+    glDisableVertexAttribArray(this->uvLocation);
+    glDisableVertexAttribArray(this->colLocation);
 }
