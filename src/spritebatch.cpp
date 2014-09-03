@@ -1,4 +1,5 @@
 #include "spritebatch.hpp"
+#include "sprite.hpp"
 
 mugg::graphics::SpriteBatch::SpriteBatch(unsigned int maxSprites, GLuint vaoID, GLint posLocation, GLint uvLocation, GLint colLocation) {
     //Initialize default values
@@ -60,54 +61,44 @@ mugg::graphics::SpriteBatch::~SpriteBatch() {
 }
 
 //TODO: Figure out cleaner way to do this
-void mugg::graphics::SpriteBatch::Add() {
-    if(this->spriteCount < this->maxSprites) {
-        static const GLfloat vertex_position_data[] = {
-            -1.0f, -1.0f, 0.0f, 
-             1.0f,  1.0f, 0.0f,
-            -1.0f,  1.0f, 0.0f,
-            -1.0f, -1.0f, 0.0f,
-             1.0f, -1.0f, 0.0f,
-             1.0f,  1.0f, 0.0f,
-        };
+void mugg::graphics::SpriteBatch::AddSprite(mugg::gui::Sprite* sprite) {
+    this->spriteCount++;
+    this->UpdateSprite(sprite);
+}
+void mugg::graphics::SpriteBatch::UpdateSprite(mugg::gui::Sprite* sprite) {
+    unsigned int index = sprite->GetIndex();
 
-        static const GLfloat vertex_uv_data[] = {
-            0.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f,
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-        };
-
-        static const GLfloat vertex_color_data[] = {
-            1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-        };
-
-        //POSITION
-        glBindBuffer(GL_ARRAY_BUFFER, this->positionBufferID);
-        glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertex_position_data) * this->spriteCount, sizeof(vertex_position_data), (GLvoid*)(vertex_position_data));
-        
-        //UV
-        glBindBuffer(GL_ARRAY_BUFFER, this->uvBufferID);
-        glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertex_uv_data) * this->spriteCount, sizeof(vertex_uv_data), (GLvoid*)(vertex_uv_data));
-        
-        //COLOR
-        glBindBuffer(GL_ARRAY_BUFFER, this->colorBufferID);
-        glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertex_color_data) * this->spriteCount, sizeof(vertex_color_data), (GLvoid*)(vertex_color_data));
-        
-        this->spriteCount++;
-    } else {
-        //Shouldn't ever happen, the parent GUIManager should always create a new one at the correct time,
-        //but you never know
-        std::cout << "Tried to add sprite to full spritebatch!\n";
+    if(index <= this->spriteCount) {
+        if(sprite->IsPositionChanged()) {
+            std::cout << "Updating positions for sprite " << index << std::endl;
+            this->UpdatePosition(index + 0, sprite->GetBottomLeftPosition());
+            this->UpdatePosition(index + 1, sprite->GetTopRightPosition());
+            this->UpdatePosition(index + 2, sprite->GetTopLeftPosition());
+            this->UpdatePosition(index + 3, sprite->GetBottomLeftPosition());
+            this->UpdatePosition(index + 4, sprite->GetBottomRightPosition());
+            this->UpdatePosition(index + 5, sprite->GetTopRightPosition());
+        }
+        if(sprite->IsUVChanged()) {
+            std::cout << "Updating uvs for sprite " << index << std::endl;
+            this->UpdateUV(index + 0, sprite->GetBottomLeftUV());
+            this->UpdateUV(index + 1, sprite->GetTopRightUV());
+            this->UpdateUV(index + 2, sprite->GetTopLeftUV());
+            this->UpdateUV(index + 3, sprite->GetBottomLeftUV());
+            this->UpdateUV(index + 4, sprite->GetBottomRightUV());
+            this->UpdateUV(index + 5, sprite->GetTopRightUV());
+        }
+        if(sprite->IsColorChanged()) {
+            std::cout << "Updating colors for sprite " << index << std::endl;
+            this->UpdateColor(index + 0, sprite->GetBottomLeftColor());
+            this->UpdateColor(index + 1, sprite->GetTopRightColor());
+            this->UpdateColor(index + 2, sprite->GetTopLeftColor());
+            this->UpdateColor(index + 3, sprite->GetBottomLeftColor());
+            this->UpdateColor(index + 4, sprite->GetBottomRightColor());
+            this->UpdateColor(index + 5, sprite->GetTopRightColor());
+        }
     }
 }
+
 void mugg::graphics::SpriteBatch::UpdatePosition(unsigned int index, const glm::vec3& position) {
     if(index <= this->spriteCount * 6) {
         glBindVertexArray(this->vaoID);
@@ -133,21 +124,6 @@ void mugg::graphics::SpriteBatch::UpdateColor(unsigned int index, const glm::vec
         glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * index, sizeof(glm::vec3), (GLvoid*)(&color[0]));
     } else {
         std::cout << "Tried to update vertex colors for out of bounds sprite\n";
-    }
-}
-void mugg::graphics::SpriteBatch::UpdateSprite(unsigned int index, const glm::mat4& modelMatrix) {
-    if(index <= this->spriteCount) {
-        glm::vec3 bottomLeft  = glm::vec3(glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f) * modelMatrix); 
-        glm::vec3 topRight    = glm::vec3(glm::vec4( 1.0f,  1.0f, 0.0f, 1.0f) * modelMatrix);
-        glm::vec3 topLeft     = glm::vec3(glm::vec4(-1.0f,  1.0f, 0.0f, 1.0f) * modelMatrix);
-        glm::vec3 bottomRight = glm::vec3(glm::vec4( 1.0f, -1.0f, 0.0f, 1.0f) * modelMatrix);
-
-        this->UpdatePosition(index + 0, bottomLeft);
-        this->UpdatePosition(index + 1, topRight);
-        this->UpdatePosition(index + 2, topLeft);
-        this->UpdatePosition(index + 3, bottomLeft);
-        this->UpdatePosition(index + 4, bottomRight);
-        this->UpdatePosition(index + 5, topRight);
     }
 }
 

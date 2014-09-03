@@ -1,5 +1,5 @@
 #include "guimanager.hpp"
-#include "image.hpp"
+#include "sprite.hpp"
 
 mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
     this->parent = parent;
@@ -60,9 +60,9 @@ mugg::gui::GUIManager::~GUIManager() {
         glDeleteProgram(this->programID);
     }
 
-    for(unsigned int i = 0; i < this->images.size(); i++) {
-        if(this->images[i] != nullptr) {
-            delete this->images[i];
+    for(unsigned int i = 0; i < this->sprites.size(); i++) {
+        if(this->sprites[i] != nullptr) {
+            delete this->sprites[i];
         }
     }
     for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
@@ -74,9 +74,7 @@ mugg::gui::GUIManager::~GUIManager() {
     glDeleteVertexArrays(1, &this->vaoID);
 }
 
-mugg::gui::Image* mugg::gui::GUIManager::CreateImage() {
-    Image* img = new Image(this, this->images.size());
-    
+void mugg::gui::GUIManager::UpdateSpriteBatches() {
     if(!this->spriteBatches.empty()) {
         unsigned int index = this->spriteBatches.size() - 1;
         std::size_t currentSize = this->spriteBatches[index]->GetSpriteCount();
@@ -88,30 +86,36 @@ mugg::gui::Image* mugg::gui::GUIManager::CreateImage() {
     } else {
         this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
     }
-    
-    this->spriteBatches[this->spriteBatches.size() - 1]->Add();
-    
-    img->SetSpriteBatchIndex(this->spriteBatches.size() - 1);
-    
-    this->images.push_back(img);
-
-    return img;
 }
-void mugg::gui::GUIManager::UpdateImage(unsigned int index) {
-    if(index <= this->images.size()) {
-        this->imagesToBeUpdated.push_back(index);
+
+mugg::gui::Sprite* mugg::gui::GUIManager::CreateSprite() {
+    Sprite* sprite = new Sprite(this, this->sprites.size());
+   
+    this->UpdateSpriteBatches();
+
+    this->spriteBatches[this->spriteBatches.size() - 1]->AddSprite(sprite);
+    
+    sprite->SetSpriteBatchIndex(this->spriteBatches.size() - 1);
+    
+    this->sprites.push_back(sprite);
+
+    return sprite;
+}
+void mugg::gui::GUIManager::UpdateSprite(unsigned int index) {
+    if(index <= this->sprites.size()) {
+        this->spritesToBeUpdated.push_back(index);
     }
 }
-std::size_t mugg::gui::GUIManager::GetNumberOfImages() {
-    return this->images.size();
+std::size_t mugg::gui::GUIManager::GetNumberOfSprites() {
+    return this->sprites.size();
 }
-bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_image) {
-    if(index < 0 || index >= this->images.size() || this->images.empty()) {
+bool mugg::gui::GUIManager::GetSpriteByIndex(int index, mugg::gui::Sprite*& out_image) {
+    if(index < 0 || index >= this->sprites.size() || this->sprites.empty()) {
         std::cout << "Tried to get image from GUIManager by out of binds index!\n";
         return false;
     }
 
-    out_image = this->images[index];
+    out_image = this->sprites[index];
     return true;
 }
 
@@ -131,9 +135,9 @@ void mugg::gui::GUIManager::Render() {
         //Render spritebatches
         for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
             //Update VBO in spritebatches where it is needed
-            for(unsigned int u = 0; u < this->imagesToBeUpdated.size(); u++) {
-                this->spriteBatches[i]->UpdateSprite(u, this->images[this->imagesToBeUpdated[u]]->GetModelMatrix());
-                this->imagesToBeUpdated.erase(this->imagesToBeUpdated.begin() + u);
+            for(unsigned int u = 0; u < this->spritesToBeUpdated.size(); u++) {
+                this->spriteBatches[i]->UpdateSprite(this->sprites[this->spritesToBeUpdated[u]]);
+                this->spritesToBeUpdated.erase(this->spritesToBeUpdated.begin() + u);
                 u--;
             }
 

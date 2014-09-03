@@ -26,12 +26,12 @@ namespace mugg {
     }
     
     namespace gui {
-        class Image;
+        class Sprite;
         
         class GUIManager {
             private:
-                std::vector<mugg::gui::Image*> images;
-                std::vector<unsigned int> imagesToBeUpdated;
+                std::vector<mugg::gui::Sprite*> sprites;
+                std::vector<unsigned int> spritesToBeUpdated;
                 
                 std::vector<mugg::graphics::SpriteBatch*> spriteBatches;
                     
@@ -43,14 +43,16 @@ namespace mugg {
                 glm::mat4 modelMatrix;
 
                 mugg::core::Engine* parent;
+
+                void UpdateSpriteBatches();
             public:
                 GUIManager(mugg::core::Engine*);
                 ~GUIManager();
 
-                virtual mugg::gui::Image* CreateImage();
-                virtual void UpdateImage(unsigned int);
-                virtual std::size_t GetNumberOfImages();
-                virtual bool GetImageByIndex(int, mugg::gui::Image*&);
+                virtual mugg::gui::Sprite* CreateSprite();
+                virtual void UpdateSprite(unsigned int);
+                virtual std::size_t GetNumberOfSprites();
+                virtual bool GetSpriteByIndex(int, mugg::gui::Sprite*&);
 
                 virtual glm::mat4 GetModelMatrix();
                 virtual void SetModelMatrix(const glm::mat4&);

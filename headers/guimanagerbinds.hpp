@@ -3,7 +3,7 @@
 
 #include <lua.hpp>
 
-#include "imagebinds.hpp"
+#include "spritebinds.hpp"
 #include "guimanager.hpp"
 
 namespace mugg {
@@ -14,13 +14,13 @@ namespace mugg {
             return *(mugg::gui::GUIManager**)luaL_checkudata(L, n, GUIManagerName);
         }
 
-        int guiManagerCreateImage(lua_State* L) {
+        int guiManagerCreateSprite(lua_State* L) {
             mugg::gui::GUIManager* mgr = checkGUIManager(L, 1);
             
-            mugg::gui::Image** img = (mugg::gui::Image**)lua_newuserdata(L, sizeof(mugg::gui::Image*));
-            *img = mgr->CreateImage();
+            mugg::gui::Sprite** sprite = (mugg::gui::Sprite**)lua_newuserdata(L, sizeof(mugg::gui::Sprite*));
+            *sprite = mgr->CreateSprite();
 
-            luaL_getmetatable(L, ImageName);
+            luaL_getmetatable(L, SpriteName);
             lua_setmetatable(L, -2);
 
             return 1;
@@ -35,7 +35,7 @@ namespace mugg {
         }
 
         luaL_Reg guiManagerFuncs[] = {
-            {"create_image", guiManagerCreateImage},
+            {"create_sprite", guiManagerCreateSprite},
             {"render", guiManagerRender},
 
             {NULL, NULL}

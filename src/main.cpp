@@ -21,7 +21,7 @@
 #include "netmanagerbinds.hpp"
 #include "contentmanagerbinds.hpp"
 #include "guimanagerbinds.hpp"
-#include "imagebinds.hpp"
+#include "spritebinds.hpp"
 #include "vec2binds.hpp"
 #include "vec4binds.hpp"
 #include "keyboardbinds.hpp"
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
     system.RegisterMetatable(mugg::binds::netManagerFuncs, mugg::binds::NetManagerName);
     system.RegisterMetatable(mugg::binds::contentManagerFuncs, mugg::binds::ContentManagerName);
     system.RegisterMetatable(mugg::binds::guiManagerFuncs, mugg::binds::GUIManagerName);
-    system.RegisterMetatable(mugg::binds::imageFuncs, mugg::binds::ImageName);
+    system.RegisterMetatable(mugg::binds::spriteFuncs, mugg::binds::SpriteName);
     system.RegisterMetatable(mugg::binds::engineFuncs, mugg::binds::EngineName);
     system.RegisterMetatable(mugg::binds::vec2Funcs, mugg::binds::Vec2Name);
     system.RegisterMetatable(mugg::binds::vec4Funcs, mugg::binds::Vec4Name);

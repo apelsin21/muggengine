@@ -12,6 +12,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace mugg {
+    namespace gui {
+        class Sprite;
+    }
+    
     namespace graphics {
         class SpriteBatch {
             private:
@@ -21,15 +25,16 @@ namespace mugg {
                 GLint posLocation, uvLocation, colLocation, modelLocation;
             
                 GLfloat* vertexColorData, vertexPositionData, vertexUVData;
+                
+                virtual void UpdatePosition(unsigned int, const glm::vec3&);
+                virtual void UpdateUV(unsigned int, const glm::vec2&);
+                virtual void UpdateColor(unsigned int, const glm::vec3&);
             public:
                 SpriteBatch(unsigned int, GLuint, GLint, GLint, GLint);
                 ~SpriteBatch();
                 
-                virtual void Add();
-                virtual void UpdatePosition(unsigned int, const glm::vec3&);
-                virtual void UpdateUV(unsigned int, const glm::vec2&);
-                virtual void UpdateColor(unsigned int, const glm::vec3&);
-                virtual void UpdateSprite(unsigned int, const glm::mat4&);
+                virtual void AddSprite(mugg::gui::Sprite*);
+                virtual void UpdateSprite(mugg::gui::Sprite*);
         
                 virtual unsigned int GetSpriteCount();
                 virtual unsigned int GetMaxSprites();

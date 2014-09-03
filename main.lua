@@ -18,7 +18,7 @@ ballscale = Vector2D.new(0.1, 0.1)
 ballpos = Vector2D.new(1.0, 0.0)
 
 for i = 1, num_balls do
-    ball_array[i] = gui_mgr:create_image()
+    ball_array[i] = gui_mgr:create_sprite()
     ball_array[i]:set_texture(balltexture)
     ball_array[i]:set_scale(ballscale)
 end
