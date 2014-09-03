@@ -9,8 +9,11 @@ net_mgr = engine:get_net_manager()
 renderer:initialize()
 
 ball_array = {}
-num_balls = 2 
+num_balls = 1 
 balltexture = content_mgr:create_texture2d("data/textures/ball.png", false)
+
+balltexture:set_filter("Linear", "Linear")
+
 ballscale = Vector2D.new(0.1, 0.1)
 ballpos = Vector2D.new(1.0, 0.0)
 
@@ -26,6 +29,11 @@ mouse = Mouse.new()
 keyboard = Keyboard.new()
 
 start_time = os.clock()
+
+rotation = 0
+scale = Vector2D.new(1, 1)
+position = Vector2D.new(0.0, 0.0)
+scalefactor = 1
 
 function update()
     if keyboard:is_key_down("Escape") and lastkey ~= "Escape" then
@@ -62,24 +70,34 @@ function update()
     window:set_title("ms/frame: " .. renderer:get_frametime())
 
     deltatime = os.clock() - start_time
+    deltatime = 1
     start_time = os.clock()
 
-    pos = ball_array[1]:get_position()
-
+    rotation = rotation + 0.1
+    
+    if rotation >= 3.14*2 then
+        rotation = 0
+    end
+    
     if keyboard:is_key_down("W") then
-        pos:set_y(pos:get_y() + 0.1 * deltatime)
+        position:set_y(position:get_y() + 0.1 * deltatime)
     end
     if keyboard:is_key_down("S") then
-        pos:set_y(pos:get_y() - 0.1 * deltatime)
+        position:set_y(position:get_y() - 0.1 * deltatime)
     end
     if keyboard:is_key_down("A") then
-        pos:set_x(pos:get_x() - 0.1 * deltatime)
+        position:set_x(position:get_x() - 0.1 * deltatime)
     end
     if keyboard:is_key_down("D") then
-        pos:set_x(pos:get_x() + 0.1 * deltatime)
+        position:set_x(position:get_x() + 0.1 * deltatime)
     end
+    
+    scalefactor = math.sqrt(deltatime * 1.1)
+    scale:set_x(scale:get_x() * scalefactor)
 
-    ball_array[1]:set_position(Vector2D.new(0.1, 0.5))
+    ball_array[1]:set_position(position)
+    ball_array[1]:set_rotation(rotation)
+    ball_array[1]:set_scale(scale)
 end
 
 while window:is_open() do

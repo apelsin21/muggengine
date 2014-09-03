@@ -19,6 +19,8 @@ namespace mugg {
                 unsigned int maxSprites, spriteCount, positionCount, uvCount, colorCount;
                 int stride;
                 GLint posLocation, uvLocation, colLocation, modelLocation;
+            
+                GLfloat* vertexColorData, vertexPositionData, vertexUVData;
             public:
                 SpriteBatch(unsigned int, GLuint, GLint, GLint, GLint);
                 ~SpriteBatch();
