@@ -77,10 +77,15 @@ mugg::gui::GUIManager::~GUIManager() {
 mugg::gui::Image* mugg::gui::GUIManager::CreateImage() {
     Image* img = new Image(this, this->images.size());
     
-    if(this->spriteBatches.empty()) {
-        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
-    }
-    else if(this->spriteBatches[this->spriteBatches.size() - 1]->GetSpriteCount() == this->spriteBatches[this->spriteBatches.size() - 1]->GetMaxSprites()) {
+    if(!this->spriteBatches.empty()) {
+        unsigned int index = this->spriteBatches.size() - 1;
+        std::size_t currentSize = this->spriteBatches[index]->GetSpriteCount();
+        std::size_t maxSize = this->spriteBatches[index]->GetMaxSprites();
+        
+        if(currentSize >= maxSize) {
+            this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
+        }
+    } else {
         this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
     }
     
@@ -110,11 +115,18 @@ bool mugg::gui::GUIManager::GetImageByIndex(int index, mugg::gui::Image*& out_im
     return true;
 }
 
+glm::mat4 mugg::gui::GUIManager::GetModelMatrix() {
+    return this->modelMatrix;
+}
+void mugg::gui::GUIManager::SetModelMatrix(const glm::mat4& modelMatrix) {
+    this->modelMatrix = modelMatrix;
+}
+
 void mugg::gui::GUIManager::Render() {
     if(glIsProgram(this->programID) == GL_TRUE && !this->spriteBatches.empty()) {
         glUseProgram(this->programID);
        
-        glUniformMatrix4fv(this->modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+        glUniformMatrix4fv(this->modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
 
         //Render spritebatches
         for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
@@ -124,7 +136,10 @@ void mugg::gui::GUIManager::Render() {
                 this->imagesToBeUpdated.erase(this->imagesToBeUpdated.begin() + u);
                 u--;
             }
-            this->spriteBatches[i]->Render();
+
+            if(this->spriteBatches[i]->GetSpriteCount() > 0) {
+                this->spriteBatches[i]->Render();
+            }
         }
 
     }

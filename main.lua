@@ -9,7 +9,7 @@ net_mgr = engine:get_net_manager()
 renderer:initialize()
 
 ball_array = {}
-num_balls = 1 
+num_balls = 2
 balltexture = content_mgr:create_texture2d("data/textures/ball.png", false)
 
 balltexture:set_filter("Linear", "Linear")
@@ -92,8 +92,9 @@ function update()
         position:set_x(position:get_x() + 0.1 * deltatime)
     end
     
-    scalefactor = math.sqrt(deltatime * 1.1)
+    scalefactor = math.sqrt(deltatime * 1.001)
     scale:set_x(scale:get_x() * scalefactor)
+    scale:set_y(scale:get_y() * scalefactor)
 
     ball_array[1]:set_position(position)
     ball_array[1]:set_rotation(rotation)

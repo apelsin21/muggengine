@@ -40,6 +40,8 @@ namespace mugg {
                
                 GLint posLocation, uvLocation, colLocation, modelMatrixUniformLocation;
 
+                glm::mat4 modelMatrix;
+
                 mugg::core::Engine* parent;
             public:
                 GUIManager(mugg::core::Engine*);
@@ -49,6 +51,9 @@ namespace mugg {
                 virtual void UpdateImage(unsigned int);
                 virtual std::size_t GetNumberOfImages();
                 virtual bool GetImageByIndex(int, mugg::gui::Image*&);
+
+                virtual glm::mat4 GetModelMatrix();
+                virtual void SetModelMatrix(const glm::mat4&);
 
                 virtual void Render();
         };
