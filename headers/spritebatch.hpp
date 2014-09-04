@@ -26,9 +26,9 @@ namespace mugg {
             
                 GLfloat* vertexColorData, vertexPositionData, vertexUVData;
                 
-                virtual void UpdatePosition(unsigned int, const glm::vec3&);
-                virtual void UpdateUV(unsigned int, const glm::vec2&);
-                virtual void UpdateColor(unsigned int, const glm::vec3&);
+                virtual void UpdatePositions(unsigned int, const std::vector<float>&);
+                virtual void UpdateUVs(unsigned int, const std::vector<float>&);
+                virtual void UpdateColors(unsigned int, const std::vector<float>&);
             public:
                 SpriteBatch(unsigned int, GLuint, GLint, GLint, GLint);
                 ~SpriteBatch();

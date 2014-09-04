@@ -128,9 +128,7 @@ void mugg::gui::GUIManager::Render() {
        
         glUniformMatrix4fv(this->modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
 
-        //Render spritebatches
         for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
-            //Update VBO in spritebatches where it is needed
             for(unsigned int u = 0; u < this->spritesToBeUpdated.size(); u++) {
                 this->spriteBatches[i]->UpdateSprite(this->sprites[this->spritesToBeUpdated[u]]);
                 this->spritesToBeUpdated.erase(this->spritesToBeUpdated.begin() + u);

@@ -67,64 +67,44 @@ void mugg::graphics::SpriteBatch::AddSprite(mugg::gui::Sprite* sprite) {
     this->UpdateSprite(sprite);
 }
 void mugg::graphics::SpriteBatch::UpdateSprite(mugg::gui::Sprite* sprite) {
-    unsigned int index = sprite->GetIndex() * 6;
+    unsigned int index = sprite->GetIndex();
     
-    std::cout << "Updating sprite: " << index << std::endl;
-
     if(index <= this->spriteCount) {
         if(sprite->IsPositionChanged()) {
-            std::cout << "Updating all positions for sprite: " << index << std::endl;
-            this->UpdatePosition(index + 0, sprite->GetBottomLeftPosition());
-            this->UpdatePosition(index + 1, sprite->GetTopRightPosition());
-            this->UpdatePosition(index + 2, sprite->GetTopLeftPosition());
-            this->UpdatePosition(index + 3, sprite->GetBottomLeftPosition());
-            this->UpdatePosition(index + 4, sprite->GetBottomRightPosition());
-            this->UpdatePosition(index + 5, sprite->GetTopRightPosition());
+            this->UpdatePositions(index, sprite->GetPositions());
         }
         if(sprite->IsUVChanged()) {
-            std::cout << "Updating all uvs for sprite: " << index << std::endl;
-            this->UpdateUV(index + 0, sprite->GetBottomLeftUV());
-            this->UpdateUV(index + 1, sprite->GetTopRightUV());
-            this->UpdateUV(index + 2, sprite->GetTopLeftUV());
-            this->UpdateUV(index + 3, sprite->GetBottomLeftUV());
-            this->UpdateUV(index + 4, sprite->GetBottomRightUV());
-            this->UpdateUV(index + 5, sprite->GetTopRightUV());
+            this->UpdateUVs(index, sprite->GetUVs());
         }
         if(sprite->IsColorChanged()) {
-            std::cout << "Updating all colors for sprite: " << index << std::endl;
-            this->UpdateColor(index + 0, sprite->GetBottomLeftColor());
-            this->UpdateColor(index + 1, sprite->GetTopRightColor());
-            this->UpdateColor(index + 2, sprite->GetTopLeftColor());
-            this->UpdateColor(index + 3, sprite->GetBottomLeftColor());
-            this->UpdateColor(index + 4, sprite->GetBottomRightColor());
-            this->UpdateColor(index + 5, sprite->GetTopRightColor());
+            this->UpdateColors(index, sprite->GetColors());
         }
     }
 }
 
-void mugg::graphics::SpriteBatch::UpdatePosition(unsigned int index, const glm::vec3& position) {
-    if(index <= this->spriteCount * 6) {
+void mugg::graphics::SpriteBatch::UpdatePositions(unsigned int index, const std::vector<float>& positions) {
+    if(index <= this->spriteCount) {
         glBindVertexArray(this->vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->positionBufferID);
-        glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * index, sizeof(glm::vec3), (GLvoid*)(&position[0]));
+        glBufferSubData(GL_ARRAY_BUFFER, (sizeof(float) * positions.size()) * index, sizeof(float) * positions.size(), (GLvoid*)(&positions[0]));
     } else {
         std::cout << "Tried to update vertex position for out of bounds sprite\n";
     }
 }
-void mugg::graphics::SpriteBatch::UpdateUV(unsigned int index, const glm::vec2& uv) {
-    if(index <= this->spriteCount * 6) {
+void mugg::graphics::SpriteBatch::UpdateUVs(unsigned int index, const std::vector<float>& uvs) {
+    if(index <= this->spriteCount) {
         glBindVertexArray(this->vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->uvBufferID);
-        glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * index, sizeof(glm::vec2), (GLvoid*)(&uv[0]));
+        glBufferSubData(GL_ARRAY_BUFFER, (sizeof(float) * uvs.size()) * index, sizeof(float) * uvs.size(), (GLvoid*)(&uvs[0]));
     } else {
         std::cout << "Tried to update vertex UVs for out of bounds sprite\n";
     }
 }
-void mugg::graphics::SpriteBatch::UpdateColor(unsigned int index, const glm::vec3& color) {
-    if(index <= this->spriteCount * 6) {
+void mugg::graphics::SpriteBatch::UpdateColors(unsigned int index, const std::vector<float>& colors) {
+    if(index <= this->spriteCount) {
         glBindVertexArray(this->vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, this->colorBufferID);
-        glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * index, sizeof(glm::vec3), (GLvoid*)(&color[0]));
+        glBufferSubData(GL_ARRAY_BUFFER, (sizeof(float) * colors.size()) * index, sizeof(float) * colors.size(), (GLvoid*)(&colors[0]));
     } else {
         std::cout << "Tried to update vertex colors for out of bounds sprite\n";
     }
