@@ -33,7 +33,7 @@ namespace mugg {
                 std::vector<mugg::gui::Sprite*> sprites;
                 std::vector<unsigned int> spritesToBeUpdated;
                 
-                std::vector<mugg::graphics::SpriteBatch*> spriteBatches;
+                std::vector<mugg::gui::SpriteBatch*> spriteBatches;
                     
                 GLuint vaoID;
                 GLuint vsID, fsID, programID;
@@ -54,8 +54,13 @@ namespace mugg {
                 virtual std::size_t GetNumberOfSprites();
                 virtual bool GetSpriteByIndex(int, mugg::gui::Sprite*&);
 
+                virtual mugg::gui::SpriteBatch* CreateSpriteBatch();
+
                 virtual glm::mat4 GetModelMatrix();
                 virtual void SetModelMatrix(const glm::mat4&);
+
+                virtual GLuint GetShaderProgramID();
+                virtual void SetShaderProgramID(GLuint);
 
                 virtual void Render();
         };

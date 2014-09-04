@@ -8,32 +8,22 @@ net_mgr = engine:get_net_manager()
 
 renderer:initialize()
 
-ball_array = {}
-num_balls = 1000 
-balltexture = content_mgr:create_texture2d("data/textures/ball.png", false)
+texture = content_mgr:create_texture2d("data/textures/ball.png", false)
+texture:set_filter("Linear", "Linear")
 
-balltexture:set_filter("Linear", "Linear")
+ball = gui_mgr:create_sprite()
+ball:set_position(Vector2D.new(0.5, -0.5))
+ball:set_scale(Vector2D.new(0.5, 0.5))
+ball:set_rotation(3.14)
 
-ballscale = Vector2D.new(0.1, 0.1)
-ballpos = Vector2D.new(1.0, 0.0)
-
-for i = 1, num_balls do
-    ball_array[i] = gui_mgr:create_sprite()
-    ball_array[i]:set_texture(balltexture)
-    ball_array[i]:set_scale(ballscale)
-end
+batch = gui_mgr:create_spritebatch()
+batch:add_sprite(ball)
+batch:set_texture(texture)
 
 lastkey = ""
 
 mouse = Mouse.new()
 keyboard = Keyboard.new()
-
-start_time = os.clock()
-
-rotation = 0
-scale = Vector2D.new(1, 1)
-position = Vector2D.new(0.0, 0.0)
-scalefactor = 1
 
 function update()
     if keyboard:is_key_down("Escape") and lastkey ~= "Escape" then
@@ -68,41 +58,11 @@ function update()
     end 
 
     window:set_title("ms/frame: " .. renderer:get_frametime())
-
-    deltatime = os.clock() - start_time
-    deltatime = 1
-    start_time = os.clock()
-
-    rotation = rotation + 0.1
-    
-    if rotation >= 3.14*2 then
-        rotation = 0
-    end
-    
-    if keyboard:is_key_down("W") then
-        position:set_y(position:get_y() + 0.1 * deltatime)
-    end
-    if keyboard:is_key_down("S") then
-        position:set_y(position:get_y() - 0.1 * deltatime)
-    end
-    if keyboard:is_key_down("A") then
-        position:set_x(position:get_x() - 0.1 * deltatime)
-    end
-    if keyboard:is_key_down("D") then
-        position:set_x(position:get_x() + 0.1 * deltatime)
-    end
-    
-    scalefactor = math.sqrt(deltatime * 1.001)
-    scale:set_x(scale:get_x() * scalefactor)
-    scale:set_y(scale:get_y() * scalefactor)
-
-    ball_array[1]:set_position(position)
-    ball_array[1]:set_rotation(rotation)
-    ball_array[1]:set_scale(scale)
 end
 
 while window:is_open() do
     update()
 
     engine:render()
+    batch:render()
 end

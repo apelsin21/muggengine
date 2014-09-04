@@ -1,5 +1,6 @@
 #include "sprite.hpp"
 #include "guimanager.hpp"
+
 mugg::gui::Sprite::Sprite(mugg::gui::GUIManager* creator) : GUIObject(creator) {
     this->positions = {
         -1.0f, -1.0f, 0.0f,

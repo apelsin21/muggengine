@@ -14,9 +14,8 @@
 namespace mugg {
     namespace gui {
         class Sprite;
-    }
+        class GUIManager;
     
-    namespace graphics {
         class SpriteBatch {
             private:
                 GLuint positionBufferID, uvBufferID, colorBufferID, texID, vaoID;
@@ -29,8 +28,10 @@ namespace mugg {
                 virtual void UpdatePositions(unsigned int, const std::vector<float>&);
                 virtual void UpdateUVs(unsigned int, const std::vector<float>&);
                 virtual void UpdateColors(unsigned int, const std::vector<float>&);
+            
+                mugg::gui::GUIManager* parent;
             public:
-                SpriteBatch(unsigned int, GLuint, GLint, GLint, GLint);
+                SpriteBatch(mugg::gui::GUIManager*, unsigned int, GLuint, GLint, GLint, GLint);
                 ~SpriteBatch();
                 
                 virtual void AddSprite(mugg::gui::Sprite*);
@@ -44,7 +45,8 @@ namespace mugg {
                 virtual GLuint GetColorBufferID();
 
                 virtual GLuint GetTextureID();
-        
+                virtual void SetTextureID(GLuint);
+
                 virtual void Render();
         };
     }

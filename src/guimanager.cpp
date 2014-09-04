@@ -81,10 +81,10 @@ void mugg::gui::GUIManager::UpdateSpriteBatches() {
         std::size_t maxSize = this->spriteBatches[index]->GetMaxSprites();
         
         if(currentSize >= maxSize) {
-            this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
+            this->spriteBatches.push_back(new mugg::gui::SpriteBatch(this, 10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
         }
     } else {
-        this->spriteBatches.push_back(new mugg::graphics::SpriteBatch(10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
+        this->spriteBatches.push_back(new mugg::gui::SpriteBatch(this, 10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
     }
 }
 
@@ -122,23 +122,21 @@ void mugg::gui::GUIManager::SetModelMatrix(const glm::mat4& modelMatrix) {
     this->modelMatrix = modelMatrix;
 }
 
+mugg::gui::SpriteBatch* mugg::gui::GUIManager::CreateSpriteBatch() {
+    this->UpdateSpriteBatches();
+
+    return this->spriteBatches[this->spriteBatches.size() - 1];
+}
+
+GLuint mugg::gui::GUIManager::GetShaderProgramID() {
+    return this->programID;
+}
+void mugg::gui::GUIManager::SetShaderProgramID(GLuint id) {
+    this->programID = id;
+}
+
 void mugg::gui::GUIManager::Render() {
-    if(glIsProgram(this->programID) == GL_TRUE && !this->spriteBatches.empty()) {
-        glUseProgram(this->programID);
-       
+    if(!this->spriteBatches.empty()) {
         glUniformMatrix4fv(this->modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
-
-        for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {
-            for(unsigned int u = 0; u < this->spritesToBeUpdated.size(); u++) {
-                this->spriteBatches[i]->UpdateSprite(this->sprites[this->spritesToBeUpdated[u]]);
-                this->spritesToBeUpdated.erase(this->spritesToBeUpdated.begin() + u);
-                u--;
-            }
-
-            if(this->spriteBatches[i]->GetSpriteCount() > 0) {
-                this->spriteBatches[i]->Render();
-            }
-        }
-
     }
 }

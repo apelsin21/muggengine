@@ -4,6 +4,8 @@
 #include <lua.hpp>
 
 #include "spritebinds.hpp"
+#include "spritebatchbinds.hpp"
+
 #include "guimanager.hpp"
 
 namespace mugg {
@@ -26,6 +28,18 @@ namespace mugg {
             return 1;
         }
 
+        int guiManagerCreateSpriteBatch(lua_State* L) {
+            mugg::gui::GUIManager* mgr = checkGUIManager(L, 1);
+
+            mugg::gui::SpriteBatch** spriteBatch = (mugg::gui::SpriteBatch**)lua_newuserdata(L, sizeof(mugg::gui::SpriteBatch*));
+            *spriteBatch = mgr->CreateSpriteBatch();
+
+            luaL_getmetatable(L, SpriteBatchName);
+            lua_setmetatable(L, -2);
+
+            return 1;
+        }
+
         int guiManagerRender(lua_State* L) {
             mugg::gui::GUIManager* mgr = checkGUIManager(L, 1);
 
@@ -36,6 +50,8 @@ namespace mugg {
 
         luaL_Reg guiManagerFuncs[] = {
             {"create_sprite", guiManagerCreateSprite},
+            {"create_spritebatch", guiManagerCreateSpriteBatch},
+            
             {"render", guiManagerRender},
 
             {NULL, NULL}
