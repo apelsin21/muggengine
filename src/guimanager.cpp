@@ -89,14 +89,10 @@ void mugg::gui::GUIManager::UpdateSpriteBatches() {
 }
 
 mugg::gui::Sprite* mugg::gui::GUIManager::CreateSprite() {
-    Sprite* sprite = new Sprite(this, this->sprites.size());
+    Sprite* sprite = new Sprite(this);
    
     this->UpdateSpriteBatches();
-
     this->spriteBatches[this->spriteBatches.size() - 1]->AddSprite(sprite);
-    
-    sprite->SetSpriteBatchIndex(this->spriteBatches.size() - 1);
-    
     this->sprites.push_back(sprite);
 
     return sprite;

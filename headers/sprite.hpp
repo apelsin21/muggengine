@@ -13,19 +13,14 @@ namespace mugg {
         
         class Sprite : public GUIObject {
             private:
-                unsigned int spriteBatchIndex;
-
                 bool positionChanged, uvChanged, colorChanged;
             
                 glm::vec3 positionBottomLeft, positionTopLeft, positionBottomRight, positionTopRight;
                 glm::vec2 uvBottomLeft, uvTopLeft, uvBottomRight, uvTopRight;
                 glm::vec3 colorBottomLeft, colorTopLeft, colorBottomRight, colorTopRight;
             public:
-                Sprite(mugg::gui::GUIManager*, unsigned int);
+                Sprite(mugg::gui::GUIManager*);
                 ~Sprite();
-
-                virtual unsigned int GetSpriteBatchIndex();
-                virtual void SetSpriteBatchIndex(unsigned int);
         
                 virtual bool IsPositionChanged();
                 virtual bool IsUVChanged();

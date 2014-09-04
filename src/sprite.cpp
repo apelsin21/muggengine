@@ -1,9 +1,7 @@
 #include "sprite.hpp"
 #include "guimanager.hpp"
 
-mugg::gui::Sprite::Sprite(mugg::gui::GUIManager* creator, unsigned int index) : GUIObject(creator, index) {
-    this->spriteBatchIndex = 0;
-
+mugg::gui::Sprite::Sprite(mugg::gui::GUIManager* creator) : GUIObject(creator) {
     this->positionBottomLeft  = glm::vec3(-1.0f, -1.0f, 0.0f); 
     this->positionTopRight    = glm::vec3( 1.0f,  1.0f, 0.0f);
     this->positionTopLeft     = glm::vec3(-1.0f,  1.0f, 0.0f);
@@ -24,13 +22,6 @@ mugg::gui::Sprite::Sprite(mugg::gui::GUIManager* creator, unsigned int index) : 
     this->uvChanged = true;
 }
 mugg::gui::Sprite::~Sprite() {
-}
-
-unsigned int mugg::gui::Sprite::GetSpriteBatchIndex() {
-    return this->spriteBatchIndex;
-}
-void mugg::gui::Sprite::SetSpriteBatchIndex(unsigned int index) {
-    this->spriteBatchIndex = index;
 }
 
 bool mugg::gui::Sprite::IsPositionChanged() {

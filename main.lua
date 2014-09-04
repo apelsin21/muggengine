@@ -9,7 +9,7 @@ net_mgr = engine:get_net_manager()
 renderer:initialize()
 
 ball_array = {}
-num_balls = 2
+num_balls = 5000 
 balltexture = content_mgr:create_texture2d("data/textures/ball.png", false)
 
 balltexture:set_filter("Linear", "Linear")

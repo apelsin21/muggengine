@@ -26,7 +26,7 @@ namespace mugg {
             
                 bool changed;
             public:
-                GUIObject(mugg::gui::GUIManager*, unsigned int);
+                GUIObject(mugg::gui::GUIManager*);
 
                 virtual mugg::gui::GUIManager* GetParent();
 
@@ -46,7 +46,8 @@ namespace mugg {
                 virtual glm::mat4 GetModelMatrix();
 
                 virtual unsigned int GetIndex();
-       
+                virtual void SetIndex(unsigned int);
+
                 virtual bool HasChanged();
         };
     }

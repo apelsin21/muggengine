@@ -30,17 +30,17 @@ mugg::graphics::SpriteBatch::SpriteBatch(unsigned int maxSprites, GLuint vaoID, 
     glGenBuffers(1, &this->colorBufferID);
     
     glBindBuffer(GL_ARRAY_BUFFER, this->positionBufferID);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (3*6), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (sizeof(GLfloat) * (3*6)) * this->maxSprites, NULL, GL_DYNAMIC_DRAW);
 
     glVertexAttribPointer(this->posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     glBindBuffer(GL_ARRAY_BUFFER, this->uvBufferID);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (2*6), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (sizeof(GLfloat) * (2*6)) * this->maxSprites, NULL, GL_DYNAMIC_DRAW);
 
     glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     glBindBuffer(GL_ARRAY_BUFFER, this->colorBufferID);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (3*6), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (sizeof(GLfloat) * (3*6)) * this->maxSprites, NULL, GL_DYNAMIC_DRAW);
     
     glVertexAttribPointer(this->colLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -62,15 +62,18 @@ mugg::graphics::SpriteBatch::~SpriteBatch() {
 
 //TODO: Figure out cleaner way to do this
 void mugg::graphics::SpriteBatch::AddSprite(mugg::gui::Sprite* sprite) {
+    sprite->SetIndex(this->spriteCount);
     this->spriteCount++;
     this->UpdateSprite(sprite);
 }
 void mugg::graphics::SpriteBatch::UpdateSprite(mugg::gui::Sprite* sprite) {
-    unsigned int index = sprite->GetIndex();
+    unsigned int index = sprite->GetIndex() * 6;
+    
+    std::cout << "Updating sprite: " << index << std::endl;
 
     if(index <= this->spriteCount) {
         if(sprite->IsPositionChanged()) {
-            std::cout << "Updating positions for sprite " << index << std::endl;
+            std::cout << "Updating all positions for sprite: " << index << std::endl;
             this->UpdatePosition(index + 0, sprite->GetBottomLeftPosition());
             this->UpdatePosition(index + 1, sprite->GetTopRightPosition());
             this->UpdatePosition(index + 2, sprite->GetTopLeftPosition());
@@ -79,7 +82,7 @@ void mugg::graphics::SpriteBatch::UpdateSprite(mugg::gui::Sprite* sprite) {
             this->UpdatePosition(index + 5, sprite->GetTopRightPosition());
         }
         if(sprite->IsUVChanged()) {
-            std::cout << "Updating uvs for sprite " << index << std::endl;
+            std::cout << "Updating all uvs for sprite: " << index << std::endl;
             this->UpdateUV(index + 0, sprite->GetBottomLeftUV());
             this->UpdateUV(index + 1, sprite->GetTopRightUV());
             this->UpdateUV(index + 2, sprite->GetTopLeftUV());
@@ -88,7 +91,7 @@ void mugg::graphics::SpriteBatch::UpdateSprite(mugg::gui::Sprite* sprite) {
             this->UpdateUV(index + 5, sprite->GetTopRightUV());
         }
         if(sprite->IsColorChanged()) {
-            std::cout << "Updating colors for sprite " << index << std::endl;
+            std::cout << "Updating all colors for sprite: " << index << std::endl;
             this->UpdateColor(index + 0, sprite->GetBottomLeftColor());
             this->UpdateColor(index + 1, sprite->GetTopRightColor());
             this->UpdateColor(index + 2, sprite->GetTopLeftColor());

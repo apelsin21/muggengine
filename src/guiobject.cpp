@@ -1,8 +1,8 @@
 #include "guiobject.hpp"
 
-mugg::gui::GUIObject::GUIObject(mugg::gui::GUIManager* parent, unsigned int index) {
+mugg::gui::GUIObject::GUIObject(mugg::gui::GUIManager* parent) {
     this->parent = parent;
-    this->index = index;
+    this->index = 0;
     this->rotation = 0.0f;
     this->scale = glm::vec2(1.0f, 1.0f);
     this->changed = false;
@@ -62,6 +62,9 @@ glm::mat4 mugg::gui::GUIObject::GetModelMatrix() {
     return this->translationMatrix * this->rotationMatrix * this->scaleMatrix;
 }
 
+void mugg::gui::GUIObject::SetIndex(unsigned int i) {
+    this->index = i;
+}
 unsigned int mugg::gui::GUIObject::GetIndex() {
     return this->index;
 }
