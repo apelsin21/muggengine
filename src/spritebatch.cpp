@@ -1,85 +1,54 @@
 #include "spritebatch.hpp"
 #include "sprite.hpp"
 
-mugg::gui::SpriteBatch::SpriteBatch(mugg::gui::GUIManager* parent, unsigned int maxSprites, GLuint vaoID, GLint posLocation, GLint uvLocation, GLint colLocation) {
+mugg::gui::SpriteBatch::SpriteBatch(mugg::gui::GUIManager* parent, unsigned int maxSprites, GLuint vaoID, GLint modelMatrixLocation) {
     //Initialize default values
-    this->vboID = -1;
-    this->texID = -1;
+    this->modelMatrixBufferID = -1;
+    this->texID = 1; //TODO: FIX
     this->spriteCount = 0;
-    this->positionsCount = 0;
-    this->uvsCount = 0;
-    this->colorsCount = 0;
     
     //Initialize member variables with parameters
     this->parent = parent;
     this->maxSprites = maxSprites;
-    this->posLocation = posLocation;
-    this->uvLocation = uvLocation;
-    this->colLocation = colLocation;
+    this->modelMatrixLocation = modelMatrixLocation;
     this->vaoID = vaoID;
-   
-    this->bufferSize = (18+12+18) * (this->maxSprites * sizeof(float));
-    this->stride = (18+12+18) * sizeof(float);
-        
-    glBindVertexArray(this->vaoID);
 
-    glEnableVertexAttribArray(this->posLocation);
-    glEnableVertexAttribArray(this->uvLocation);
-    glEnableVertexAttribArray(this->colLocation);
+    this->bufferSize = sizeof(glm::mat4) * this->maxSprites;
+    this->stride = sizeof(glm::mat4);
     
-    glGenBuffers(1, &this->vboID);
-    glBindBuffer(GL_ARRAY_BUFFER, this->vboID);
-    glBufferData(GL_ARRAY_BUFFER, (sizeof(GLfloat) * (3*6)) * this->maxSprites, NULL, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(this->posLocation, 3, GL_FLOAT, GL_FALSE, this->stride, 0);
-    glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, this->stride, (GLvoid*)(sizeof(float) * 18));
-    glVertexAttribPointer(this->colLocation, 3, GL_FLOAT, GL_FALSE, this->stride, (GLvoid*)(sizeof(float) * (18+12)));
-
-    glDisableVertexAttribArray(this->posLocation);
-    glDisableVertexAttribArray(this->uvLocation);
-    glDisableVertexAttribArray(this->colLocation);
+    glBindVertexArray(this->vaoID);
+    
+    glGenBuffers(1, &this->modelMatrixBufferID);
+    glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBufferID);
+    glBufferData(GL_ARRAY_BUFFER, this->bufferSize, NULL, GL_DYNAMIC_DRAW);
+    
+    for(unsigned int i = 0; i < 4; i++) {
+        glVertexAttribPointer(this->modelMatrixLocation + i, 4, GL_FLOAT, GL_FALSE, this->stride, (GLvoid*)(sizeof(glm::vec4) * i));
+        glEnableVertexAttribArray(this->modelMatrixLocation + i);
+        glVertexAttribDivisor(this->modelMatrixLocation + i, 1);
+    }
+    
+    for(unsigned int i = 0; i < 4; i++) {
+        glDisableVertexAttribArray(this->modelMatrixLocation + i);
+    }
 }
 mugg::gui::SpriteBatch::~SpriteBatch() {
-    if(glIsBuffer(this->vboID) == GL_TRUE) {
-        glDeleteBuffers(1, &this->vboID);
+    if(glIsBuffer(this->modelMatrixBufferID) == GL_TRUE) {
+        glDeleteBuffers(1, &this->modelMatrixBufferID);
     }
 }
 
-//TODO: Figure out cleaner way to do this
 void mugg::gui::SpriteBatch::AddSprite(mugg::gui::Sprite* sprite) {
     sprite->SetIndex(this->spriteCount);
+    this->UpdateSprite(sprite);
     this->spriteCount++;
-
-    this->UpdatePositions(sprite->GetPositions());
-    this->positionsCount++;
-    
-    this->UpdateUVs(sprite->GetUVs());
-    this->uvsCount++;
-    
-    this->UpdateColors(sprite->GetColors());
-    this->colorsCount++;
 }
-
-int mugg::gui::SpriteBatch::GetCurrentBufferOffset() {
-    return  (this->positionsCount * (sizeof(float) * 18)) +
-            (this->uvsCount * (sizeof(float) * 12)) +
-            (this->colorsCount * (sizeof(float) * 18));
-}
-
-void mugg::gui::SpriteBatch::UpdatePositions(const std::vector<float>& positions) {
-    glBindVertexArray(this->vaoID);
-    glBindBuffer(GL_ARRAY_BUFFER, this->vboID);
-    glBufferSubData(GL_ARRAY_BUFFER, this->GetCurrentBufferOffset(), sizeof(float) * positions.size(), (GLvoid*)(&positions[0]));
-}
-void mugg::gui::SpriteBatch::UpdateUVs(const std::vector<float>& uvs) {
-    glBindVertexArray(this->vaoID);
-    glBindBuffer(GL_ARRAY_BUFFER, this->vboID);
-    glBufferSubData(GL_ARRAY_BUFFER, this->GetCurrentBufferOffset(), sizeof(float) * uvs.size(), (GLvoid*)(&uvs[0]));
-}
-void mugg::gui::SpriteBatch::UpdateColors(const std::vector<float>& colors) {
-    glBindVertexArray(this->vaoID);
-    glBindBuffer(GL_ARRAY_BUFFER, this->vboID);
-    glBufferSubData(GL_ARRAY_BUFFER, this->GetCurrentBufferOffset(), sizeof(float) * colors.size(), (GLvoid*)(&colors[0]));
+void mugg::gui::SpriteBatch::UpdateSprite(mugg::gui::Sprite* sprite) {
+    if(sprite->GetIndex() <= this->spriteCount) {
+        glBindVertexArray(this->vaoID);
+        glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBufferID);
+        glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * sprite->GetIndex(), sizeof(glm::mat4), (GLvoid*)(&sprite->GetModelMatrix()[0]));
+    }
 }
 
 unsigned int mugg::gui::SpriteBatch::GetSpriteCount() {
@@ -89,9 +58,20 @@ unsigned int mugg::gui::SpriteBatch::GetMaxSprites() {
     return this->maxSprites;
 }
 
-GLuint mugg::gui::SpriteBatch::GetVBOID() {
-    return this->vboID;
+int mugg::gui::SpriteBatch::GetBufferSize() {
+    return this->bufferSize;
 }
+int mugg::gui::SpriteBatch::GetStride() {
+    return this->stride;
+}
+
+GLuint mugg::gui::SpriteBatch::GetModelMatrixBufferID() {
+    return this->modelMatrixBufferID;
+}
+void mugg::gui::SpriteBatch::SetModelMatrixBufferID(GLuint id) {
+    this->modelMatrixBufferID = id;
+}
+
 GLuint mugg::gui::SpriteBatch::GetTextureID() {
     return this->texID;
 }
@@ -100,25 +80,18 @@ void mugg::gui::SpriteBatch::SetTextureID(GLuint id) {
 }
 
 void mugg::gui::SpriteBatch::Render() {
-    if(glIsProgram(this->parent->GetShaderProgramID()))
-        glUseProgram(this->parent->GetShaderProgramID());
-    else
-        std::cout << "Spritebatch has invalid program id\n";
-    
-    glBindVertexArray(this->vaoID);
-    
-    glEnableVertexAttribArray(this->posLocation);
-    glEnableVertexAttribArray(this->uvLocation);
-    glEnableVertexAttribArray(this->colLocation);
+    for(unsigned int i = 0; i < 4; i++) {
+        glEnableVertexAttribArray(this->modelMatrixLocation + i);
+    }
     
     if(glIsTexture(this->texID))
         glBindTexture(GL_TEXTURE_2D, this->texID);
     else
         std::cout << this->texID << " isn't a texture!\n";
 
-    glDrawArrays(GL_TRIANGLES, 0, this->spriteCount * 6);
-
-    glDisableVertexAttribArray(this->posLocation);
-    glDisableVertexAttribArray(this->uvLocation);
-    glDisableVertexAttribArray(this->colLocation);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, this->spriteCount);
+    
+    for(unsigned int i = 0; i < 4; i++) {
+        glDisableVertexAttribArray(this->modelMatrixLocation + i);
+    }
 }

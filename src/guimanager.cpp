@@ -44,9 +44,44 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
 
     this->posLocation = 0; 
     this->uvLocation  = 1;
-    this->colLocation = 2;
+    this->modelLocation = 2;
     
-    this->modelMatrixUniformLocation = glGetUniformLocation(this->programID, "u_model");
+    static const float vertex_positions[] = {
+        -1.0f, -1.0f, 0.0f,
+         1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
+         1.0f, -1.0f, 0.0f,
+         1.0f,  1.0f, 0.0f, 
+    };
+    static const float vertex_uvs[] = {
+        0.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,    
+    };
+
+    glBindVertexArray(this->vaoID);
+
+    glGenBuffers(1, &this->positionBufferID);
+    glGenBuffers(1, &this->uvBufferID);
+
+    glBindBuffer(GL_ARRAY_BUFFER, this->positionBufferID);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_positions), vertex_positions, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(this->posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(this->posLocation);
+
+    glBindBuffer(GL_ARRAY_BUFFER, this->uvBufferID);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_uvs), vertex_uvs, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(this->uvLocation);
+    
+    glDisableVertexAttribArray(this->posLocation);
+    glDisableVertexAttribArray(this->uvLocation);
 }
 
 mugg::gui::GUIManager::~GUIManager() {
@@ -81,10 +116,10 @@ void mugg::gui::GUIManager::UpdateSpriteBatches() {
         std::size_t maxSize = this->spriteBatches[index]->GetMaxSprites();
         
         if(currentSize >= maxSize) {
-            this->spriteBatches.push_back(new mugg::gui::SpriteBatch(this, 10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
+            this->spriteBatches.push_back(new mugg::gui::SpriteBatch(this, 10000, this->vaoID, this->modelLocation));
         }
     } else {
-        this->spriteBatches.push_back(new mugg::gui::SpriteBatch(this, 10000, this->vaoID, this->posLocation, this->uvLocation, this->colLocation));
+        this->spriteBatches.push_back(new mugg::gui::SpriteBatch(this, 10000, this->vaoID, this->modelLocation));
     }
 }
 
@@ -115,13 +150,6 @@ bool mugg::gui::GUIManager::GetSpriteByIndex(int index, mugg::gui::Sprite*& out_
     return true;
 }
 
-glm::mat4 mugg::gui::GUIManager::GetModelMatrix() {
-    return this->modelMatrix;
-}
-void mugg::gui::GUIManager::SetModelMatrix(const glm::mat4& modelMatrix) {
-    this->modelMatrix = modelMatrix;
-}
-
 mugg::gui::SpriteBatch* mugg::gui::GUIManager::CreateSpriteBatch() {
     this->UpdateSpriteBatches();
 
@@ -136,7 +164,22 @@ void mugg::gui::GUIManager::SetShaderProgramID(GLuint id) {
 }
 
 void mugg::gui::GUIManager::Render() {
-    if(!this->spriteBatches.empty()) {
-        glUniformMatrix4fv(this->modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
+    for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {    
+        glUseProgram(this->programID);
+        glBindVertexArray(this->vaoID);
+
+        glEnableVertexAttribArray(this->posLocation);
+        glEnableVertexAttribArray(this->uvLocation);
+
+        for(unsigned int u = 0; u < this->spritesToBeUpdated.size(); u++) {
+            this->spriteBatches[i]->UpdateSprite(this->sprites[this->spritesToBeUpdated[u]]);
+            this->spritesToBeUpdated.erase(this->spritesToBeUpdated.begin() + u);
+            u--;
+        }
+
+        this->spriteBatches[i]->Render();
+        
+        glDisableVertexAttribArray(this->posLocation);
+        glDisableVertexAttribArray(this->uvLocation);
     }
 }

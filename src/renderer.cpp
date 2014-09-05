@@ -39,7 +39,7 @@ std::vector<GLuint> mugg::graphics::Renderer::GetShaderProgramVector() {
 
 bool mugg::graphics::Renderer::Initialize() {
     this->lastTime = std::chrono::system_clock::now();
-    
+   
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

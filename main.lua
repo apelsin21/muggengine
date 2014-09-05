@@ -14,13 +14,16 @@ texture:set_filter("Linear", "Linear")
 ball = gui_mgr:create_sprite()
 ball:set_position(Vector2D.new(0.5, -0.5))
 ball:set_scale(Vector2D.new(0.5, 0.5))
-ball:set_rotation(3.14)
-
-batch = gui_mgr:create_spritebatch()
-batch:add_sprite(ball)
-batch:set_texture(texture)
+ball:set_rotation(0)
 
 lastkey = ""
+
+array = {}
+array_size = 1000
+
+for i = 0, array_size do
+    array[i] = gui_mgr:create_sprite()
+end
 
 mouse = Mouse.new()
 keyboard = Keyboard.new()
@@ -57,6 +60,23 @@ function update()
         lastkey = ""
     end 
 
+    pos = ball:get_position()
+
+    if keyboard:is_key_down("W") then
+        pos:set_y(pos:get_y() + 0.1)
+    end
+    if keyboard:is_key_down("S") then
+        pos:set_y(pos:get_y() - 0.1)
+    end
+    if keyboard:is_key_down("A") then
+        pos:set_x(pos:get_x() - 0.1)
+    end
+    if keyboard:is_key_down("D") then
+        pos:set_x(pos:get_x() + 0.1)
+    end
+
+    ball:set_position(pos)
+
     window:set_title("ms/frame: " .. renderer:get_frametime())
 end
 
@@ -64,5 +84,4 @@ while window:is_open() do
     update()
 
     engine:render()
-    batch:render()
 end

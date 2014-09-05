@@ -18,32 +18,29 @@ namespace mugg {
     
         class SpriteBatch {
             private:
-                GLuint  vboID, texID, vaoID;
-                unsigned int maxSprites, spriteCount, positionsCount, uvsCount, colorsCount;
+                GLuint  modelMatrixBufferID, texID, vaoID;
+                unsigned int maxSprites, spriteCount;
                 int stride, bufferSize;
-                GLint posLocation, uvLocation, colLocation, modelLocation;
-            
-                GLfloat* vertexColorData, vertexPositionData, vertexUVData;
-                
-                virtual void UpdatePositions(const std::vector<float>&);
-                virtual void UpdateUVs(const std::vector<float>&);
-                virtual void UpdateColors(const std::vector<float>&);
+                GLint modelMatrixLocation;
             
                 mugg::gui::GUIManager* parent;
             public:
-                SpriteBatch(mugg::gui::GUIManager*, unsigned int, GLuint, GLint, GLint, GLint);
+                SpriteBatch(mugg::gui::GUIManager*, unsigned int, GLuint, GLint);
                 ~SpriteBatch();
 
-                virtual int GetCurrentBufferOffset();
-                
                 virtual void AddSprite(mugg::gui::Sprite*);
+                virtual void UpdateSprite(mugg::gui::Sprite*);
         
+                virtual int GetBufferSize();
+                virtual int GetStride();
+
                 virtual unsigned int GetSpriteCount();
                 virtual unsigned int GetMaxSprites();
                 
-                virtual GLuint GetVBOID();
+                virtual GLuint GetModelMatrixBufferID();
+                virtual void SetModelMatrixBufferID(GLuint);
+
                 virtual GLuint GetTextureID();
-                
                 virtual void SetTextureID(GLuint);
 
                 virtual void Render();

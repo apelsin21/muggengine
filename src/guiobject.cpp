@@ -58,8 +58,12 @@ void mugg::gui::GUIObject::SetModelMatrix(const glm::mat4& matrix) {
     this->parent->UpdateSprite(this->index);
 }
 glm::mat4 mugg::gui::GUIObject::GetModelMatrix() {
-    this->changed = false;
-    return this->translationMatrix * this->rotationMatrix * this->scaleMatrix;
+    if(this->changed) {
+        this->modelMatrix = this->translationMatrix * this->rotationMatrix * this->scaleMatrix;
+        return this->modelMatrix;
+    } else {
+       return this->modelMatrix;
+    }
 }
 
 void mugg::gui::GUIObject::SetIndex(unsigned int i) {

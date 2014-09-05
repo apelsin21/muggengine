@@ -35,12 +35,10 @@ namespace mugg {
                 
                 std::vector<mugg::gui::SpriteBatch*> spriteBatches;
                     
-                GLuint vaoID;
+                GLuint vaoID, positionBufferID, uvBufferID;
                 GLuint vsID, fsID, programID;
                
-                GLint posLocation, uvLocation, colLocation, modelMatrixUniformLocation;
-
-                glm::mat4 modelMatrix;
+                GLint posLocation, uvLocation, modelLocation;
 
                 mugg::core::Engine* parent;
 
@@ -55,9 +53,6 @@ namespace mugg {
                 virtual bool GetSpriteByIndex(int, mugg::gui::Sprite*&);
 
                 virtual mugg::gui::SpriteBatch* CreateSpriteBatch();
-
-                virtual glm::mat4 GetModelMatrix();
-                virtual void SetModelMatrix(const glm::mat4&);
 
                 virtual GLuint GetShaderProgramID();
                 virtual void SetShaderProgramID(GLuint);
