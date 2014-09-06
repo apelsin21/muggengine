@@ -21,7 +21,7 @@ mugg::gui::SpriteBatch::SpriteBatch(mugg::gui::GUIManager* parent, unsigned int 
     glGenBuffers(1, &this->modelMatrixBufferID);
     glBindBuffer(GL_ARRAY_BUFFER, this->modelMatrixBufferID);
     glBufferData(GL_ARRAY_BUFFER, this->bufferSize, NULL, GL_DYNAMIC_DRAW);
-    
+
     for(unsigned int i = 0; i < 4; i++) {
         glVertexAttribPointer(this->modelMatrixLocation + i, 4, GL_FLOAT, GL_FALSE, this->stride, (GLvoid*)(sizeof(glm::vec4) * i));
         glEnableVertexAttribArray(this->modelMatrixLocation + i);

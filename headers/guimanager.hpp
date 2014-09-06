@@ -38,9 +38,11 @@ namespace mugg {
                 GLuint vaoID, positionBufferID, uvBufferID;
                 GLuint vsID, fsID, programID;
                
-                GLint posLocation, uvLocation, modelLocation;
+                GLint posLocation, uvLocation, modelLocation, projectionMatrixUniformLocation;
 
                 mugg::core::Engine* parent;
+
+                glm::mat4 projectionMatrix;
 
                 void UpdateSpriteBatches();
             public:
@@ -56,6 +58,9 @@ namespace mugg {
 
                 virtual GLuint GetShaderProgramID();
                 virtual void SetShaderProgramID(GLuint);
+
+                virtual glm::mat4 GetProjectionMatrix();
+                virtual void SetProjectionMatrix(const glm::mat4&);
 
                 virtual void Render();
         };

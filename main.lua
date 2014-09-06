@@ -1,6 +1,7 @@
 engine = Engine.new()
 
 window = engine:get_window()
+window:set_swap_interval(1)
 renderer = engine:get_renderer()
 content_mgr = engine:get_content_manager()
 gui_mgr = engine:get_gui_manager()
@@ -8,26 +9,41 @@ net_mgr = engine:get_net_manager()
 
 renderer:initialize()
 
-texture = content_mgr:create_texture2d("data/textures/ball.png", false)
-texture:set_filter("Linear", "Linear")
+texture = content_mgr:create_texture2d("data/textures/grass.jpg", false)
+texture:set_filter("Nearest", "Nearest")
 
 lastkey = ""
 
-array = {}
-array_size = 2000
+tiles = {}
+num_tiles_x = (window:get_width() / texture:get_width()) + 1
+num_tiles_y = (window:get_height() / texture:get_height()) + 1
 
-scale = Vector2D.new(0.5, 0.5)
+velocity = Vector2D.new(0.03, 0.01)
+scale = Vector2D.new(0.1, 0.1)
+position = Vector2D.new(-1, -1)
 
-for i = 1, array_size do
-    array[i] = gui_mgr:create_sprite()
-    array[i]:set_texture(texture)
-    -- array[i]:set_scale(scale)
+for x = 0, num_tiles_x do
+    tiles[x] = {}
+    
+    if x ~= 0 then
+        position:set_x(position:get_x() + 0.2)
+    end
+
+    for y = 0, num_tiles_y do
+        tiles[x][y] = gui_mgr:create_sprite()
+        tiles[x][y]:set_scale(scale)
+        if y ~= 0 then
+            position:set_y(position:get_y() + 0.2)
+        end
+
+        tiles[x][y]:set_position(position)
+    end
+
+    position:set_y(-1)
 end
 
 mouse = Mouse.new()
 keyboard = Keyboard.new()
-
-position = Vector2D.new(0.0, 0.0)
 
 function update()
     if keyboard:is_key_down("Escape") and lastkey ~= "Escape" then
@@ -61,9 +77,14 @@ function update()
         lastkey = ""
     end 
 
-    for i = 1, array_size do
-        position:set_xy(math.random(-1, 1), math.random(-1, 1))
-        array[i]:set_position(position)
+    for x = 0, num_tiles_x do
+        for y = 0, num_tiles_y do
+            sx = math.sin(os.clock()) / 10
+            sy = math.sin(os.clock()) / 10
+
+            tiles[x][y]:set_scale(Vector2D.new(sx, sy))
+            tiles[x][y]:set_rotation(os.clock())
+        end
     end
 
     window:set_title("ms/frame: " .. renderer:get_frametime())

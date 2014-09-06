@@ -1,5 +1,6 @@
 #include "guimanager.hpp"
 #include "sprite.hpp"
+#include "engine.hpp"
 
 mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
     this->parent = parent;
@@ -8,6 +9,7 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
     this->vsID = -1;
     this->fsID = -1;
     this->programID = -1;
+    this->projectionMatrixUniformLocation = -1;
 
     this->vsID = glCreateShader(GL_VERTEX_SHADER);
     this->fsID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -163,6 +165,13 @@ void mugg::gui::GUIManager::SetShaderProgramID(GLuint id) {
     this->programID = id;
 }
 
+glm::mat4 mugg::gui::GUIManager::GetProjectionMatrix() {
+    return this->projectionMatrix;
+}
+void mugg::gui::GUIManager::SetProjectionMatrix(const glm::mat4& mat) {
+    this->projectionMatrix = mat;
+}
+
 void mugg::gui::GUIManager::Render() {
     glUseProgram(this->programID);
     glBindVertexArray(this->vaoID);
@@ -174,7 +183,6 @@ void mugg::gui::GUIManager::Render() {
     }
 
     for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {    
-
         for(unsigned int u = 0; u < this->spritesToBeUpdated.size(); u++) {
             this->spriteBatches[i]->UpdateSprite(this->sprites[this->spritesToBeUpdated[u]]);
             this->spritesToBeUpdated.erase(this->spritesToBeUpdated.begin() + u);
