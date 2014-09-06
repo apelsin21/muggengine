@@ -11,22 +11,23 @@ renderer:initialize()
 texture = content_mgr:create_texture2d("data/textures/ball.png", false)
 texture:set_filter("Linear", "Linear")
 
-ball = gui_mgr:create_sprite()
-ball:set_position(Vector2D.new(0.5, -0.5))
-ball:set_scale(Vector2D.new(0.5, 0.5))
-ball:set_rotation(0)
-
 lastkey = ""
 
 array = {}
-array_size = 1000
+array_size = 2000
 
-for i = 0, array_size do
+scale = Vector2D.new(0.5, 0.5)
+
+for i = 1, array_size do
     array[i] = gui_mgr:create_sprite()
+    array[i]:set_texture(texture)
+    -- array[i]:set_scale(scale)
 end
 
 mouse = Mouse.new()
 keyboard = Keyboard.new()
+
+position = Vector2D.new(0.0, 0.0)
 
 function update()
     if keyboard:is_key_down("Escape") and lastkey ~= "Escape" then
@@ -60,22 +61,10 @@ function update()
         lastkey = ""
     end 
 
-    pos = ball:get_position()
-
-    if keyboard:is_key_down("W") then
-        pos:set_y(pos:get_y() + 0.1)
+    for i = 1, array_size do
+        position:set_xy(math.random(-1, 1), math.random(-1, 1))
+        array[i]:set_position(position)
     end
-    if keyboard:is_key_down("S") then
-        pos:set_y(pos:get_y() - 0.1)
-    end
-    if keyboard:is_key_down("A") then
-        pos:set_x(pos:get_x() - 0.1)
-    end
-    if keyboard:is_key_down("D") then
-        pos:set_x(pos:get_x() + 0.1)
-    end
-
-    ball:set_position(pos)
 
     window:set_title("ms/frame: " .. renderer:get_frametime())
 end

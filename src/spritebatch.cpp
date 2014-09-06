@@ -27,10 +27,6 @@ mugg::gui::SpriteBatch::SpriteBatch(mugg::gui::GUIManager* parent, unsigned int 
         glEnableVertexAttribArray(this->modelMatrixLocation + i);
         glVertexAttribDivisor(this->modelMatrixLocation + i, 1);
     }
-    
-    for(unsigned int i = 0; i < 4; i++) {
-        glDisableVertexAttribArray(this->modelMatrixLocation + i);
-    }
 }
 mugg::gui::SpriteBatch::~SpriteBatch() {
     if(glIsBuffer(this->modelMatrixBufferID) == GL_TRUE) {
@@ -80,18 +76,7 @@ void mugg::gui::SpriteBatch::SetTextureID(GLuint id) {
 }
 
 void mugg::gui::SpriteBatch::Render() {
-    for(unsigned int i = 0; i < 4; i++) {
-        glEnableVertexAttribArray(this->modelMatrixLocation + i);
-    }
-    
-    if(glIsTexture(this->texID))
-        glBindTexture(GL_TEXTURE_2D, this->texID);
-    else
-        std::cout << this->texID << " isn't a texture!\n";
+    glBindTexture(GL_TEXTURE_2D, this->texID);
 
     glDrawArraysInstanced(GL_TRIANGLES, 0, 6, this->spriteCount);
-    
-    for(unsigned int i = 0; i < 4; i++) {
-        glDisableVertexAttribArray(this->modelMatrixLocation + i);
-    }
 }

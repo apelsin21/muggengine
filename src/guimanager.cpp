@@ -164,12 +164,16 @@ void mugg::gui::GUIManager::SetShaderProgramID(GLuint id) {
 }
 
 void mugg::gui::GUIManager::Render() {
-    for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {    
-        glUseProgram(this->programID);
-        glBindVertexArray(this->vaoID);
+    glUseProgram(this->programID);
+    glBindVertexArray(this->vaoID);
 
-        glEnableVertexAttribArray(this->posLocation);
-        glEnableVertexAttribArray(this->uvLocation);
+    glEnableVertexAttribArray(this->posLocation);
+    glEnableVertexAttribArray(this->uvLocation);
+    for(unsigned int i = 0; i <= 4; i++) {
+        glEnableVertexAttribArray(i + this->modelLocation); 
+    }
+
+    for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {    
 
         for(unsigned int u = 0; u < this->spritesToBeUpdated.size(); u++) {
             this->spriteBatches[i]->UpdateSprite(this->sprites[this->spritesToBeUpdated[u]]);
@@ -178,8 +182,5 @@ void mugg::gui::GUIManager::Render() {
         }
 
         this->spriteBatches[i]->Render();
-        
-        glDisableVertexAttribArray(this->posLocation);
-        glDisableVertexAttribArray(this->uvLocation);
     }
 }
