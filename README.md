@@ -25,4 +25,4 @@ Requirements:
 
     Platform: Whatever x86 platforms SDL2 runs on.
     
-    GPU: OpenGL 3.0+, GLSL 1.30+ (OpenGL ES isn't supported)
+    GPU: OpenGL 3.3 Core+, GLSL 3.30 Core+ (OpenGL ES isn't supported)
