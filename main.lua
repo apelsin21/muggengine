@@ -1,7 +1,6 @@
 engine = Engine.new()
 
 window = engine:get_window()
-window:set_resolution(1600, 900)
 
 renderer = engine:get_renderer()
 content_mgr = engine:get_content_manager()
@@ -10,14 +9,14 @@ net_mgr = engine:get_net_manager()
 
 renderer:initialize()
 
-texture = content_mgr:create_texture2d("data/textures/tile.png", false)
+texture = content_mgr:create_texture2d("data/textures/error.png", false)
 texture:set_filter("Nearest", "Nearest")
 
 lastkey = ""
 
 tiles = {}
-tiles.width = (window:get_width() / (texture:get_width() * 5))
-tiles.height = (window:get_height() / (texture:get_height() * 5))
+tiles.width = (window:get_width() / (texture:get_width() * 3))
+tiles.height = (window:get_height() / (texture:get_height() * 3))
 
 function tiles.count(self)
     return self.width*self.height
@@ -84,16 +83,6 @@ function update()
     elseif lastkey ~= "" and keyboard:is_key_up(lastkey) then
         lastkey = ""
     end 
-
-    -- for x = 0, tiles.width do
-    --     for y = 0, tiles.height do
-    --         sx = math.sin(os.clock()) / 50
-    --         sy = math.sin(os.clock()) / 50
-
-    --         tiles[x][y]:set_scale(Vector2D.new(sx, sy))
-    --         tiles[x][y]:set_rotation(os.clock())
-    --     end
-    -- end
 
     window:set_title("ms/frame: " .. renderer:get_frametime())
 end
