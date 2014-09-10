@@ -10,38 +10,45 @@ net_mgr = engine:get_net_manager()
 
 renderer:initialize()
 
-texture = content_mgr:create_texture2d("data/textures/grass.jpg", false)
+texture = content_mgr:create_texture2d("data/textures/tile.png", false)
 texture:set_filter("Nearest", "Nearest")
 
 lastkey = ""
 
 tiles = {}
-num_tiles_x = (window:get_width() / texture:get_width()) + 1
-num_tiles_y = (window:get_height() / texture:get_height()) + 1
+tiles.width = (window:get_width() / (texture:get_width() * 5))
+tiles.height = (window:get_height() / (texture:get_height() * 5))
+
+function tiles.count(self)
+    return self.width*self.height
+end
 
 velocity = Vector2D.new(0.03, 0.01)
-scale = Vector2D.new(0.1, 0.1)
+scale = Vector2D.new(1 / tiles.width, 1 / tiles.height)
 position = Vector2D.new(-1, -1)
 
-for x = 0, num_tiles_x do
+for x = 0, tiles.width do
     tiles[x] = {}
     
     if x ~= 0 then
-        position:set_x(position:get_x() + 0.2)
+        position:set_x(position:get_x() + scale:get_x()*2)
     end
 
-    for y = 0, num_tiles_y do
+    for y = 0, tiles.height do
         tiles[x][y] = gui_mgr:create_sprite()
-        tiles[x][y]:set_scale(scale)
         if y ~= 0 then
-            position:set_y(position:get_y() + 0.2)
+            position:set_y(position:get_y() + scale:get_y()*2)
         end
 
+        tiles[x][y]:set_scale(scale)
         tiles[x][y]:set_position(position)
     end
 
     position:set_y(-1)
 end
+
+print("There are " .. tiles:count() .. " tiles in total")
+print(tiles.width .. " horizontally, " .. tiles.height .. " vertically")
 
 mouse = Mouse.new()
 keyboard = Keyboard.new()
@@ -78,15 +85,15 @@ function update()
         lastkey = ""
     end 
 
-    for x = 0, num_tiles_x do
-        for y = 0, num_tiles_y do
-            sx = math.sin(os.clock()) / 10
-            sy = math.sin(os.clock()) / 10
+    -- for x = 0, tiles.width do
+    --     for y = 0, tiles.height do
+    --         sx = math.sin(os.clock()) / 50
+    --         sy = math.sin(os.clock()) / 50
 
-            tiles[x][y]:set_scale(Vector2D.new(sx, sy))
-            tiles[x][y]:set_rotation(os.clock())
-        end
-    end
+    --         tiles[x][y]:set_scale(Vector2D.new(sx, sy))
+    --         tiles[x][y]:set_rotation(os.clock())
+    --     end
+    -- end
 
     window:set_title("ms/frame: " .. renderer:get_frametime())
 end
