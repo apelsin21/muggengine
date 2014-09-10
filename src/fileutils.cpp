@@ -1,6 +1,6 @@
 #include "fileutils.hpp"
 
-bool mugg::io::LoadTextFromFile(const char* filepath, std::string &outString) {
+bool mugg::io::LoadTextFromFile(const std::string& filepath, std::string &outString) {
     std::string data;
     std::ifstream textStream(filepath, std::ios::in);
 

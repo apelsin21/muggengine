@@ -22,29 +22,40 @@ namespace mugg {
     namespace graphics {
         class ShaderProgram : public GLObject {
             private:
-                bool linked, hasGeneratedID, compiledSuccessfully;
+                bool linked, compiledSuccessfully;
 
                 std::vector<GLuint> shaders;
+
                 std::map<std::string, GLint> knownLocations;
+
                 mugg::core::ContentManager* creator;
             public:
-                ShaderProgram();
+                ShaderProgram(bool);
                 ShaderProgram(mugg::core::ContentManager*);
                 ~ShaderProgram();
                 
+                virtual void CreateID();
+                virtual void DeleteID();
+
                 virtual void CheckForErrors();
                 virtual const char* GetLog();
                 virtual bool Link();
                 
-                virtual bool AddShader(GLuint);
+                virtual bool AttachShader(mugg::graphics::Shader*);
 
                 virtual bool GetCompiledSuccessfully();
 
                 virtual bool Validate();
 
-                virtual bool AddAttribute(std::string);
-                
+                virtual bool AddAttribute(const std::string&);
+                virtual GLint GetAttribute(const std::string&);
+
+                virtual bool AddUniform(const std::string&);
+                virtual GLint GetUniform(const std::string&);
+
                 virtual GLint GetNumberOfAttachedShaders();
+
+                virtual void Use();
         };
     }
 }

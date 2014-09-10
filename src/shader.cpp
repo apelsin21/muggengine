@@ -1,12 +1,14 @@
 #include "shader.hpp"
 
-mugg::graphics::Shader::Shader() : GLObject(nullptr) {
-    this->type = mugg::graphics::ShaderType::VertexShader;
+mugg::graphics::Shader::Shader(mugg::graphics::ShaderType type, bool createID = true) : GLObject(nullptr) {
+    this->type = type;
     this->filepath = "";
     this->data = "";
     this->loaded = false;
     this->compiledSuccessfully = false;
-    this->hasGeneratedID = false;
+
+    if(createID)
+        this->CreateID();
 }
 mugg::graphics::Shader::Shader(mugg::core::ContentManager* creator) : GLObject(creator){
     this->type = mugg::graphics::ShaderType::VertexShader;
@@ -17,6 +19,19 @@ mugg::graphics::Shader::Shader(mugg::core::ContentManager* creator) : GLObject(c
     this->hasGeneratedID = false;
 }
 mugg::graphics::Shader::~Shader() {
+}
+
+void mugg::graphics::Shader::CreateID() {
+    this->ID = glCreateShader(mugg::graphics::ShaderTypeToGLEnum(this->type));
+    this->hasGeneratedID = true;
+}
+void mugg::graphics::Shader::DeleteID() {
+    if(glIsShader(this->ID) == GL_TRUE) {
+        this->hasGeneratedID = false;
+        glDeleteShader(this->ID);
+    } else {
+        std::cout << "Tried deleting invalid shader " << this->ID << std::endl;
+    }
 }
 
 mugg::graphics::ShaderType mugg::graphics::Shader::GetType() {
@@ -47,6 +62,19 @@ std::string mugg::graphics::Shader::GetData() {
 void mugg::graphics::Shader::SetData(const std::string& data) {
     this->loaded = true;
     this->data = data;
+}
+
+bool mugg::graphics::Shader::Load(const std::string& path) {
+    if(path == "") {
+        std::cout << "Got empty string as shader filepath!\n";
+        return false;
+    }
+
+    if(!mugg::io::LoadTextFromFile(path, this->data)) {
+        return false;
+    }
+
+    return true;
 }
 
 bool mugg::graphics::Shader::Compile() {

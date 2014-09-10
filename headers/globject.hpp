@@ -14,9 +14,11 @@ namespace mugg {
                 GLuint ID = -1;
                 unsigned int index = 0;
                 mugg::core::ContentManager* parent;
+                bool hasGeneratedID;
             public:
                 GLObject(mugg::core::ContentManager* parent) {
                     this->parent = parent;
+                    this->hasGeneratedID = false;
                 }
                 
                 virtual mugg::core::ContentManager* GetParent() {
@@ -28,6 +30,10 @@ namespace mugg {
                 }
                 virtual GLuint GetID() {
                     return this->ID;
+                }
+
+                virtual bool HasGeneratedID() {
+                    return this->hasGeneratedID;
                 }
 
                 virtual void SetIndex(unsigned int index) {

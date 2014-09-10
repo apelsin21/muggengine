@@ -32,13 +32,15 @@ namespace mugg {
             private:
                 std::vector<mugg::gui::Sprite*> sprites;
                 std::vector<unsigned int> spritesToBeUpdated;
-                
                 std::vector<mugg::gui::SpriteBatch*> spriteBatches;
                     
                 GLuint vaoID, positionBufferID, uvBufferID;
-                GLuint vsID, fsID, programID;
+                
+                mugg::graphics::Shader* vertexShader;
+                mugg::graphics::Shader* fragmentShader;
+                mugg::graphics::ShaderProgram* shaderProgram;
                
-                GLint posLocation, uvLocation, modelLocation, projectionMatrixUniformLocation;
+                std::string posAttribName, uvAttribName, modelAttribName, projectionMatrixUniformName;
 
                 mugg::core::Engine* parent;
 
@@ -56,8 +58,8 @@ namespace mugg {
 
                 virtual mugg::gui::SpriteBatch* CreateSpriteBatch();
 
-                virtual GLuint GetShaderProgramID();
-                virtual void SetShaderProgramID(GLuint);
+                virtual mugg::graphics::ShaderProgram* GetShaderProgram();
+                virtual void SetShaderProgram(mugg::graphics::ShaderProgram*);
 
                 virtual glm::mat4 GetProjectionMatrix();
                 virtual void SetProjectionMatrix(const glm::mat4&);

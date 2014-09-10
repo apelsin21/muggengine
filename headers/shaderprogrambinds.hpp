@@ -21,7 +21,7 @@ namespace mugg {
 
             mugg::graphics::Shader* shader = checkShader(L, 2);
 
-            program->AddShader(shader->GetID());
+            program->AttachShader(shader);
 
             return 0;
         }

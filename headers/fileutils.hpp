@@ -7,8 +7,8 @@
 
 namespace mugg {
     namespace io {
-        bool LoadTextFromFile(const char* filepath, std::string &outString);
-        bool LoadTextFromFile(const char* filepath, const char* &outString);
+        bool LoadTextFromFile(const std::string&, std::string&);
+        bool LoadTextFromFile(const char*, const char*&);
     }
 }
 
