@@ -18,10 +18,6 @@ mugg::graphics::ShaderProgram::~ShaderProgram() {
 void mugg::graphics::ShaderProgram::CreateID() {
     this->ID = glCreateProgram();
     this->hasGeneratedID = true;
-    
-    if(glIsProgram(this->ID) == GL_TRUE) {
-        std::cout << "Created program " << this->ID << std::endl;
-    }
 }
 void mugg::graphics::ShaderProgram::DeleteID() {
     if(glIsProgram(this->ID) == GL_TRUE) {
@@ -126,7 +122,7 @@ bool mugg::graphics::ShaderProgram::GetCompiledSuccessfully() {
     return this->compiledSuccessfully;
 }
 
-bool mugg::graphics::ShaderProgram::AddAttribute(const std::string& name) {
+bool mugg::graphics::ShaderProgram::AddAttrib(const std::string& name) {
     if(glIsProgram(this->ID) == GL_FALSE) {
         std::cout << "Tried to add attribute to invalid shader program!\n";
         return false;
@@ -143,12 +139,11 @@ bool mugg::graphics::ShaderProgram::AddAttribute(const std::string& name) {
 
     return true;
 }
-GLint mugg::graphics::ShaderProgram::GetAttribute(const std::string& name) {
+GLint mugg::graphics::ShaderProgram::GetAttrib(const std::string& name) {
     auto it = this->knownLocations.find(name);
 
     if(it != this->knownLocations.end()) {
-        std::cout << "Found attribute " << it->first << " : " << it->second << std::endl;
-        
+        //Search success
         return it->second;
     }
 
@@ -177,8 +172,7 @@ GLint mugg::graphics::ShaderProgram::GetUniform(const std::string& name) {
     auto it = this->knownLocations.find(name);
 
     if(it != this->knownLocations.end()) {
-        std::cout << "Found uniform: " << it->first << " = " << it->second << std::endl;
-        
+        //It was found
         return it->second;
     }
 

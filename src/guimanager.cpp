@@ -26,18 +26,23 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
     shaderProgram->AttachShader(this->fragmentShader);
     shaderProgram->Link();
 
-    if(!this->shaderProgram->AddAttribute(this->posAttribName)) {
+    if(!this->shaderProgram->AddAttrib(this->posAttribName)) {
        std::cout << "GUIManager failed to get attribute " << this->posAttribName << "\n";
     }
-    if(!this->shaderProgram->AddAttribute(this->uvAttribName)) {
+    if(!this->shaderProgram->AddAttrib(this->uvAttribName)) {
        std::cout << "GUIManager failed to get attribute " << this->uvAttribName << "\n";
     }
-    if(!this->shaderProgram->AddAttribute(this->modelAttribName)) {
+    if(!this->shaderProgram->AddAttrib(this->modelAttribName)) {
         std::cout << "GUIManager failed to get attribute " << this->modelAttribName << "\n";
     }
     if(!this->shaderProgram->AddUniform(this->projectionMatrixUniformName)) {
        std::cout << "GUIManager failed to get uniform " << this->projectionMatrixUniformName << "\n";
     }
+
+    this->posLocation = this->shaderProgram->GetAttrib(this->posAttribName);
+    this->uvLocation = this->shaderProgram->GetAttrib(this->uvAttribName);
+    this->modelLocation = this->shaderProgram->GetAttrib(this->modelAttribName);
+    this->projectionMatrixUniformLocation = this->shaderProgram->GetUniform(this->projectionMatrixUniformName);
 
     glGenVertexArrays(1, &this->vaoID);
     
@@ -66,20 +71,24 @@ mugg::gui::GUIManager::GUIManager(mugg::core::Engine* parent) {
     glBindBuffer(GL_ARRAY_BUFFER, this->positionBufferID);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_positions), vertex_positions, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(this->shaderProgram->GetAttribute(this->posAttribName), 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(this->shaderProgram->GetAttribute(this->posAttribName));
+    glVertexAttribPointer(this->posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(this->posLocation);
 
     glBindBuffer(GL_ARRAY_BUFFER, this->uvBufferID);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_uvs), vertex_uvs, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(this->shaderProgram->GetAttribute(this->uvAttribName), 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(this->shaderProgram->GetAttribute(this->uvAttribName));
+    glVertexAttribPointer(this->uvLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(this->uvLocation);
     
-    glDisableVertexAttribArray(this->shaderProgram->GetAttribute(this->posAttribName));
-    glDisableVertexAttribArray(this->shaderProgram->GetAttribute(this->uvAttribName));
+    glDisableVertexAttribArray(this->posLocation);
+    glDisableVertexAttribArray(this->uvLocation);
 }
 
 mugg::gui::GUIManager::~GUIManager() {
+    if(glIsShader(this->vertexShader->GetID()) == GL_TRUE) {
+        std::cout << "It is a shader\n";
+    }
+    
     this->shaderProgram->DeleteID();
     this->vertexShader->DeleteID();
     this->fragmentShader->DeleteID();
@@ -109,10 +118,10 @@ void mugg::gui::GUIManager::UpdateSpriteBatches() {
         std::size_t maxSize = this->spriteBatches[index]->GetMaxSprites();
         
         if(currentSize >= maxSize) {
-            this->spriteBatches.push_back(new mugg::gui::SpriteBatch(this, 10000, this->vaoID, this->shaderProgram->GetAttribute(this->modelAttribName)));
+            this->spriteBatches.push_back(new mugg::gui::SpriteBatch(this, 32768, this->vaoID, this->modelLocation));
         }
     } else {
-        this->spriteBatches.push_back(new mugg::gui::SpriteBatch(this, 10000, this->vaoID, this->shaderProgram->GetAttribute(this->modelAttribName)));
+        this->spriteBatches.push_back(new mugg::gui::SpriteBatch(this, 32768, this->vaoID, this->modelLocation));
     }
 }
 
@@ -167,13 +176,13 @@ void mugg::gui::GUIManager::Render() {
     this->shaderProgram->Use();
     glBindVertexArray(this->vaoID);
 
-    glEnableVertexAttribArray(this->shaderProgram->GetAttribute(this->posAttribName));
-    glEnableVertexAttribArray(this->shaderProgram->GetAttribute(this->uvAttribName));
+    glEnableVertexAttribArray(this->posLocation);
+    glEnableVertexAttribArray(this->uvLocation);
     for(unsigned int i = 0; i <= 4; i++) {
-        glEnableVertexAttribArray(i + this->shaderProgram->GetUniform(this->projectionMatrixUniformName)); 
+        glEnableVertexAttribArray(i + this->modelLocation); 
     }
 
-    glUniformMatrix4fv(this->shaderProgram->GetUniform(this->projectionMatrixUniformName), 1, GL_FALSE, glm::value_ptr(this->projectionMatrix));
+    glUniformMatrix4fv(this->projectionMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(this->projectionMatrix));
 
     for(unsigned int i = 0; i < this->spriteBatches.size(); i++) {    
         for(unsigned int u = 0; u < this->spritesToBeUpdated.size(); u++) {

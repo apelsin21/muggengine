@@ -47,8 +47,8 @@ namespace mugg {
 
                 virtual bool Validate();
 
-                virtual bool AddAttribute(const std::string&);
-                virtual GLint GetAttribute(const std::string&);
+                virtual bool AddAttrib(const std::string&);
+                virtual GLint GetAttrib(const std::string&);
 
                 virtual bool AddUniform(const std::string&);
                 virtual GLint GetUniform(const std::string&);

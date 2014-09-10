@@ -41,6 +41,7 @@ namespace mugg {
                 mugg::graphics::ShaderProgram* shaderProgram;
                
                 std::string posAttribName, uvAttribName, modelAttribName, projectionMatrixUniformName;
+                GLint posLocation, uvLocation, modelLocation, projectionMatrixUniformLocation;
 
                 mugg::core::Engine* parent;
 
