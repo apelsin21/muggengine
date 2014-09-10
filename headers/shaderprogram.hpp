@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <memory>
 
 #include <GL/glew.h>
@@ -24,27 +25,26 @@ namespace mugg {
                 bool linked, hasGeneratedID, compiledSuccessfully;
 
                 std::vector<GLuint> shaders;
+                std::map<std::string, GLint> knownLocations;
                 mugg::core::ContentManager* creator;
             public:
                 ShaderProgram();
                 ShaderProgram(mugg::core::ContentManager*);
                 ~ShaderProgram();
                 
-                bool HasGeneratedID();
-                void DeleteID();
-                void GenID();
-
-                void CheckForErrors();
-                const char* GetLog();
-                bool Link();
+                virtual void CheckForErrors();
+                virtual const char* GetLog();
+                virtual bool Link();
                 
-                bool AddShader(GLuint);
+                virtual bool AddShader(GLuint);
 
-                bool GetCompiledSuccessfully();
+                virtual bool GetCompiledSuccessfully();
 
-                bool Validate();
+                virtual bool Validate();
 
-                GLint GetNumberOfAttachedShaders();
+                virtual bool AddAttribute(std::string);
+                
+                virtual GLint GetNumberOfAttachedShaders();
         };
     }
 }

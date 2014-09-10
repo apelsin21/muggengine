@@ -14,10 +14,6 @@ mugg::graphics::ShaderProgram::ShaderProgram(mugg::core::ContentManager* creator
 mugg::graphics::ShaderProgram::~ShaderProgram() {
 }
 
-bool mugg::graphics::ShaderProgram::HasGeneratedID() {
-    return this->hasGeneratedID;
-}
-
 bool mugg::graphics::ShaderProgram::AddShader(GLuint shader) {
     if(glIsShader(shader) == GL_FALSE) {
         std::cout << "Tried adding an unvalid shader to shaderprogram!\n";
@@ -29,10 +25,6 @@ bool mugg::graphics::ShaderProgram::AddShader(GLuint shader) {
     this->shaders.push_back(shader);
 
     return true;
-}
-
-bool mugg::graphics::ShaderProgram::GetCompiledSuccessfully() {
-    return this->compiledSuccessfully;
 }
 
 bool mugg::graphics::ShaderProgram::Link() {
@@ -89,7 +81,6 @@ const char* mugg::graphics::ShaderProgram::GetLog() {
 }
 
 bool mugg::graphics::ShaderProgram::Validate() {
-
     if(glIsProgram(this->ID) != GL_TRUE) {
         return false;
     }
@@ -107,6 +98,26 @@ bool mugg::graphics::ShaderProgram::Validate() {
     }
 
     return true;
+}
+
+bool mugg::graphics::ShaderProgram::GetCompiledSuccessfully() {
+    return this->compiledSuccessfully;
+}
+
+bool mugg::graphics::ShaderProgram::AddAttribute(std::string attribName) {
+    if(glIsProgram(this->ID) == GL_FALSE) {
+        std::cout << "Tried to add attribute to invalid shader program!\n";
+        return false;
+    }
+    
+    GLint attribLocation = glGetAttribLocation(this->ID, attribName.c_str());
+
+    if(attribLocation == -1) {
+        std::cout << "Got invalid attribute location (" << attribLocation << ") for: " << attribName << std::endl;
+        return false;
+    }
+
+    this->knownLocations.emplace(std::make_pair(attribName, attribLocation));
 }
 
 GLint mugg::graphics::ShaderProgram::GetNumberOfAttachedShaders() {

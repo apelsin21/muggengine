@@ -1,7 +1,8 @@
 engine = Engine.new()
 
 window = engine:get_window()
-window:set_swap_interval(1)
+window:set_resolution(1600, 900)
+
 renderer = engine:get_renderer()
 content_mgr = engine:get_content_manager()
 gui_mgr = engine:get_gui_manager()
