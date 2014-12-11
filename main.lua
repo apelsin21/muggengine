@@ -14,40 +14,40 @@ texture:set_filter("Nearest", "Nearest")
 
 lastkey = ""
 
-tiles = {}
-tiles.width = (window:get_width() / (texture:get_width() * 3))
-tiles.height = (window:get_height() / (texture:get_height() * 3))
+--tiles = {}
+--tiles.width = (window:get_width() / (texture:get_width() * 8))
+--tiles.height = (window:get_height() / (texture:get_height() * 8))
+--
+--function tiles.count(self)
+--    return self.width*self.height
+--end
+--
+--velocity = Vector2D.new(0.03, 0.01)
+--scale = Vector2D.new(1 / tiles.width, 1 / tiles.height)
+--position = Vector2D.new(-1, -1)
+--
+--for x = 0, tiles.width do
+--    tiles[x] = {}
+--    
+--    if x ~= 0 then
+--        position:set_x(position:get_x() + scale:get_x()*2)
+--    end
+--
+--    for y = 0, tiles.height do
+--        tiles[x][y] = gui_mgr:create_sprite()
+--        if y ~= 0 then
+--            position:set_y(position:get_y() + scale:get_y()*2)
+--        end
+--
+--        tiles[x][y]:set_scale(scale)
+--        tiles[x][y]:set_position(position)
+--    end
+--
+--    position:set_y(-1)
+--end
 
-function tiles.count(self)
-    return self.width*self.height
-end
-
-velocity = Vector2D.new(0.03, 0.01)
-scale = Vector2D.new(1 / tiles.width, 1 / tiles.height)
-position = Vector2D.new(-1, -1)
-
-for x = 0, tiles.width do
-    tiles[x] = {}
-    
-    if x ~= 0 then
-        position:set_x(position:get_x() + scale:get_x()*2)
-    end
-
-    for y = 0, tiles.height do
-        tiles[x][y] = gui_mgr:create_sprite()
-        if y ~= 0 then
-            position:set_y(position:get_y() + scale:get_y()*2)
-        end
-
-        tiles[x][y]:set_scale(scale)
-        tiles[x][y]:set_position(position)
-    end
-
-    position:set_y(-1)
-end
-
-print("There are " .. tiles:count() .. " tiles in total")
-print(tiles.width .. " horizontally, " .. tiles.height .. " vertically")
+--print("There are " .. tiles:count() .. " tiles in total")
+--print(tiles.width .. " horizontally, " .. tiles.height .. " vertically")
 
 mouse = Mouse.new()
 keyboard = Keyboard.new()
