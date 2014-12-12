@@ -30,27 +30,27 @@ namespace mugg {
             public:
                 GUIObject(mugg::gui::GUIManager*);
 
-                virtual mugg::gui::GUIManager* GetParent();
+                mugg::gui::GUIManager* GetParent();
 
-                virtual void SetScale(const glm::vec2&);
-                virtual glm::vec2 GetScale();
+                void SetScale(const glm::vec2&);
+                glm::vec2 GetScale();
 
-                virtual void SetRotation(const float);
-                virtual float GetRotation();
+                void SetRotation(const float);
+                float GetRotation();
 
-                virtual void SetPosition(const glm::vec2&);
-                virtual glm::vec2 GetPosition();
+                void SetPosition(const glm::vec2&);
+                glm::vec2 GetPosition();
 
-                virtual void SetTexture(mugg::graphics::Texture2D*);
-                virtual mugg::graphics::Texture2D* GetTexture();
+                void SetTexture(mugg::graphics::Texture2D*);
+                mugg::graphics::Texture2D* GetTexture();
                 
-                virtual void SetModelMatrix(const glm::mat4&);
-                virtual glm::mat4 GetModelMatrix();
+                void SetModelMatrix(const glm::mat4&);
+                glm::mat4 GetModelMatrix();
 
-                virtual unsigned int GetIndex();
-                virtual void SetIndex(unsigned int);
+                unsigned int GetIndex();
+                void SetIndex(unsigned int);
 
-                virtual bool HasChanged();
+                bool HasChanged();
         };
     }
 }

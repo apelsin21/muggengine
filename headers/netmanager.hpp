@@ -42,16 +42,16 @@ namespace mugg {
                 NetManager(mugg::core::Engine*);
                 ~NetManager();
 
-                virtual mugg::net::Client* CreateClient();
-                virtual std::size_t GetClientCount();
-                virtual std::size_t GetClientQueueCount();
+                mugg::net::Client* CreateClient();
+                std::size_t GetClientCount();
+                std::size_t GetClientQueueCount();
 
-                virtual mugg::net::Server* CreateServer();
-                virtual std::size_t GetServerCount();
-                virtual std::size_t GetServerQueueCount();
+                mugg::net::Server* CreateServer();
+                std::size_t GetServerCount();
+                std::size_t GetServerQueueCount();
         
-                virtual void UpdateClients();
-                virtual void UpdateServers();
+                void UpdateClients();
+                void UpdateServers();
         };
     }
 }

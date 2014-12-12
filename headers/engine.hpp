@@ -28,19 +28,19 @@ namespace mugg {
                 Engine();
                 ~Engine();
 
-                virtual mugg::gui::GUIManager* GetGUIManager();
+                mugg::gui::GUIManager* GetGUIManager();
 
-                virtual mugg::core::ContentManager* GetContentManager();
+                mugg::core::ContentManager* GetContentManager();
 
-                virtual mugg::core::Window* GetWindow();
+                mugg::core::Window* GetWindow();
 
-                virtual mugg::graphics::Renderer* GetRenderer();
+                mugg::graphics::Renderer* GetRenderer();
            
-                virtual mugg::scene::SceneManager* GetSceneManager();
+                mugg::scene::SceneManager* GetSceneManager();
 
-                virtual mugg::net::NetManager* GetNetManager();
+                mugg::net::NetManager* GetNetManager();
             
-                virtual void Render();
+                void Render();
         };
     }
 }

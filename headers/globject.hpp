@@ -21,25 +21,25 @@ namespace mugg {
                     this->hasGeneratedID = false;
                 }
                 
-                virtual mugg::core::ContentManager* GetParent() {
+                mugg::core::ContentManager* GetParent() {
                     return this->parent;
                 }
 
-                virtual void SetID(GLuint newID) {
+                void SetID(GLuint newID) {
                     this->ID = newID;   
                 }
-                virtual GLuint GetID() {
+                GLuint GetID() {
                     return this->ID;
                 }
 
-                virtual bool HasGeneratedID() {
+                bool HasGeneratedID() {
                     return this->hasGeneratedID;
                 }
 
-                virtual void SetIndex(unsigned int index) {
+                void SetIndex(unsigned int index) {
                     this->index = index;
                 }
-                virtual unsigned int GetIndex() {
+                unsigned int GetIndex() {
                     return this->index;
                 }
         };

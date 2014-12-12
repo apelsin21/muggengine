@@ -30,30 +30,30 @@ namespace mugg {
                     this->latestEvent = mugg::net::Event::None;
                 }
 
-                virtual int GetMaxConnections() {
+                int GetMaxConnections() {
                     return this->maxConnections;
                 }
-                virtual int GetMaxChannels() {
+                int GetMaxChannels() {
                     return this->maxChannels;
                 }
                 
-                virtual void SetBandwidthLimit(unsigned int inThrottle, unsigned int outThrottle) {
+                void SetBandwidthLimit(unsigned int inThrottle, unsigned int outThrottle) {
                     enet_host_bandwidth_limit(this->host, inThrottle, outThrottle);
                     this->inLimit = inThrottle;
                     this->outLimit = outThrottle;
                 }
-                virtual unsigned int GetInLimit() {
+                unsigned int GetInLimit() {
                     return this->inLimit;
                 }
-                virtual unsigned int GetOutLimit() {
+                unsigned int GetOutLimit() {
                     return this->outLimit;
                 }
                 
-                virtual bool IsInitialized() {
+                bool IsInitialized() {
                     return this->initialized;
                 }
 
-                virtual std::string AddressToString(ENetAddress address) {
+                std::string AddressToString(ENetAddress address) {
                     unsigned char bytes[4];
                     bytes[0] = address.host & 0xFF;
                     bytes[1] = (address.host >> 8) & 0xFF;
@@ -67,20 +67,20 @@ namespace mugg {
                     return std::string(buffer);
                 }
 
-                virtual mugg::net::Event ClearLatestEvent() {
+                mugg::net::Event ClearLatestEvent() {
                     this->latestEvent = mugg::net::Event::None;
                 }
-                virtual mugg::net::Event GetLatestEvent() {
+                mugg::net::Event GetLatestEvent() {
                     return this->latestEvent;
                 }
-                virtual std::string GetLatestEventAddress() {
+                std::string GetLatestEventAddress() {
                     return this->latestEventAddress;
                 }
-                virtual unsigned char* GetLatestEventData() {
+                unsigned char* GetLatestEventData() {
                     return this->latestEventData;
                 }
 
-                virtual void Poll() {
+                void Poll() {
                 }
         };
     }

@@ -34,28 +34,28 @@ namespace mugg {
                 ShaderProgram(mugg::core::ContentManager*);
                 ~ShaderProgram();
                 
-                virtual void CreateID();
-                virtual void DeleteID();
+                void CreateID();
+                void DeleteID();
 
-                virtual void CheckForErrors();
-                virtual const char* GetLog();
-                virtual bool Link();
+                void CheckForErrors();
+                const char* GetLog();
+                bool Link();
                 
-                virtual bool AttachShader(mugg::graphics::Shader*);
+                bool AttachShader(mugg::graphics::Shader*);
 
-                virtual bool GetCompiledSuccessfully();
+                bool GetCompiledSuccessfully();
 
-                virtual bool Validate();
+                bool Validate();
 
-                virtual bool AddAttrib(const std::string&);
-                virtual GLint GetAttrib(const std::string&);
+                bool AddAttrib(const std::string&);
+                GLint GetAttrib(const std::string&);
 
-                virtual bool AddUniform(const std::string&);
-                virtual GLint GetUniform(const std::string&);
+                bool AddUniform(const std::string&);
+                GLint GetUniform(const std::string&);
 
-                virtual GLint GetNumberOfAttachedShaders();
+                GLint GetNumberOfAttachedShaders();
 
-                virtual void Use();
+                void Use();
         };
     }
 }

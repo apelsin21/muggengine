@@ -15,13 +15,13 @@ namespace mugg {
                 Mouse();
                 ~Mouse();
 
-                virtual glm::vec2 GetPosition();
-                virtual int GetX();
-                virtual int GetY();
+                glm::vec2 GetPosition();
+                int GetX();
+                int GetY();
 
-                virtual bool IsLeftButtonDown();
-                virtual bool IsMiddleButtonDown();
-                virtual bool IsRightButtonDown();
+                bool IsLeftButtonDown();
+                bool IsMiddleButtonDown();
+                bool IsRightButtonDown();
         };
     }
 }

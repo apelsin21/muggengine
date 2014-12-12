@@ -18,8 +18,8 @@ namespace mugg {
                 TextureAtlas(mugg::core::ContentManager*);
                 ~TextureAtlas();
 
-                virtual void SetOffset(int);
-                virtual int GetOffset();
+                void SetOffset(int);
+                int GetOffset();
         };
     }
 }

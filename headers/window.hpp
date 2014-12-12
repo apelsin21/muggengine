@@ -35,53 +35,53 @@ namespace mugg {
                 Window(mugg::core::Engine*, int, int, const std::string&);
                 ~Window();
 
-                virtual bool HasFocus();
+                bool HasFocus();
 
-                virtual bool Open(int, int, const std::string&);
-                virtual bool IsOpen();
-                virtual void Close();
+                bool Open(int, int, const std::string&);
+                bool IsOpen();
+                void Close();
 
-                virtual void Restore();
-                virtual void Maximize();
-                virtual void Minimize();
-                virtual bool IsMaximized();
+                void Restore();
+                void Maximize();
+                void Minimize();
+                bool IsMaximized();
 
-                virtual void SetResolution(int, int);
-                virtual void SetWidth(int);
-                virtual void SetHeight(int);
-                virtual int GetWidth();
-                virtual int GetHeight();
+                void SetResolution(int, int);
+                void SetWidth(int);
+                void SetHeight(int);
+                int GetWidth();
+                int GetHeight();
 
-                virtual void SetPosition(int, int);
-                virtual void SetPositionX(int);
-                virtual void SetPositionY(int);
-                virtual int GetPositionX();
-                virtual int GetPositionY();
+                void SetPosition(int, int);
+                void SetPositionX(int);
+                void SetPositionY(int);
+                int GetPositionX();
+                int GetPositionY();
 
-                virtual void SetSwapInterval(int);
-                virtual int GetSwapInterval();
+                void SetSwapInterval(int);
+                int GetSwapInterval();
 
-                virtual void Show();
-                virtual void Hide();
-                virtual bool IsHidden();
+                void Show();
+                void Hide();
+                bool IsHidden();
 
-                virtual bool SetClipboardText(const std::string&);
-                virtual bool HasClipboardText();
-                virtual std::string GetClipboardText();
+                bool SetClipboardText(const std::string&);
+                bool HasClipboardText();
+                std::string GetClipboardText();
 
-                virtual bool SetFullscreen();
-                virtual bool SetBorderlessFullscreen();
-                virtual bool SetWindowed();
-                virtual bool IsFullscreen();
+                bool SetFullscreen();
+                bool SetBorderlessFullscreen();
+                bool SetWindowed();
+                bool IsFullscreen();
 
-                virtual void SetTitle(const std::string&);
-                virtual std::string GetTitle();
+                void SetTitle(const std::string&);
+                std::string GetTitle();
 
-                virtual void ShowCursor();
-                virtual void HideCursor();
-                virtual bool IsCursorHidden();
+                void ShowCursor();
+                void HideCursor();
+                bool IsCursorHidden();
 
-                virtual void SwapBuffers();
+                void SwapBuffers();
         };
     }
 }

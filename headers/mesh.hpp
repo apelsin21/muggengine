@@ -39,44 +39,44 @@ namespace mugg {
                 Mesh(mugg::core::ContentManager*);
                 ~Mesh();
 
-                virtual mugg::graphics::Texture2D* GetTexture();
-                virtual void SetTexture(mugg::graphics::Texture2D*);
+                mugg::graphics::Texture2D* GetTexture();
+                void SetTexture(mugg::graphics::Texture2D*);
 
-                virtual void SetIndices(const std::vector<unsigned short>&);
-                virtual std::vector<unsigned short> GetIndices();
-                virtual int GetNumberOfIndices();
+                void SetIndices(const std::vector<unsigned short>&);
+                std::vector<unsigned short> GetIndices();
+                int GetNumberOfIndices();
 
-                virtual void SetVertices(const std::vector<glm::vec3>&);
-                virtual std::vector<glm::vec3> GetVertices();
-                virtual int GetNumberOfVertices();
+                void SetVertices(const std::vector<glm::vec3>&);
+                std::vector<glm::vec3> GetVertices();
+                int GetNumberOfVertices();
                 
-                virtual void SetUVS(const std::vector<glm::vec2>&);
-                virtual std::vector<glm::vec2> GetUVS();
-                virtual int GetNumberOfUVS();
+                void SetUVS(const std::vector<glm::vec2>&);
+                std::vector<glm::vec2> GetUVS();
+                int GetNumberOfUVS();
                 
-                virtual void SetNormals(const std::vector<glm::vec3>&);
-                virtual std::vector<glm::vec3> GetNormals();
-                virtual int GetNumberOfNormals();
+                void SetNormals(const std::vector<glm::vec3>&);
+                std::vector<glm::vec3> GetNormals();
+                int GetNumberOfNormals();
 
-                virtual GLuint GetVAOID();
-                virtual void SetVAOID(GLuint);
+                GLuint GetVAOID();
+                void SetVAOID(GLuint);
                 
-                virtual GLuint GetPositionBufferID();
-                virtual void SetPositionBufferID(GLuint);
+                GLuint GetPositionBufferID();
+                void SetPositionBufferID(GLuint);
                 
-                virtual GLuint GetUVBufferID();
-                virtual void SetUVBufferID(GLuint);
+                GLuint GetUVBufferID();
+                void SetUVBufferID(GLuint);
                 
-                virtual GLuint GetNormalBufferID();
-                virtual void SetNormalBufferID(GLuint);
+                GLuint GetNormalBufferID();
+                void SetNormalBufferID(GLuint);
                 
-                virtual GLuint GetElementBufferID();
-                virtual void SetElementBufferID(GLuint);
+                GLuint GetElementBufferID();
+                void SetElementBufferID(GLuint);
                 
-                virtual std::string GetFilepath();
-                virtual void SetFilepath(const std::string&);
+                std::string GetFilepath();
+                void SetFilepath(const std::string&);
                 
-                virtual void Clear();
+                void Clear();
         };
     }
 }

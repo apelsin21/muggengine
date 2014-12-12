@@ -56,14 +56,14 @@ namespace mugg {
                 Font(GUIManager*);
                 ~Font();
 
-                virtual bool Load(const std::string&, unsigned int);
+                bool Load(const std::string&, unsigned int);
 
-                virtual GLuint GetTextureID();
-                virtual void SetTextureID(GLuint);
+                GLuint GetTextureID();
+                void SetTextureID(GLuint);
 
-                virtual unsigned int GetPixelSize();
-                virtual int GetWidth();
-                virtual int GetHeight();
+                unsigned int GetPixelSize();
+                int GetWidth();
+                int GetHeight();
         };
     }
 }

@@ -22,8 +22,8 @@ namespace mugg {
                 Keyboard();
                 ~Keyboard();
                 
-                virtual bool IsKeyDown(const std::string&);
-                virtual bool IsKeyUp(const std::string&);
+                bool IsKeyDown(const std::string&);
+                bool IsKeyUp(const std::string&);
         };
     }
 }
